@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btTgl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pilih tanggal" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Debet"
+            android:textColor="#000" />
+
+        <Button
+            android:id="@+id/btPildeb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pilih debet" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kredit"
+            android:textColor="#000" />
+
+        <Button
+            android:id="@+id/btPilKred"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="pilih kredit" />
+
+        <EditText
+            android:id="@+id/etNominalTrans"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Masukkan Nominal Transaksi"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/etKeterangan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Masukkan Keterangan Transaksi"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/btAddData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="tambahkan" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
