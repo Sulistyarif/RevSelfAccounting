@@ -40,7 +40,9 @@ public class DBAdapterMix extends SQLiteOpenHelper {
     private static final String TGL_TRANS = "tgl";
     private static final String KETERANGAN = "keterangan";
     private static final String AKUN_DEBET = "akun_debet";
+    private static final String NAMA_DEBET = "nama_debet";
     private static final String AKUN_KREDIT = "akun_kredit";
+    private static final String NAMA_KREDIT = "nama_kredit";
     private static final String NOMINAL_DEBET = "nominal_debet";
     private static final String NOMINAL_KREDIT = "nominal_kredit";
 
@@ -70,7 +72,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE_AKUN = "CREATE TABLE " + TABLE_AKUN + "(" + KODE_AKUN + " INTEGER PRIMARY KEY," + NAMA_AKUN + " TEXT," + JENIS_AKUN + " INTEGER)";
         String CREATE_DATA_PERUSAHAAN = "CREATE TABLE data_perusahaan(id INTEGER PRIMARY KEY, nama_perusahaan TEXT, nama_pemilik TEXT, alamat TEXT, telp TEXT, email TEXT)";
-        String CREATE_TABEL_JURNAL = "CREATE TABLE jurnal(id INTEGER PRIMARY KEY, tgl INTEGER, keterangan TEXT, akun_debet INTEGER, akun_kredit INTEGER, nominal_debet INTEGER, nominal_kredit INTEGER)";
+        String CREATE_TABEL_JURNAL = "CREATE TABLE jurnal(id INTEGER PRIMARY KEY, tgl INTEGER, keterangan TEXT, akun_debet INTEGER, nama_debet TEXT, akun_kredit INTEGER, nama_kredit TEXT, nominal_debet INTEGER, nominal_kredit INTEGER)";
         String CREATE_RIWAYAT_NOMINAL = "CREATE TABLE riwayat_nominal(id INTEGER PRIMARY KEY, kode_akun INTEGER, nominal INTEGER)";
 
         db.execSQL(CREATE_TABLE_AKUN);
@@ -411,7 +413,9 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         cv.put(TGL_TRANS,dateInMilis);
         cv.put(KETERANGAN, dataJurnal.getKeterangan());
         cv.put(AKUN_DEBET, dataJurnal.getAkunDebet());
+        cv.put(NAMA_DEBET, dataJurnal.getNamaDebet());
         cv.put(AKUN_KREDIT, dataJurnal.getAkunKredit());
+        cv.put(NAMA_KREDIT, dataJurnal.getNamaKredit());
         cv.put(NOMINAL_DEBET, dataJurnal.getNominalDebet());
         cv.put(NOMINAL_KREDIT, dataJurnal.getNominalKredit());
 
@@ -435,15 +439,19 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 String tgl = longToStr(cursor.getLong(1));
                 String keterangan = cursor.getString(2);
                 int akun_debet = cursor.getInt(3);
-                int akun_kredit = cursor.getInt(4);
-                long nominal_debet = cursor.getLong(5);
-                long nominal_kredit = cursor.getLong(6);
+                String nama_debet = cursor.getString(4);
+                int akun_kredit = cursor.getInt(5);
+                String nama_kredit = cursor.getString(6);
+                long nominal_debet = cursor.getLong(7);
+                long nominal_kredit = cursor.getLong(8);
 
                 dataJurnal = new DataJurnal();
                 dataJurnal.setTgl(tgl);
                 dataJurnal.setKeterangan(keterangan);
                 dataJurnal.setAkunDebet(akun_debet);
+                dataJurnal.setNamaDebet(nama_debet);
                 dataJurnal.setAkunKredit(akun_kredit);
+                dataJurnal.setNamaKredit(nama_kredit);
                 dataJurnal.setNominalDebet(nominal_debet);
                 dataJurnal.setNominalKredit(nominal_kredit);
 
@@ -502,4 +510,109 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         db.close();
     }
 
+    public ArrayList<DataJurnal> selectJurnalUmum(){
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+
+        String querySelect = "SELECT * FROM " + TABLE_JURNAL;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = longToStr(cursor.getLong(1));
+                String keterangan = cursor.getString(2);
+                int akun_debet = cursor.getInt(3);
+                int akun_kredit = cursor.getInt(4);
+                long nominal_debet = cursor.getLong(5);
+                long nominal_kredit = cursor.getLong(6);
+
+                dataJurnal = new DataJurnal();
+                dataJurnal.setTgl(tgl);
+                dataJurnal.setKeterangan(keterangan);
+                dataJurnal.setAkunDebet(akun_debet);
+                dataJurnal.setAkunKredit(akun_kredit);
+                dataJurnal.setNominalDebet(nominal_debet);
+                dataJurnal.setNominalKredit(nominal_kredit);
+
+                dataJurnals.add(dataJurnal);
+
+            }
+        }
+        return dataJurnals;
+
+    }
+
+    public ArrayList<DataSaldo> selectRiwayatJenis(int jenisAkun) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
+
+        String querySaldo = "SELECT riwayat_nominal.kode_akun, akun.nama_akun,sum(nominal), akun.jenis\n" +
+                "FROM `riwayat_nominal` \n" +
+                "INNER JOIN akun ON riwayat_nominal.kode_akun=akun.kode_akun\n" +
+                "WHERE akun.jenis = " + jenisAkun + "\n" +
+                "GROUP BY riwayat_nominal.kode_akun";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                String kodeAkun = String.valueOf(cursor.getInt(0));
+                String namaAkun = cursor.getString(1);
+                long nominal = cursor.getLong(2);
+                int jenis = cursor.getInt(3);
+
+//                untuk pengecekan
+                System.out.println("Data yang diambil : " + kodeAkun);
+
+                dataSaldo = new DataSaldo();
+                dataSaldo.setKodeAkun(kodeAkun);
+                dataSaldo.setNamaAkun(namaAkun);
+                dataSaldo.setNominal(nominal);
+                dataSaldo.setJenis(jenis);
+
+                dataSaldos.add(dataSaldo);
+            }
+        }
+        return dataSaldos;
+    }
+
+    public ArrayList<DataSaldo> selectRiwayatJenis(int i, int i1) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
+
+        String querySaldo = "SELECT riwayat_nominal.kode_akun, akun.nama_akun,sum(nominal), akun.jenis\n" +
+                "FROM `riwayat_nominal` \n" +
+                "INNER JOIN akun ON riwayat_nominal.kode_akun=akun.kode_akun\n" +
+                "WHERE akun.jenis = " + i + " OR akun.jenis = " + i1 + "\n" +
+                "GROUP BY riwayat_nominal.kode_akun";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                String kodeAkun = String.valueOf(cursor.getInt(0));
+                String namaAkun = cursor.getString(1);
+                long nominal = cursor.getLong(2);
+                int jenis = cursor.getInt(3);
+
+//                untuk pengecekan
+                System.out.println("Data yang diambil : " + kodeAkun);
+
+                dataSaldo = new DataSaldo();
+                dataSaldo.setKodeAkun(kodeAkun);
+                dataSaldo.setNamaAkun(namaAkun);
+                dataSaldo.setNominal(nominal);
+                dataSaldo.setJenis(jenis);
+
+                dataSaldos.add(dataSaldo);
+            }
+        }
+        return dataSaldos;
+    }
 }

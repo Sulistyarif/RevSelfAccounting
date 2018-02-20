@@ -30,6 +30,7 @@
         <activity android:name=".MenuUtamaActivity"/>
         <activity android:name=".LaporanNeracaSaldoActivity"/>
         <activity android:name=".tasting.WebviewActivity"/>
+        <activity android:name=".LaporanLabaRugi"/>
 
     </application>
 

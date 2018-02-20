@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,6 +54,13 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
         btKredit = (Button)findViewById(R.id.btPilKred);
 
         btTgl = (Button)findViewById(R.id.btTgl);
+
+//        set tanggal sekarang pada button pemilihan tanggal
+        Date tgl = new Date();
+        tgl.setTime(System.currentTimeMillis());
+        SimpleDateFormat formatTgl = new SimpleDateFormat("dd/MM/YYY");
+        btTgl.setText(formatTgl.format(tgl));
+
         btTgl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,33 +96,40 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
                 dataJurnal.setTgl(btTgl.getText().toString());
                 dataJurnal.setKeterangan(etKeterangan.getText().toString());
                 dataJurnal.setAkunDebet(Integer.parseInt(kodeDebet));
+                dataJurnal.setNamaDebet(namaDebet);
                 dataJurnal.setAkunKredit(Integer.parseInt(kodeKredit));
+                dataJurnal.setNamaKredit(namaKredit);
                 dataJurnal.setNominalDebet(nominalTransaksi);
                 dataJurnal.setNominalKredit(nominalTransaksi);
 
                 new DBAdapterMix(TambahJurnalActivity.this).insertJurnal(dataJurnal);
                 Toast.makeText(TambahJurnalActivity.this, "Data Jurnal Telah Tersimpan",Toast.LENGTH_LONG).show();
 
-                kodeDebetint = Integer.parseInt(kodeDebet);
-                kodeKreditInt = Integer.parseInt(kodeKredit);
+                kodeDebetint = Integer.parseInt(jenisDebet);
+                kodeKreditInt = Integer.parseInt(jenisKredit);
+
+                int nominalTransaksiDebet = nominalTransaksi;
+                int nominalTransaksiKredit = nominalTransaksi;
 
                 if (kodeDebetint == 2 || kodeDebetint == 3 || kodeDebetint == 4 || kodeDebetint == 5 || kodeDebetint == 8 || kodeDebetint == 9){
-                    nominalTransaksi = -nominalTransaksi;
+                    nominalTransaksiDebet = -1 * nominalTransaksi;
                 }else if (kodeKreditInt == 0 || kodeKreditInt == 1 || kodeKreditInt == 6 || kodeKreditInt == 7){
-                    nominalTransaksi = -nominalTransaksi;
+                    nominalTransaksiKredit = -1 * nominalTransaksi;
                 }
+
+                Log.i("TambahJurnalActivity","jenis debet : " + kodeDebetint + ", besar transaksi : " + nominalTransaksiDebet + ", jenis kredit : " + kodeKreditInt + ", besar transaksi : "+ nominalTransaksiKredit);
 
                 DataSaldo dataSaldo = new DataSaldo();
                 dataSaldo.setKodeAkun(kodeDebet);
-                dataSaldo.setNominal(nominalTransaksi);
+                dataSaldo.setNominal(nominalTransaksiDebet);
                 new DBAdapterMix(TambahJurnalActivity.this).insertRiwayatSaldo(dataSaldo);
-                Toast.makeText(TambahJurnalActivity.this, "Data riwayat debet telah tersimpan",Toast.LENGTH_LONG).show();
+//                Toast.makeText(TambahJurnalActivity.this, "Data riwayat debet telah tersimpan",Toast.LENGTH_LONG).show();
 
                 DataSaldo dataSaldo1 = new DataSaldo();
                 dataSaldo1.setKodeAkun(kodeKredit);
-                dataSaldo1.setNominal(nominalTransaksi);
+                dataSaldo1.setNominal(nominalTransaksiKredit);
                 new DBAdapterMix(TambahJurnalActivity.this).insertRiwayatSaldo(dataSaldo1);
-                Toast.makeText(TambahJurnalActivity.this, "Data riwayat kredit telah tersimpan",Toast.LENGTH_LONG).show();
+//                Toast.makeText(TambahJurnalActivity.this, "Data riwayat kredit telah tersimpan",Toast.LENGTH_LONG).show();
 
                 finish();
 

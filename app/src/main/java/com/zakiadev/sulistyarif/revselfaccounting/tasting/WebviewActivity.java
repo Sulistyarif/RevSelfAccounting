@@ -33,10 +33,11 @@ public class WebviewActivity extends AppCompatActivity {
         setContentView(R.layout.webview_activity);
 
         webView = (WebView)findViewById(R.id.wv);
-        webView.loadUrl("file:///android_asset/jurnal_umum.html");
+        webView.loadUrl("file:///android_asset/index.html");
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setSupportZoom(true);
-        webView.getSettings().setDisplayZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setBuiltInZoomControls(true);
         webView.addJavascriptInterface(new JavaScriptInterface(WebviewActivity.this), "Android");
 
         webView.setWebViewClient(new WebViewClient(){
@@ -52,12 +53,12 @@ public class WebviewActivity extends AppCompatActivity {
                     String tgl = dataJurnal.getTgl();
                     String ket = dataJurnal.getKeterangan();
                     String akunDebt = String.valueOf(dataJurnal.getAkunDebet());
+                    String namaDebt = dataJurnal.getNamaDebet();
                     String nomDebt = String.valueOf(dataJurnal.getNominalDebet());
                     String akunKred = String.valueOf(dataJurnal.getAkunKredit());
+                    String namaKred = dataJurnal.getNamaKredit();
                     String nomKred = String.valueOf(dataJurnal.getNominalKredit());
-                    webView.loadUrl("javascript:addRow('" + tgl + "', '" + ket + "', '" + akunDebt + "', '" + nomDebt + "', '" + akunKred + "', '" + nomKred + "');");
-
-
+                    webView.loadUrl("javascript:addRow('" + tgl + "', '" + ket + "', '" + akunDebt + "', '" + namaDebt + "', '" + nomDebt + "', '" + akunKred + "', '" + namaKred + "', '" + nomKred + "');");
 
                 }
             }

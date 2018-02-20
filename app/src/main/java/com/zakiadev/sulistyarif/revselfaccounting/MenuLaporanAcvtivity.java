@@ -51,6 +51,8 @@ public class MenuLaporanAcvtivity extends AppCompatActivity {
                     }
                     case 2:{
 //                        Laba Rugi
+                        Intent i = new Intent(MenuLaporanAcvtivity.this, LaporanLabaRugi.class);
+                        startActivity(i);
                         break;
                     }
                     case 3:{

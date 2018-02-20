@@ -7,7 +7,27 @@ import java.util.Date;
  */
 
 public class DataJurnal {
-    String keterangan, tgl;
+    String keterangan;
+    String tgl;
+    String namaDebet;
+
+    public String getNamaDebet() {
+        return namaDebet;
+    }
+
+    public void setNamaDebet(String namaDebet) {
+        this.namaDebet = namaDebet;
+    }
+
+    public String getNamaKredit() {
+        return namaKredit;
+    }
+
+    public void setNamaKredit(String namaKredit) {
+        this.namaKredit = namaKredit;
+    }
+
+    String namaKredit;
     long nominalDebet, nominalKredit;
     int akunDebet, akunKredit;
 

@@ -18,20 +18,24 @@
     <![endif]-->
 
     <script>
-        function addRow(tgl, ket, akunDebt, namaDebt, nomDebt, akunKred, namaKred, nomKred){
+        function addRow(kodeAkun, namaAkun, nominal, jenis){
 
         var table = document.getElementById("myTableData");
-
-        <!--Android.showToast(name + "telah dimasukkan");-->
 
         var rowCount = table.rows.length;
         var row = table.insertRow(rowCount);
 
-        row.insertCell(0).innerHTML= tgl;
-        row.insertCell(1).innerHTML= namaDebt + "<br>&ensp;&ensp;&ensp;" + namaKred + "<br>(" + ket + ")";
-        row.insertCell(2).innerHTML= akunDebt + "<br>&ensp;&ensp;&ensp;" + akunKred;
-        row.insertCell(3).innerHTML= nomDebt;
-        row.insertCell(4).innerHTML= "<br>" + nomKred;
+
+        row.insertCell(0).innerHTML= "<center>" + kodeAkun + "</center>";
+        row.insertCell(1).innerHTML= namaAkun;
+
+        if (jenis == 0 || jenis == 1 || jenis == 6 || jenis == 7){
+            row.insertCell(2).innerHTML= "<center>" + nominal + "</center>";
+            row.insertCell(3).innerHTML= "<center>-</center>";
+        }else{
+            row.insertCell(2).innerHTML= "<center>-</center>";
+            row.insertCell(3).innerHTML= "<center>" + nominal + "</center>";
+        }
 
     }
     </script>
@@ -39,12 +43,11 @@
 </head>
 <body>
 <div class="table-responsive">
-    <table class="table table-hover" id="myTableData">
-        <thead>
+    <table class="table table-bordered" id="myTableData">
+        <thead class="thead-dark">
         <tr>
-            <th>Tanggal</th>
-            <th>Nama Akun & Deskripsi Transaksi</th>
             <th>Kode Akun</th>
+            <th>Nama Akun</th>
             <th>Debet</th>
             <th>Kredit</th>
         </tr>

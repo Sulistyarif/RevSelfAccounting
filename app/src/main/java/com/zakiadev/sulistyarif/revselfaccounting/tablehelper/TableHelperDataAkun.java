@@ -161,7 +161,7 @@ public class TableHelperDataAkun {
 
             this.dataAkun[j][0] = dataAkun.getKodeAkun();
             this.dataAkun[j][1] = dataAkun.getNamaAkun();
-            this.dataAkun[j][2] = dataAkun.getNamaAkun();
+            this.dataAkun[j][2] = dataAkun.getJenis();
 
         }
 
