@@ -37,16 +37,6 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_neraca_saldo);
 
-//        tableHelperDataSaldo = new TableHelperDataSaldo(this);
-//        tableView = (TableView<String[]>)findViewById(R.id.tvNeracaSaldo);
-//        tableView.setColumnCount(4);
-//        tableView.setHeaderBackgroundColor(Color.parseColor("#3498db"));
-//        tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableHelperDataSaldo.getColHeader()));
-//        tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataSaldo.getDataSaldo()));
-//
-//        TableColumnDpWidthModel tableColumnWeightModel = new TableColumnDpWidthModel(this, 4, 200);
-//        tableView.setColumnModel(tableColumnWeightModel);
-
         webView = (WebView)findViewById(R.id.wvNeracaSaldo);
         webView.loadUrl("file:///android_asset/neraca_saldo.html");
         webView.getSettings().setJavaScriptEnabled(true);

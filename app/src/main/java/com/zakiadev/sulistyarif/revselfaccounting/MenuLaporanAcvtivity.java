@@ -57,6 +57,8 @@ public class MenuLaporanAcvtivity extends AppCompatActivity {
                     }
                     case 3:{
 //                        Perubahan Ekuitas
+                        Intent i = new Intent(MenuLaporanAcvtivity.this, LaporanPerubahanEkuitas.class);
+                        startActivity(i);
                         break;
                     }
                     case 4:{

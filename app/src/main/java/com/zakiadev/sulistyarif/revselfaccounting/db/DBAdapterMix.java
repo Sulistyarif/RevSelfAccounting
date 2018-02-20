@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
@@ -424,6 +425,47 @@ public class DBAdapterMix extends SQLiteOpenHelper {
     }
 
     public ArrayList<DataJurnal> selectJurnal(){
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+
+        String querySelect = "SELECT * FROM " + TABLE_JURNAL;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = longToStr(cursor.getLong(1));
+                String keterangan = cursor.getString(2);
+                int akun_debet = cursor.getInt(3);
+                String nama_debet = cursor.getString(4);
+                int akun_kredit = cursor.getInt(5);
+                String nama_kredit = cursor.getString(6);
+                long nominal_debet = cursor.getLong(7);
+                long nominal_kredit = cursor.getLong(8);
+
+                dataJurnal = new DataJurnal();
+                dataJurnal.setTgl(tgl);
+                dataJurnal.setKeterangan(keterangan);
+                dataJurnal.setAkunDebet(akun_debet);
+                dataJurnal.setNamaDebet(nama_debet);
+                dataJurnal.setAkunKredit(akun_kredit);
+                dataJurnal.setNamaKredit(nama_kredit);
+                dataJurnal.setNominalDebet(nominal_debet);
+                dataJurnal.setNominalKredit(nominal_kredit);
+
+                dataJurnals.add(dataJurnal);
+
+            }
+        }
+        return dataJurnals;
+
+    }
+
+//    membuat method untuk mengambil data sebuah jenis akun di tanggal tertentu
+    public ArrayList<DataJurnal> selectJurnalBlnThnJenis(int bulan, int tahun, int jenis){
         ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
 
         String querySelect = "SELECT * FROM " + TABLE_JURNAL;
