@@ -7,11 +7,15 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
+
+import java.util.ArrayList;
 
 /**
  * Created by Sulistyarif on 07/02/2018.
@@ -41,6 +45,9 @@ public class SplashScreenActivity extends AppCompatActivity{
                 finish();
             }
         }, 2000L);
+
+        new DBAdapterMix(SplashScreenActivity.this).selectDateJurnal();
+        Log.i("caution", "Method selectDateJurnal telah dipanggil");
 
     }
 
@@ -221,4 +228,5 @@ public class SplashScreenActivity extends AppCompatActivity{
         }
 
     }
+
 }

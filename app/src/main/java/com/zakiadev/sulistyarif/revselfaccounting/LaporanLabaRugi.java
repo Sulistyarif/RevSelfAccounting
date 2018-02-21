@@ -53,14 +53,14 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
                     totalPendapatan += dataSaldo.getNominal();
 
-                    webView.loadUrl("javascript:tableDataPendapatan('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+                    webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
-                    webView.loadUrl("javascript:totalPendapatan('" + totalPendapatan + "');");
+                    webView.loadUrl("javascript:separator('" + "Total Pendapatan Bersih" + "', '" + totalPendapatan + "');");
 
-//                pengambilan data untuk beban
+//                pengambilan data untuk beban biaya operasional
 
-                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(6,7);
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(6);
                 DataSaldo dataSaldo1;
 
                 int totalBeban = 0;
@@ -74,15 +74,41 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
                     totalBeban += dataSaldo1.getNominal();
 
+                    webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+
+                }
+
+                webView.loadUrl("javascript:separator('" + "Total Biaya" + "', '" + totalBeban + "');");
+
+//                pengambilan data untuk pendapatan luar usaha
+//                sedang dalam konfirmasi
+
+//                pengambilan data untuk biaya luar usaha
+                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(7);
+                DataSaldo dataSaldo3;
+
+                int totalBebanNonOp = 0;
+
+                for (int i = 0; i< dataSaldos3.size(); i++){
+                    dataSaldo3 = dataSaldos3.get(i);
+
+                    String kodeAkun = dataSaldo3.getKodeAkun();
+                    String namaAkun = dataSaldo3.getNamaAkun();
+                    String nominal = String.valueOf(dataSaldo3.getNominal());
+
+                    totalBebanNonOp += dataSaldo3.getNominal();
+
                     webView.loadUrl("javascript:tableDataPendapatan('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
 
-                webView.loadUrl("javascript:totalBeban('" + totalBeban + "');");
+                webView.loadUrl("javascript:separator('" + "Total Biaya Diluar Usaha" + "', '" + totalBebanNonOp + "');");
 
-                labaBersih = totalPendapatan - totalBeban;
 
-                webView.loadUrl("javascript:labaBersih('" + labaBersih + "');");
+//                menghitung total laba
+                labaBersih = totalPendapatan - totalBeban - totalBebanNonOp;
+
+                webView.loadUrl("javascript:separator('" + "Laba Bersih" + "', '" + labaBersih + "');");
 
             }
         });

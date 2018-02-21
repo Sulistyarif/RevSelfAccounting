@@ -8,11 +8,18 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Spinner;
+
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
+import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -24,39 +31,35 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
     Button btTgl;
     WebView webView;
     String tglDipilih;
+    Spinner spinnerMonth, spinnerYear;
+    private String[] listBulan = {"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
+    private String[] listTahun = new String[50];
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_perubahan_ekuitas_activity);
 
-        btTgl = (Button)findViewById(R.id.btTglEkuitas);
+        spinnerMonth = (Spinner)findViewById(R.id.spinnerEkuiMonth);
+        spinnerYear = (Spinner)findViewById(R.id.spinnerEkuiYear);
 
-//        setting tanggal sekarang ke dalam button
-        long date = System.currentTimeMillis();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyy");
-        tglDipilih = simpleDateFormat.format(date);
-        btTgl.setText(tglDipilih);
+//        ambil waktu sekarang
+        Date currentDate = Calendar.getInstance().getTime();
 
-//        bikin datePicker dialog
-        final Calendar calendar = Calendar.getInstance();
-        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, month);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateButtonText(calendar);
-            }
-        };
+//        setting spinner bulan
+        final ArrayAdapter<String> adapterSpinnerMonth = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, listBulan);
+        spinnerMonth.setAdapter(adapterSpinnerMonth);
+        spinnerMonth.setSelection(currentDate.getMonth());
 
-//        ketika button tanggal diklik, muncul dialog picker
-        btTgl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(LaporanPerubahanEkuitas.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+//        setting spinner tahun
+        int c = 1990;
+        for (int i=0; i<listTahun.length; i++){
+            listTahun[i] = String.valueOf(c);
+            c++;
+        }
+        final ArrayAdapter<String> adapterSpinnerYear = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, listTahun);
+        spinnerYear.setAdapter(adapterSpinnerYear);
+        spinnerYear.setSelection(currentDate.getYear()-90);
 
 //        setting webView
         webView = (WebView)findViewById(R.id.wvEkuitas);
@@ -66,23 +69,30 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setBuiltInZoomControls(true);
 
+//        ngisi data di webview
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
+                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectAkunTertentu();
+                DataSaldo dataSaldo;
+
+                for (int i = 0; i< dataSaldos.size(); i++){
+                    dataSaldo = dataSaldos.get(i);
+
+                    String kodeAkun = dataSaldo.getKodeAkun();
+                    String namaAkun = dataSaldo.getNamaAkun();
+                    String nominal = String.valueOf(dataSaldo.getNominal());
+
+//                    totalPendapatan += dataSaldo.getNominal();
+
+                    webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+
+                }
             }
         });
 
     }
 
-//    method untuk mengubah button tanggal ketika setelah milih tanggal
-    private void updateButtonText(Calendar calendar) {
-        String formatTgl = "dd-MM-yyy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(formatTgl, Locale.US);
-        tglDipilih = simpleDateFormat.format(calendar.getTime());
-        btTgl.setText(tglDipilih);
-        Log.i("perubahanEkuitas","bulan yang dipilih : " + calendar.getTime().getMonth());
-        Log.i("perubahanEkuitas","tahun yang dipilih : " + calendar.getTime().getYear());
-    }
 }

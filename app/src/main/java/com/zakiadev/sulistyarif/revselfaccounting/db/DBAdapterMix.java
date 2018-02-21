@@ -657,4 +657,57 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         }
         return dataSaldos;
     }
+
+
+//    melakukan testing mengambil date menggunakan function date()
+    public void selectDateJurnal() {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+
+        String querySelect = "SELECT date(tgl) FROM " + TABLE_JURNAL;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = longToStr(cursor.getLong(0));
+                Log.i("returnDate", "Formatnya : " + tgl);
+
+            }
+        }
+    }
+
+    public ArrayList<DataSaldo> selectAkunTertentu() {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
+
+        String querySaldo = "SELECT ";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                String kodeAkun = String.valueOf(cursor.getInt(0));
+                String namaAkun = cursor.getString(1);
+                long nominal = cursor.getLong(2);
+                int jenis = cursor.getInt(3);
+
+//                untuk pengecekan
+                System.out.println("Data yang diambil : " + kodeAkun);
+
+                dataSaldo = new DataSaldo();
+                dataSaldo.setKodeAkun(kodeAkun);
+                dataSaldo.setNamaAkun(namaAkun);
+                dataSaldo.setNominal(nominal);
+                dataSaldo.setJenis(jenis);
+
+                dataSaldos.add(dataSaldo);
+            }
+        }
+        return dataSaldos;
+    }
 }

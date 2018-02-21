@@ -1,6 +1,7 @@
 package com.zakiadev.sulistyarif.revselfaccounting.tablehelper;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
@@ -54,6 +55,8 @@ public class TableHelperDataJurnalKec {
             dataJurnal = dataJurnals.get(i);
 
             this.dataJurnal[i][0] = dataJurnal.getTgl();
+            String[] pisahTgl = dataJurnal.getTgl().split("/");
+            Log.i("returnDate",i + "Format pisah,tanggal :" + pisahTgl[0] + ", bulan : " + pisahTgl[1] + ", tahun : " + pisahTgl[2]);
             this.dataJurnal[i][1] = dataJurnal.getKeterangan();
 
         }
