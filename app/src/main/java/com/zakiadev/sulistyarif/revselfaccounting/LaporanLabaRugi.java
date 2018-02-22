@@ -56,11 +56,11 @@ public class LaporanLabaRugi extends AppCompatActivity {
                     webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
-                    webView.loadUrl("javascript:separator('" + "Total Pendapatan Bersih" + "', '" + totalPendapatan + "');");
+                    webView.loadUrl("javascript:separator('" + "Total Pendapatan Operasional" + "', '" + totalPendapatan + "');");
 
 //                pengambilan data untuk beban biaya operasional
 
-                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(6);
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(7);
                 DataSaldo dataSaldo1;
 
                 int totalBeban = 0;
@@ -78,13 +78,31 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
                 }
 
-                webView.loadUrl("javascript:separator('" + "Total Biaya" + "', '" + totalBeban + "');");
+                webView.loadUrl("javascript:separator('" + "Total Biaya Operasional" + "', '" + totalBeban + "');");
 
 //                pengambilan data untuk pendapatan luar usaha
-//                sedang dalam konfirmasi
+                ArrayList<DataSaldo> dataSaldos2 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(6);
+                DataSaldo dataSaldo2;
+
+                int totalPendapatanNonOP = 0;
+
+                for (int i = 0; i< dataSaldos2.size(); i++){
+                    dataSaldo2 = dataSaldos2.get(i);
+
+                    String kodeAkun = dataSaldo2.getKodeAkun();
+                    String namaAkun = dataSaldo2.getNamaAkun();
+                    String nominal = String.valueOf(dataSaldo2.getNominal());
+
+                    totalPendapatanNonOP += dataSaldo2.getNominal();
+
+                    webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+
+                }
+
+                webView.loadUrl("javascript:separator('" + "Total Biaya Non Operasional" + "', '" + totalPendapatanNonOP + "');");
 
 //                pengambilan data untuk biaya luar usaha
-                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(7);
+                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenis(8);
                 DataSaldo dataSaldo3;
 
                 int totalBebanNonOp = 0;
@@ -106,7 +124,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
 
 //                menghitung total laba
-                labaBersih = totalPendapatan - totalBeban - totalBebanNonOp;
+                labaBersih = totalPendapatan + totalPendapatanNonOP - totalBeban - totalBebanNonOp;
 
                 webView.loadUrl("javascript:separator('" + "Laba Bersih" + "', '" + labaBersih + "');");
 

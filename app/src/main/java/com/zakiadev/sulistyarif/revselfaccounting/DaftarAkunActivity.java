@@ -53,7 +53,7 @@ public class DaftarAkunActivity extends AppCompatActivity {
         tableView.setColumnCount(2);
         tableView.setHeaderBackgroundColor(Color.parseColor("#3498db"));
         tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableHelperDataAkun.getColHeader()));
-        if (jenisAkun == 10){
+        if (jenisAkun == 11){
             tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataAkun.getDataAll()));
             fab.setVisibility(View.INVISIBLE);
         }else {

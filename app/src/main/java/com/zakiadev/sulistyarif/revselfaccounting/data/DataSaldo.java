@@ -9,6 +9,16 @@ public class DataSaldo {
     long nominal;
     int jenis;
 
+    public String getTgl() {
+        return tgl;
+    }
+
+    public void setTgl(String tgl) {
+        this.tgl = tgl;
+    }
+
+    String tgl;
+
     public int getJenis() {
         return jenis;
     }

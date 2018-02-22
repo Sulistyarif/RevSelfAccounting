@@ -30,7 +30,8 @@ public class SplashScreenActivity extends AppCompatActivity{
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (!sharedPreferences.getBoolean("firstTime", false)){
-            Toast.makeText(SplashScreenActivity.this, "Hanya akan muncul pertama kali install", Toast.LENGTH_LONG).show();
+//            Toast.makeText(SplashScreenActivity.this, "Hanya akan muncul pertama kali install", Toast.LENGTH_LONG).show();
+            Log.i("firstInstallation", "Hanya akan berjalan pada saat pertama kali install");
             masukanDataDefault();
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("firstTime", true);
@@ -94,9 +95,12 @@ public class SplashScreenActivity extends AppCompatActivity{
         };
 
         String[][] pendapatanUsaha = {
-                {"4101", "Pendapatan Jasa"},
-                {"4102", "Pendapatan Bunga"},
-                {"4103", "Pendapatan Lain-Lain"}
+                {"4101", "Pendapatan Jasa"}
+        };
+
+        String[][] pendapatanNonOperasional = {
+                {"4201","Pendapatan bunga"},
+                {"4202", "Pendapatan Lain-Lain"}
         };
 
         String[][] biayaUsaha = {
@@ -173,7 +177,7 @@ public class SplashScreenActivity extends AppCompatActivity{
             new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,3);
         }
 
-//        memasukkan data modal
+//        memasukkan data modal utawa ekuitas
         for (int i = 0; i<modal.length; i++){
             DataAkun dataAkun = new DataAkun();
             dataAkun.setKodeAkun(modal[i][0]);
@@ -191,13 +195,23 @@ public class SplashScreenActivity extends AppCompatActivity{
             new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,5);
         }
 
+//        memasukkan data pendapatan luar usaha (update tgl 22-2-18)
+        for (int i = 0; i<pendapatanNonOperasional.length; i++){
+            DataAkun dataAkun = new DataAkun();
+            dataAkun.setKodeAkun(pendapatanNonOperasional[i][0]);
+            dataAkun.setNamaAkun(pendapatanNonOperasional[i][1]);
+
+            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,6);
+        }
+
+
 //        memasukkan data biaya usaha
         for (int i = 0; i<biayaUsaha.length; i++){
             DataAkun dataAkun = new DataAkun();
             dataAkun.setKodeAkun(biayaUsaha[i][0]);
             dataAkun.setNamaAkun(biayaUsaha[i][1]);
 
-            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,6);
+            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,7);
         }
 
 //        memasukkan data biaya luar usaha
@@ -206,7 +220,7 @@ public class SplashScreenActivity extends AppCompatActivity{
             dataAkun.setKodeAkun(biayaLuarUsaha[i][0]);
             dataAkun.setNamaAkun(biayaLuarUsaha[i][1]);
 
-            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,7);
+            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,8);
         }
 
 //        memasukkan data pengembalian ekuitas
@@ -215,7 +229,7 @@ public class SplashScreenActivity extends AppCompatActivity{
             dataAkun.setKodeAkun(pengembalianEkuitas[i][0]);
             dataAkun.setNamaAkun(pengembalianEkuitas[i][1]);
 
-            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,8);
+            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,9);
         }
 
 //        memasukkan data akun lain lain
@@ -224,7 +238,7 @@ public class SplashScreenActivity extends AppCompatActivity{
             dataAkun.setKodeAkun(akunLainLain[i][0]);
             dataAkun.setNamaAkun(akunLainLain[i][1]);
 
-            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,9);
+            new DBAdapterMix(SplashScreenActivity.this).insertAkun(dataAkun,10);
         }
 
     }

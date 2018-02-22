@@ -28,14 +28,12 @@
 
       td1 = document.createElement('TD');
       td1.appendChild(document.createTextNode(teks));
+      td1.setAttribute("width", "75%");
       tr1.appendChild(td1);
-
-      td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode("<center>-</center>"));
-      tr1.appendChild(td2);
 
       td3 = document.createElement('TD');
       td3.appendChild(document.createTextNode(total));
+      td3.setAttribute("width", "25%");
       tr1.appendChild(td3);
 
       myTableDiv.appendChild(table);
@@ -55,16 +53,14 @@
       var tr1 = document.createElement('TR');
       tableBody.appendChild(tr1);
 
-      td1 = document.createElement('TD');
-      td1.appendChild(document.createTextNode(namaAkun));
-      tr1.appendChild(td1);
-
       td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(nominal));
+      td2.appendChild(document.createTextNode(namaAkun));
+      td2.setAttribute("width", "50%");
       tr1.appendChild(td2);
 
       td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode("<center>-</center>"));
+      td3.appendChild(document.createTextNode(nominal));
+      td3.setAttribute("width", "50%");
       tr1.appendChild(td3);
 
       myTableDiv.appendChild(table);
@@ -75,11 +71,9 @@
 </head>
 <body>
 <div id="dynamicTable" class="table-responsive">
+    <h2><center>ASET</center></h2>
 </div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-<!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -18,35 +18,6 @@
     <!-- <![endif]-->
 
     <script>
-        function addRow(kodeAkun, namaAkun, nominal, jenis){
-
-        var table = document.getElementById("myTableData");
-
-        var rowCount = table.rows.length;
-        var row = table.insertRow(rowCount);
-
-
-        row.insertCell(0).innerHTML= kodeAkun;
-        row.insertCell(1).innerHTML= namaAkun;
-
-        if (jenis == 0 || jenis == 1 || jenis == 6 || jenis == 7){
-            row.insertCell(2).innerHTML= nominal;
-            row.insertCell(3).innerHTML= "<center>-</center>";
-        }else{
-            row.insertCell(2).innerHTML= "<center>-</center>";
-            row.insertCell(3).innerHTML= nominal;
-        }
-
-    }
-
-    function load(){
-      tableDataPendapatan();
-      // hasilPendapatan();
-      // tableDataBeban();
-      // hasilBeban();
-      // labaBersih();
-    }
-
     function tableDataPendapatan(kodeAkun, namaAkun, nominal){
       var myTableDiv = document.getElementById("dynamicTable");
 

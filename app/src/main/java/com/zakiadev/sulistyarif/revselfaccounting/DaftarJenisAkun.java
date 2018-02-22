@@ -18,7 +18,7 @@ public class DaftarJenisAkun extends AppCompatActivity {
 
     ListView lv;
     String[] menu = {"Asset Lancar", "Asset Tetap", "Utang Jangka Pendek", "Utang Jangka Panjang", "Modal"
-            , "Pendapatan", "Biaya Biaya Operasional", "Biaya Biaya Non Operasional", "Pengembalian Ekuitas", "Akun Lain Lain", "Lihat Semua Akun"};
+            , "Pendapatan Operasional", "Pendapatan Non Operasional", "Biaya Biaya Operasional", "Biaya Biaya Non Operasional", "Pengembalian Ekuitas", "Akun Lain Lain", "Lihat Semua Akun"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
