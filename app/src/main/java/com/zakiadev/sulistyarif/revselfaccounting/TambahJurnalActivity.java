@@ -111,9 +111,9 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
                 int nominalTransaksiDebet = nominalTransaksi;
                 int nominalTransaksiKredit = nominalTransaksi;
 
-                if (kodeDebetint == 2 || kodeDebetint == 3 || kodeDebetint == 4 || kodeDebetint == 5  || kodeDebetint == 6 || kodeDebetint == 8 || kodeDebetint == 9){
+                if (kodeDebetint == 2 || kodeDebetint == 3 || kodeDebetint == 4 || kodeDebetint == 5  || kodeDebetint == 6){
                     nominalTransaksiDebet = -1 * nominalTransaksi;
-                }else if (kodeKreditInt == 0 || kodeKreditInt == 1 || kodeKreditInt == 7 || kodeKreditInt == 8){
+                }else if (kodeKreditInt == 0 || kodeKreditInt == 1 || kodeKreditInt == 7 || kodeKreditInt == 8 || kodeDebetint == 9){
                     nominalTransaksiKredit = -1 * nominalTransaksi;
                 }
 

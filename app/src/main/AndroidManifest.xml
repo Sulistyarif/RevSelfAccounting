@@ -32,6 +32,7 @@
         <activity android:name=".tasting.WebviewActivity"/>
         <activity android:name=".LaporanLabaRugi"/>
         <activity android:name=".LaporanPerubahanEkuitas"/>
+        <activity android:name=".LaporanNeracaActivity"/>
 
     </application>
 

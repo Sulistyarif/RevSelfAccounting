@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
@@ -22,7 +23,7 @@ import java.util.Date;
  * Created by sulistyarif on 19/02/18.
  */
 
-public class LaporanLabaRugi extends AppCompatActivity {
+public class LaporanNeracaActivity extends AppCompatActivity {
 
     WebView webView;
     Spinner spBulan,spTahun;
@@ -34,14 +35,14 @@ public class LaporanLabaRugi extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.laporan_laba_rugi_activity);
+        setContentView(R.layout.laporan_neraca_activity);
 
-        webView = (WebView)findViewById(R.id.wvLabaRugi);
+        webView = (WebView)findViewById(R.id.wvNeraca);
 
-        spBulan = (Spinner)findViewById(R.id.spNeracaSaldobulan);
-        spTahun = (Spinner)findViewById(R.id.spNeracaSaldoTahun);
+        spBulan = (Spinner)findViewById(R.id.spNeracaBulan);
+        spTahun = (Spinner)findViewById(R.id.spNeracaTahun);
 
-        //        ambil waktu sekarang
+//        ambil waktu sekarang
         Date currentDate = Calendar.getInstance().getTime();
 
 //        setting spinner bulan
@@ -55,7 +56,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
                 bulanDipilih = position+1;
                 strBulan = parent.getItemAtPosition(position).toString();
                 Log.i("Bulan yang dipilih : ", String.valueOf(position));
-                webView.loadUrl("file:///android_asset/laba_rugi.html");
+                webView.loadUrl("file:///android_asset/neraca.html");
             }
 
             @Override
@@ -80,7 +81,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
                 tahunDipilih = position+1990;
                 strTahun = parent.getItemAtPosition(position).toString();
                 Log.i("Tahun yang dipilih : ", String.valueOf(position));
-                webView.loadUrl("file:///android_asset/laba_rugi.html");
+                webView.loadUrl("file:///android_asset/neraca.html");
             }
 
             @Override
@@ -91,7 +92,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
 
 //        setting webview
-        webView.loadUrl("file:///android_asset/laba_rugi.html");
+        webView.loadUrl("file:///android_asset/neraca.html");
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setDisplayZoomControls(false);
@@ -103,11 +104,11 @@ public class LaporanLabaRugi extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 int labaBersih = 0;
 
-//                pengambilan data untuk pendapatan
-                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThn(5, bulanDipilih, tahunDipilih);
+//                pengambilan data untuk aktiva lancar
+                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(0, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo;
 
-                int totalPendapatan = 0;
+                int aktivaLancar = 0;
 
                 for (int i = 0; i< dataSaldos.size(); i++){
                     dataSaldo = dataSaldos.get(i);
@@ -116,19 +117,18 @@ public class LaporanLabaRugi extends AppCompatActivity {
                     String namaAkun = dataSaldo.getNamaAkun();
                     String nominal = String.valueOf(dataSaldo.getNominal());
 
-                    totalPendapatan += dataSaldo.getNominal();
+                    aktivaLancar += dataSaldo.getNominal();
 
-                    webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+                    webView.loadUrl("javascript:tambahDataAktiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
-                    webView.loadUrl("javascript:separator('" + "Total Pendapatan Operasional" + "', '" + totalPendapatan + "');");
+                    webView.loadUrl("javascript:separatorAktiva('" + "Total Aset Lancar " + "', '" + aktivaLancar + "');");
 
-//                pengambilan data untuk beban biaya operasional
-
-                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThn(7, bulanDipilih, tahunDipilih);
+//                pengambilan data untuk aktiva tetap
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(1, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo1;
 
-                int totalBeban = 0;
+                int aktivaTetap = 0;
 
                 for (int i = 0; i< dataSaldos1.size(); i++){
                     dataSaldo1 = dataSaldos1.get(i);
@@ -137,19 +137,23 @@ public class LaporanLabaRugi extends AppCompatActivity {
                     String namaAkun = dataSaldo1.getNamaAkun();
                     String nominal = String.valueOf(dataSaldo1.getNominal());
 
-                    totalBeban += dataSaldo1.getNominal();
+                    aktivaTetap += dataSaldo1.getNominal();
 
-                    webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+                    webView.loadUrl("javascript:tambahDataAktiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
 
-                webView.loadUrl("javascript:separator('" + "Total Biaya Operasional" + "', '" + totalBeban + "');");
+                webView.loadUrl("javascript:separatorAktiva('" + "Total Aset Tetap" + "', '" + aktivaTetap + "');");
 
-//                pengambilan data untuk pendapatan luar usaha
-                ArrayList<DataSaldo> dataSaldos2 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThn(6, bulanDipilih, tahunDipilih);
+//                footer total aktiva
+                int totalAktiva = aktivaLancar + aktivaTetap;
+                webView.loadUrl("javascript:bigSeparatorAktiva('" + "TOTAL ASET" + "', '" + totalAktiva + "');");
+
+//                pengambilan data untuk hutang lancar
+                ArrayList<DataSaldo> dataSaldos2 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(2, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo2;
 
-                int totalPendapatanNonOP = 0;
+                int totalHutangLancar = 0;
 
                 for (int i = 0; i< dataSaldos2.size(); i++){
                     dataSaldo2 = dataSaldos2.get(i);
@@ -158,19 +162,19 @@ public class LaporanLabaRugi extends AppCompatActivity {
                     String namaAkun = dataSaldo2.getNamaAkun();
                     String nominal = String.valueOf(dataSaldo2.getNominal());
 
-                    totalPendapatanNonOP += dataSaldo2.getNominal();
+                    totalHutangLancar += dataSaldo2.getNominal();
 
-                    webView.loadUrl("javascript:tambahData('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+                    webView.loadUrl("javascript:tambahDataPasiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
 
-                webView.loadUrl("javascript:separator('" + "Total Pendapatan Non Operasional" + "', '" + totalPendapatanNonOP + "');");
+                webView.loadUrl("javascript:separatorPasiva('" + "Total Hutang Lancar" + "', '" + totalHutangLancar + "');");
 
 //                pengambilan data untuk biaya luar usaha
-                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThn(8, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(3, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo3;
 
-                int totalBebanNonOp = 0;
+                int totalHutangJangkaPanjang = 0;
 
                 for (int i = 0; i< dataSaldos3.size(); i++){
                     dataSaldo3 = dataSaldos3.get(i);
@@ -179,19 +183,36 @@ public class LaporanLabaRugi extends AppCompatActivity {
                     String namaAkun = dataSaldo3.getNamaAkun();
                     String nominal = String.valueOf(dataSaldo3.getNominal());
 
-                    totalBebanNonOp += dataSaldo3.getNominal();
+                    totalHutangJangkaPanjang += dataSaldo3.getNominal();
 
-                    webView.loadUrl("javascript:tableDataPendapatan('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+                    webView.loadUrl("javascript:tambahDataPasiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
 
-                webView.loadUrl("javascript:separator('" + "Total Biaya Non Operasional" + "', '" + totalBebanNonOp + "');");
+                webView.loadUrl("javascript:separatorPasiva('" + "Total Hutang Jangka Panjang" + "', '" + totalHutangJangkaPanjang + "');");
 
+//                menghitung total laba tanggal tersebut
+                ArrayList<DataSaldo> dataSaldos4 = new DBAdapterMix(LaporanNeracaActivity.this).selectModalNeraca(bulanDipilih,tahunDipilih);
+                DataSaldo dataSaldo4;
 
-//                menghitung total laba
-                labaBersih = totalPendapatan + totalPendapatanNonOP - totalBeban - totalBebanNonOp;
+                int modalPemilik = 0;
 
-                webView.loadUrl("javascript:separator('" + "Laba Bersih" + "', '" + labaBersih + "');");
+                for (int i = 0; i< dataSaldos4.size(); i++){
+                    dataSaldo4 = dataSaldos4.get(i);
+
+                    String nominal = String.valueOf(dataSaldo4.getNominal());
+
+                    modalPemilik += dataSaldo4.getNominal();
+
+                    webView.loadUrl("javascript:tambahDataPasiva('" + "3101" + "', '" + "Modal Pemilik" + "', '" + nominal + "');");
+
+                }
+
+                webView.loadUrl("javascript:separatorPasiva('" + "Total Ekuitas" + "', '" + modalPemilik + "');");
+
+//                total pasiva
+                int totalPasiva = totalHutangJangkaPanjang + totalHutangLancar + modalPemilik;
+                webView.loadUrl("javascript:bigSeparatorPasiva('" + "TOTAL UTANG DAN EKUITAS" + "', '" + totalPasiva + "');");
 
             }
         });

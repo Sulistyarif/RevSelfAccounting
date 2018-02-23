@@ -39,7 +39,9 @@ public class MenuLaporanAcvtivity extends AppCompatActivity {
                 switch (position){
                     case 0:{
 //                        setting pengaturan perusahaan
-                        Intent i = new Intent(MenuLaporanAcvtivity.this, JurnalActivity.class);
+//                        Intent i = new Intent(MenuLaporanAcvtivity.this, JurnalActivity.class);
+//                        startActivity(i);
+                        Intent i = new Intent(MenuLaporanAcvtivity.this, WebviewActivity.class);
                         startActivity(i);
                         break;
                     }
@@ -63,12 +65,12 @@ public class MenuLaporanAcvtivity extends AppCompatActivity {
                     }
                     case 4:{
 //                        Neraca
+                        Intent i = new Intent(MenuLaporanAcvtivity.this, LaporanNeracaActivity.class);
+                        startActivity(i);
                         break;
                     }
                     case 5:{
 //                        Arus Kas
-                        Intent i = new Intent(MenuLaporanAcvtivity.this, WebviewActivity.class);
-                        startActivity(i);
                         break;
                     }
                 }

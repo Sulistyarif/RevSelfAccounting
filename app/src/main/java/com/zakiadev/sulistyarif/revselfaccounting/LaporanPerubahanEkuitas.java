@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
@@ -30,9 +31,8 @@ import java.util.Locale;
 
 public class LaporanPerubahanEkuitas extends AppCompatActivity {
 
-    Button btTgl;
+    String strBulan, strTahun;
     WebView webView;
-    String tglDipilih;
     Spinner spinnerMonth, spinnerYear;
     private String[] listBulan = {"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
     private String[] listTahun = new String[50];
@@ -42,6 +42,9 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_perubahan_ekuitas_activity);
+
+//        dikasi di awal biar ga null pointer
+        webView = (WebView)findViewById(R.id.wvEkuitas);
 
         spinnerMonth = (Spinner)findViewById(R.id.spinnerEkuiMonth);
         spinnerYear = (Spinner)findViewById(R.id.spinnerEkuiYear);
@@ -58,7 +61,9 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 bulanDipilih = position+1;
+                strBulan = parent.getItemAtPosition(position).toString();
                 Log.i("Bulan yang dipilih : ", String.valueOf(position));
+                webView.loadUrl("file:///android_asset/perubahan_ekuitas.html");
             }
 
             @Override
@@ -81,7 +86,9 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 tahunDipilih = position+1990;
+                strTahun = parent.getItemAtPosition(position).toString();
                 Log.i("Tahun yang dipilih : ", String.valueOf(position));
+                webView.loadUrl("file:///android_asset/perubahan_ekuitas.html");
             }
 
             @Override
@@ -92,8 +99,7 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
 
 
 //        setting webView
-        webView = (WebView)findViewById(R.id.wvEkuitas);
-        webView.loadUrl("file:///android_asset/perubahan_ekuitas.html");
+//        webView.loadUrl("file:///android_asset/perubahan_ekuitas.html");
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setDisplayZoomControls(false);
@@ -121,7 +127,7 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
 
                 }
 
-                webView.loadUrl("javascript:separator('" + "Modal Awal Per Tanggal 1" + "', '" + modalAwal + "');");
+                webView.loadUrl("javascript:separator('" + "Modal Awal Per Tanggal 1 "  + strBulan + "', '" + modalAwal + "');");
 
 //                  mencari modal tambahan, atau modal yang selain tanggal 1
                 ArrayList<DataJurnal> dataJurnals1 = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalTambahan(bulanDipilih,tahunDipilih);
@@ -157,7 +163,40 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
 
                 }
 
-                webView.loadUrl("javascript:tambahData('" + "Tambahan Modal " + "', '" + labaRugi + "');");
+                webView.loadUrl("javascript:tambahData('" + "Laba atau Rugi Periode Berjalan " + "', '" + labaRugi + "');");
+
+//                mengambil data prive di bulan dan tahun pada input
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectPriveBlnThn(bulanDipilih,tahunDipilih);
+                DataSaldo dataSaldo1 ;
+
+                int prive = 0;
+
+                for (int i = 0; i< dataSaldos1.size(); i++){
+                    dataSaldo1 = dataSaldos1.get(i);
+
+                    String nominal = String.valueOf(dataSaldo1.getNominal());
+                    Log.i("DataModalTambahan : ", nominal);
+
+                    prive += dataSaldo1.getNominal();
+
+                }
+
+                webView.loadUrl("javascript:tambahData('" + "Prive " + "', '" + prive + "');");
+
+//                menampilkan total penambahan atau pengurangan modal
+                int penambahanAtauPengurangnModal = modalTambahan + labaRugi + prive;
+                webView.loadUrl("javascript:separator('" + "Penambahan atau Pengurangan Modal " + "', '" + penambahanAtauPengurangnModal + "');");
+
+//                menampilkan modal di akhir bulan tersebut
+                int modalAkhirBulan = modalAwal + penambahanAtauPengurangnModal;
+                webView.loadUrl("javascript:separator('" + "Modal per 31 " + strBulan + " " + tahunDipilih + "', '" + modalAkhirBulan + "');");
+
+//                masukin data modal akhir bulan ini biar jadi modal bulan depan
+                DataModal dataModal = new DataModal();
+                String bulanFormatted = String.format("%02d", bulanDipilih + 1);
+                dataModal.setTgl("01/" + bulanFormatted + "/" + strTahun);
+                dataModal.setNominal(modalAkhirBulan);
+                new DBAdapterMix(LaporanPerubahanEkuitas.this).insertModal(dataModal);
 
             }
 
