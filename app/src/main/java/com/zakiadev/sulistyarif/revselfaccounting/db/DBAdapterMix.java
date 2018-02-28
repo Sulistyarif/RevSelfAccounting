@@ -1222,4 +1222,19 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         db.delete(TABLE_RIWAYAT_NOMINAL, "id=" + id, null);
         db.close();
     }
+
+    public int selectLastId() {
+        String querySaldo = "SELECT last_insert_rowid() FROM jurnal";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        int id = 0;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                id = cursor.getInt(0);
+            }
+        }
+        return id;
+    }
 }

@@ -119,6 +119,4 @@ public class DBAdapter {
         return sdf.format(calendar.getTime());
 
     }
-
-
 }
