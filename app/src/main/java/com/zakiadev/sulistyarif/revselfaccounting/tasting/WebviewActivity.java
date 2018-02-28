@@ -27,6 +27,7 @@ public class WebviewActivity extends AppCompatActivity {
     WebView webView;
 
 //    @SuppressLint("JavascriptInterface")
+    @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +39,13 @@ public class WebviewActivity extends AppCompatActivity {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setBuiltInZoomControls(true);
-        webView.addJavascriptInterface(new JavaScriptInterface(WebviewActivity.this), "Android");
+//        webView.addJavascriptInterface(new JavaScriptInterface(WebviewActivity.this), "Android");
+//        nggak jadi
+        webView.addJavascriptInterface(new Object(){
+            public void performClick(){
+                Toast.makeText(WebviewActivity.this, "testing javascript",Toast.LENGTH_SHORT).show();
+            }
+        }, "test");
 
         webView.setWebViewClient(new WebViewClient(){
             @Override

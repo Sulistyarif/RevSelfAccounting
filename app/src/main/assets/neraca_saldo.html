@@ -38,6 +38,21 @@
         }
 
     }
+
+    function addRowTotal(saldoDebet, saldoKredit){
+
+        var table = document.getElementById("myTableData");
+
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+
+
+        row.insertCell(0).innerHTML= "";
+        row.insertCell(1).innerHTML= "Total";
+        row.insertCell(2).innerHTML= saldoDebet;
+        row.insertCell(3).innerHTML= saldoKredit;
+
+    }
     </script>
 
 </head>

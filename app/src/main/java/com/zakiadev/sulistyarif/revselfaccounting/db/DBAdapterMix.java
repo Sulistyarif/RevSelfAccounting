@@ -65,6 +65,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 //    digunakan untuk data modal
     private static final String TGL_MODAL = "tgl";
     private static final String NOMINAL_MODAL = "nominal";
+    private static final String NOMINAL_KAS = "nominalKas";
 
     private static final String DROP_TABLE = "DROP TABLE IF EXIST " + TABLE_AKUN;
     private static final String DROP_TABLE_PEMILIK = "DROP TABLE IF EXIST " + TABLE_DATA_PERUSAHAAN;
@@ -84,7 +85,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         String CREATE_DATA_PERUSAHAAN = "CREATE TABLE data_perusahaan(id INTEGER PRIMARY KEY, nama_perusahaan TEXT, nama_pemilik TEXT, alamat TEXT, telp TEXT, email TEXT)";
         String CREATE_TABEL_JURNAL = "CREATE TABLE jurnal(id INTEGER PRIMARY KEY, tgl INTEGER, keterangan TEXT, akun_debet INTEGER, nama_debet TEXT, akun_kredit INTEGER, nama_kredit TEXT, nominal_debet INTEGER, nominal_kredit INTEGER)";
         String CREATE_RIWAYAT_NOMINAL = "CREATE TABLE riwayat_nominal(id INTEGER PRIMARY KEY, kode_akun INTEGER, nominal INTEGER, tgl TEXT)";
-        String CREATE_TABLE_MODAL = "CREATE TABLE modal(tgl TEXT PRIMARY KEY, nominal INTEGER)";
+        String CREATE_TABLE_MODAL = "CREATE TABLE modal(tgl TEXT PRIMARY KEY, nominal INTEGER, nominalKas INTEGER)";
 
         db.execSQL(CREATE_TABLE_AKUN);
         db.execSQL(CREATE_DATA_PERUSAHAAN);
@@ -391,39 +392,12 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         return dataAkuns;
     }
 
-
-
-
-    private long strToLongDate(String tgl) {
-        String tglStr = tgl;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
-        Date date = null;
-        try {
-            date = sdf.parse(tglStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long milis = date.getTime();
-
-        return milis;
-    }
-
-    private String longToStr(long aLong) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(aLong);
-        return sdf.format(calendar.getTime());
-    }
-
 //    melakukan save data jurnal
     public void insertJurnal(DataJurnal dataJurnal){
         SQLiteDatabase db = this.getWritableDatabase();
 
-        long dateInMilis = strToLongDate(dataJurnal.getTgl());
-
         ContentValues cv = new ContentValues();
-        cv.put(TGL_TRANS,dateInMilis);
+        cv.put(TGL_TRANS,dataJurnal.getTgl());
         cv.put(KETERANGAN, dataJurnal.getKeterangan());
         cv.put(AKUN_DEBET, dataJurnal.getAkunDebet());
         cv.put(NAMA_DEBET, dataJurnal.getNamaDebet());
@@ -449,7 +423,8 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = longToStr(cursor.getLong(1));
+                String id = cursor.getString(0);
+                String tgl = formatter(cursor.getString(1));
                 String keterangan = cursor.getString(2);
                 int akun_debet = cursor.getInt(3);
                 String nama_debet = cursor.getString(4);
@@ -459,6 +434,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 long nominal_kredit = cursor.getLong(8);
 
                 dataJurnal = new DataJurnal();
+                dataJurnal.setId(id);
                 dataJurnal.setTgl(tgl);
                 dataJurnal.setKeterangan(keterangan);
                 dataJurnal.setAkunDebet(akun_debet);
@@ -490,7 +466,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = longToStr(cursor.getLong(1));
+                String tgl = formatter(cursor.getString(1));
                 String keterangan = cursor.getString(2);
                 int akun_debet = cursor.getInt(3);
                 String nama_debet = cursor.getString(4);
@@ -578,7 +554,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = longToStr(cursor.getLong(1));
+                String tgl = formatter(cursor.getString(1));
                 String keterangan = cursor.getString(2);
                 int akun_debet = cursor.getInt(3);
                 int akun_kredit = cursor.getInt(4);
@@ -686,7 +662,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = longToStr(cursor.getLong(0));
+                String tgl = formatter(cursor.getString(0));
                 Log.i("returnDate", "Formatnya : " + tgl);
 
             }
@@ -712,7 +688,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = longToStr(cursor.getLong(0));
+                String tgl = formatter(cursor.getString(0));
                 long nominal_kredit = cursor.getLong(1);
 
                 Log.i("ModalBlnLalu", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
@@ -741,7 +717,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor1.moveToNext()){
 
-                String tgl = cursor1.getString(0);
+                String tgl = formatter(cursor1.getString(0));
                 long nominal_kredit = cursor1.getLong(1);
 
                 Log.i("Isi modal", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
@@ -780,7 +756,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = longToStr(cursor.getLong(0));
+                String tgl = formatter(cursor.getString(0));
                 long nominal_kredit = cursor.getLong(1);
 
                 Log.i("DBAdapterMix", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
@@ -824,7 +800,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
             while (cursor.moveToNext()){
 
 //                mengambil data tanggal biar diparse
-                String tgl = cursor.getString(2);
+                String tgl = formatter(cursor.getString(2));
 
 //                ngeparse tanggal
                 String splitTgl[] = tgl.split("/");
@@ -851,7 +827,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
             while (cursor1.moveToNext()){
 
 //                mengambil data tanggal biar diparse
-                String tgl = cursor1.getString(2);
+                String tgl = formatter(cursor1.getString(2));
 
 //                ngeparse tanggal
                 String splitTgl[] = tgl.split("/");
@@ -895,7 +871,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
                 Log.i("priveSelect","data : " + cursor.getString(0) + ", " + cursor.getString(1) + ", " + cursor.getString(2));
 
-                String tgl = cursor.getString(2);
+                String tgl = formatter(cursor.getString(2));
                 String[] splitTgl = tgl.split("/");
 
                 if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
@@ -933,7 +909,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = cursor.getString(4);
+                String tgl = formatter(cursor.getString(4));
                 String[] splitTgl = tgl.split("/");
 
                 if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
@@ -968,6 +944,17 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
     }
 
+//    digunakan untuk memasukkan data kas bulan depan
+    public void insertKas(DataModal dataModal){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String query = "INSERT OR REPLACE INTO modal('tgl','nominalKas') VALUES ('" + dataModal.getTgl() + "'," + dataModal.getNominalKas() + " )";
+        db.execSQL(query);
+
+        db.close();
+
+    }
+
     public ArrayList<DataSaldo> selectModalNeraca(int bulanDipilih, int tahunDipilih) {
         ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
 
@@ -983,7 +970,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         if (cursor != null){
             while (cursor.moveToNext()){
 
-                String tgl = cursor.getString(0);
+                String tgl = formatter(cursor.getString(0));
                 long nominal_kredit = cursor.getLong(1);
 
                 Log.i("NeracaModalPemilik", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
@@ -991,7 +978,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 String[] splitTgl = tgl.split("/");
 
 //                dibikin begini karena inputnya modal buat bulan depan
-                int custBulan = Integer.parseInt(splitTgl[1])-1;
+                int custBulan = Integer.parseInt(splitTgl[1]) - 1;
                 String custBulanStr = String.format("%02d", custBulan);
                 Log.i("hasilCustBulan ", "custBulanInt : " + custBulan + "custBulanStr0 : " + custBulanStr);
 
@@ -1007,5 +994,232 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         }
 
         return dataSaldos;
+    }
+
+    public ArrayList<DataJurnal> selectArusKasOnDebet(int bulanDipilih, int tahunDipilih, int kodeAkun) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+
+
+        String querySelect = "SELECT jurnal.tgl, jurnal.akun_kredit, jurnal.nama_kredit, jurnal.nominal_kredit " +
+                "FROM jurnal " +
+                "INNER JOIN akun ON jurnal.akun_kredit = akun.kode_akun " +
+                "WHERE jurnal.akun_debet = 1101 AND akun.jenis = " + kodeAkun;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                int sKodeAkun = cursor.getInt(1);
+                String namaAkun = cursor.getString(2);
+                int nominalkredit = cursor.getInt(3);
+
+                Log.i("hasilArusKas : ", tgl + ", " + sKodeAkun + ", " + namaAkun + ", " + nominalkredit);
+
+                String[] splitTgl = tgl.split("/");
+
+                if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
+
+                    dataJurnal = new DataJurnal();
+                    dataJurnal.setTgl(tgl);
+                    dataJurnal.setAkunKredit(sKodeAkun);
+                    dataJurnal.setNamaKredit(namaAkun);
+                    dataJurnal.setNominalKredit(nominalkredit);
+
+                    dataJurnals.add(dataJurnal);
+
+                }
+
+
+            }
+        }
+        return dataJurnals;
+
+    }
+
+    public ArrayList<DataJurnal> selectArusKasOnKredit(int bulanDipilih, int tahunDipilih, int kodeAkun) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+
+
+        String querySelect = "SELECT jurnal.tgl, jurnal.akun_debet, jurnal.nama_debet, jurnal.nominal_debet " +
+                "FROM jurnal " +
+                "INNER JOIN akun ON jurnal.akun_debet = akun.kode_akun " +
+                "WHERE jurnal.akun_kredit = 1101 AND akun.jenis = " + kodeAkun;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                int sKodeAkun = cursor.getInt(1);
+                String namaAkun = cursor.getString(2);
+                int nominalkredit = cursor.getInt(3);
+
+                Log.i("untukArusKas : ", tgl + ", " + sKodeAkun + ", " + namaAkun + ", " + nominalkredit);
+
+                String[] splitTgl = tgl.split("/");
+
+                if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
+
+                    dataJurnal = new DataJurnal();
+                    dataJurnal.setTgl(tgl);
+                    dataJurnal.setAkunKredit(sKodeAkun);
+                    dataJurnal.setNamaKredit(namaAkun);
+                    dataJurnal.setNominalKredit(nominalkredit);
+
+                    dataJurnals.add(dataJurnal);
+
+                }
+
+
+            }
+        }
+        return dataJurnals;
+
+    }
+
+    public ArrayList<DataJurnal> selectKasAwal(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+
+        String tahun = String.valueOf(tahunDipilih);
+
+        String querySelect = "SELECT tgl,nominal\n" +
+                "FROM riwayat_nominal\n" +
+                "WHERE kode_akun = 1101";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+        int totalkas = 0;
+        int i = 0;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                int saldoKas = cursor.getInt(1);
+
+                String[] splitTgl = tgl.split("/");
+
+//                yang dicari itu bulan kemarin
+                int bulanKmrn = bulanDipilih - 1;
+                String bulan = String.format("%02d", bulanKmrn);
+
+                if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
+                    totalkas += saldoKas;
+                }
+            }
+        }
+        dataJurnal = new DataJurnal();
+        dataJurnal.setNominalDebet(totalkas);
+        dataJurnals.add(dataJurnal);
+        Log.i("totalkas ", " " + totalkas);
+        return dataJurnals;
+    }
+
+    public ArrayList<DataSaldo> selectRiwayat(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+        String querySaldo = "SELECT riwayat_nominal.kode_akun, akun.nama_akun, sum(riwayat_nominal.nominal), akun.jenis " +
+                "FROM riwayat_nominal " +
+                "INNER JOIN akun ON riwayat_nominal.kode_akun = akun.kode_akun " +
+                "WHERE strftime('%m',riwayat_nominal.tgl) IN ('" + bulan + "') " +
+                "AND strftime('%Y',riwayat_nominal.tgl) IN ('" + tahun +"') " +
+                "GROUP BY riwayat_nominal.kode_akun;";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                String kodeAkun = String.valueOf(cursor.getInt(0));
+                String namaAkun = cursor.getString(1);
+                long nominal = cursor.getLong(2);
+                int jenis = cursor.getInt(3);
+
+                    dataSaldo = new DataSaldo();
+                    dataSaldo.setKodeAkun(kodeAkun);
+                    dataSaldo.setNamaAkun(namaAkun);
+                    dataSaldo.setNominal(nominal);
+                    dataSaldo.setJenis(jenis);
+
+                    dataSaldos.add(dataSaldo);
+            }
+        }
+        return dataSaldos;
+    }
+
+    public String formatter(String tanggalDbase){
+        Log.i("formatTglLama", tanggalDbase);
+        Date oldFormatTgl = new Date();
+        try {
+            oldFormatTgl = new SimpleDateFormat("yyyy-MM-dd").parse(tanggalDbase);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat formatTglStor = new SimpleDateFormat("dd/MM/yyyy");
+        String newFormatTgl = formatTglStor.format(oldFormatTgl);
+
+        Log.i("formatTglBaru", newFormatTgl);
+        return newFormatTgl;
+    }
+
+    public void deleteJurnal(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete("jurnal", "id=" + id, null);
+        db.close();
+    }
+
+    public void updateJurnal(DataJurnal dataJurnal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(ID_JURNAL,dataJurnal.getId());
+//        cv.put(TGL_TRANS,dataJurnal.getTgl());
+        cv.put(KETERANGAN, dataJurnal.getKeterangan());
+//        cv.put(AKUN_DEBET, dataJurnal.getAkunDebet());
+//        cv.put(NAMA_DEBET, dataJurnal.getNamaDebet());
+//        cv.put(AKUN_KREDIT, dataJurnal.getAkunKredit());
+//        cv.put(NAMA_KREDIT, dataJurnal.getNamaKredit());
+        cv.put(NOMINAL_DEBET, dataJurnal.getNominalDebet());
+        cv.put(NOMINAL_KREDIT, dataJurnal.getNominalKredit());
+
+        db.update(TABLE_JURNAL,cv,"id=" + dataJurnal.getId(), null);
+        db.close();
+    }
+
+    public void updateRiwayatSaldo(DataSaldo dataSaldo, int idDebet) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(NOMINAL,dataSaldo.getNominal());
+
+        db.update(TABLE_RIWAYAT_NOMINAL, cv, "id = " + idDebet, null);
+    }
+
+    public void deleteRiwayat(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(TABLE_RIWAYAT_NOMINAL, "id=" + id, null);
+        db.close();
     }
 }

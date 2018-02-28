@@ -184,7 +184,7 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 webView.loadUrl("javascript:tambahData('" + "Prive " + "', '" + prive + "');");
 
 //                menampilkan total penambahan atau pengurangan modal
-                int penambahanAtauPengurangnModal = modalTambahan + labaRugi + prive;
+                int penambahanAtauPengurangnModal = modalTambahan + labaRugi - prive;
                 webView.loadUrl("javascript:separator('" + "Penambahan atau Pengurangan Modal " + "', '" + penambahanAtauPengurangnModal + "');");
 
 //                menampilkan modal di akhir bulan tersebut
@@ -194,7 +194,8 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
 //                masukin data modal akhir bulan ini biar jadi modal bulan depan
                 DataModal dataModal = new DataModal();
                 String bulanFormatted = String.format("%02d", bulanDipilih + 1);
-                dataModal.setTgl("01/" + bulanFormatted + "/" + strTahun);
+//                dataModal.setTgl("01/" + bulanFormatted + "/" + strTahun);
+                dataModal.setTgl(strTahun + "-" + bulanFormatted + "-01");
                 dataModal.setNominal(modalAkhirBulan);
                 new DBAdapterMix(LaporanPerubahanEkuitas.this).insertModal(dataModal);
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataAkun;
@@ -24,7 +25,7 @@ public class PilihDebetActivity extends AppCompatActivity {
     FloatingActionButton fab;
     TableView<String[]> tableView;
     TableHelperDataAkun tableHelperDataAkun;
-    int pilihanTrans;
+    int pilihanTrans, indexSumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +36,8 @@ public class PilihDebetActivity extends AppCompatActivity {
         fab.setVisibility(View.GONE);
 
         pilihanTrans = getIntent().getIntExtra("pilihan", 99);
+        indexSumber = getIntent().getIntExtra("sumber",0);
+        Log.i("indexDebt", String.valueOf(indexSumber));
 
         tableHelperDataAkun = new TableHelperDataAkun(this);
         tableView = (TableView<String[]>)findViewById(R.id.tvKecJurnal);
@@ -82,6 +85,7 @@ public class PilihDebetActivity extends AppCompatActivity {
             @Override
             public void onDataClicked(int rowIndex, String[] clickedData) {
                 Intent intent = new Intent();
+                intent.putExtra("index", indexSumber);
                 intent.putExtra("kodeDebet", clickedData[0]);
                 intent.putExtra("namaDebet", clickedData[1]);
                 intent.putExtra("jenisDebet", clickedData[2]);

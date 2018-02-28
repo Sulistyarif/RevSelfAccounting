@@ -50,14 +50,16 @@ public class TableHelperDataJurnalKec {
         ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(context).selectJurnal();
         DataJurnal dataJurnal;
 
-        this.dataJurnal = new String[dataJurnals.size()][2];
+        this.dataJurnal = new String[dataJurnals.size()][6];
         for (int i = 0; i< dataJurnals.size(); i++){
             dataJurnal = dataJurnals.get(i);
-
             this.dataJurnal[i][0] = dataJurnal.getTgl();
-            String[] pisahTgl = dataJurnal.getTgl().split("/");
-            Log.i("returnDate",i + "Format pisah,tanggal :" + pisahTgl[0] + ", bulan : " + pisahTgl[1] + ", tahun : " + pisahTgl[2]);
+
             this.dataJurnal[i][1] = dataJurnal.getKeterangan();
+            this.dataJurnal[i][2] = dataJurnal.getId();
+            this.dataJurnal[i][3] = dataJurnal.getNamaDebet();
+            this.dataJurnal[i][4] = dataJurnal.getNamaKredit();
+            this.dataJurnal[i][5] = String.valueOf(dataJurnal.getNominalDebet());
 
         }
 

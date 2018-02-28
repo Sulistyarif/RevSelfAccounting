@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
-import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapter;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
 import java.text.SimpleDateFormat;
@@ -32,7 +31,7 @@ import java.util.TimeZone;
  * Created by Sulistyarif on 02/02/2018.
  */
 
-public class TambahJurnalActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class EditDataJurnalActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
     Spinner spinner;
     EditText etNominalTrans, etKeterangan;
@@ -42,6 +41,7 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
     String kodeDebet, namaDebet, jenisDebet;
     String kodeKredit, namaKredit, jenisKredit;
     String tglStor;
+    String idInt,tglInt,ketInt,debtint,kredInt,nomInt;
     int kodeDebetint, kodeKreditInt;
 
     @Override
@@ -69,7 +69,7 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
             public void onClick(View v) {
                 calendar = Calendar.getInstance(TimeZone.getDefault());
                 DatePickerDialog dialog = new
-                        DatePickerDialog(TambahJurnalActivity.this, TambahJurnalActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                        DatePickerDialog(EditDataJurnalActivity.this, EditDataJurnalActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dialog.show();
             }
         });
@@ -97,20 +97,21 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
                 int nominalTransaksi = Integer.parseInt(etNominalTrans.getText().toString());
 
                 DataJurnal dataJurnal = new DataJurnal();
-                dataJurnal.setTgl(tglStor);
+                dataJurnal.setId(idInt);
+//                dataJurnal.setTgl(tglStor);
                 dataJurnal.setKeterangan(etKeterangan.getText().toString());
-                dataJurnal.setAkunDebet(Integer.parseInt(kodeDebet));
-                dataJurnal.setNamaDebet(namaDebet);
-                dataJurnal.setAkunKredit(Integer.parseInt(kodeKredit));
-                dataJurnal.setNamaKredit(namaKredit);
+//                dataJurnal.setAkunDebet(Integer.parseInt(kodeDebet));
+//                dataJurnal.setNamaDebet(namaDebet);
+//                dataJurnal.setAkunKredit(Integer.parseInt(kodeKredit));
+//                dataJurnal.setNamaKredit(namaKredit);
                 dataJurnal.setNominalDebet(nominalTransaksi);
                 dataJurnal.setNominalKredit(nominalTransaksi);
 
-                new DBAdapterMix(TambahJurnalActivity.this).insertJurnal(dataJurnal);
-                Toast.makeText(TambahJurnalActivity.this, "Data Jurnal Telah Tersimpan",Toast.LENGTH_LONG).show();
+                new DBAdapterMix(EditDataJurnalActivity.this).updateJurnal(dataJurnal);
+                Toast.makeText(EditDataJurnalActivity.this, "Data Jurnal Telah Tersimpan",Toast.LENGTH_LONG).show();
 
-                kodeDebetint = Integer.parseInt(jenisDebet);
-                kodeKreditInt = Integer.parseInt(jenisKredit);
+//                kodeDebetint = Integer.parseInt(jenisDebet);
+//                kodeKreditInt = Integer.parseInt(jenisKredit);
 
                 int nominalTransaksiDebet = nominalTransaksi;
                 int nominalTransaksiKredit = nominalTransaksi;
@@ -133,25 +134,27 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
                 dataSaldo.setKodeAkun(kodeDebet);
                 dataSaldo.setTgl(tglStor);
                 dataSaldo.setNominal(nominalTransaksiDebet);
-                new DBAdapterMix(TambahJurnalActivity.this).insertRiwayatSaldo(dataSaldo);
+                int idDebet = (Integer.parseInt(idInt)*2) - 1;
+                new DBAdapterMix(EditDataJurnalActivity.this).updateRiwayatSaldo(dataSaldo,idDebet);
 //                Toast.makeText(TambahJurnalActivity.this, "Data riwayat debet telah tersimpan",Toast.LENGTH_LONG).show();
 
                 DataSaldo dataSaldo1 = new DataSaldo();
                 dataSaldo1.setKodeAkun(kodeKredit);
                 dataSaldo1.setTgl(tglStor);
                 dataSaldo1.setNominal(nominalTransaksiKredit);
-                new DBAdapterMix(TambahJurnalActivity.this).insertRiwayatSaldo(dataSaldo1);
+                int idKredit = (Integer.parseInt(idInt)*2);
+                new DBAdapterMix(EditDataJurnalActivity.this).updateRiwayatSaldo(dataSaldo1,idKredit);
 //                Toast.makeText(TambahJurnalActivity.this, "Data riwayat kredit telah tersimpan",Toast.LENGTH_LONG).show();
 
                 finish();
 
             }
         });
-//          disegel karena masih ada error index out of bound
+
         btDebet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(TambahJurnalActivity.this, PilihDebetActivity.class);
+                Intent i = new Intent(EditDataJurnalActivity.this, PilihDebetActivity.class);
                 i.putExtra("pilihan", pilihanTransaksi);
                 startActivityForResult(i,1);
             }
@@ -160,7 +163,7 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
         btKredit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(TambahJurnalActivity.this, PilihKreditActivity.class);
+                Intent i = new Intent(EditDataJurnalActivity.this, PilihKreditActivity.class);
                 i.putExtra("pilihan", pilihanTransaksi);
                 startActivityForResult(i,2);
             }
@@ -178,7 +181,27 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
             }
         });
 
+//        disetting sesuai data yang diklik
+        idInt = getIntent().getStringExtra("id");
+        tglInt = getIntent().getStringExtra("tgl");
+        ketInt = getIntent().getStringExtra("ket");
+        debtint = getIntent().getStringExtra("debet");
+        kredInt = getIntent().getStringExtra("kredit");
+        nomInt = getIntent().getStringExtra("nominal");
 
+        btTgl.setText(tglInt);
+        btTgl.setClickable(false);
+
+        spinner.setVisibility(View.GONE);
+        btDebet.setText(debtint);
+        btKredit.setText(kredInt);
+        btDebet.setClickable(false);
+        btKredit.setClickable(false);
+
+        etKeterangan.setText(ketInt);
+        etNominalTrans.setText(nomInt);
+
+        btAddJurnal.setText("UBAH DATA");
 
     }
 
@@ -209,7 +232,7 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
                 kodeDebet = data.getStringExtra("kodeDebet");
                 namaDebet = data.getStringExtra("namaDebet");
                 jenisDebet = data.getStringExtra("jenisDebet");
-                Toast.makeText(TambahJurnalActivity.this, kodeDebet + " " + namaDebet + " " + jenisDebet,Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditDataJurnalActivity.this, kodeDebet + " " + namaDebet + " " + jenisDebet,Toast.LENGTH_SHORT).show();
                 btDebet.setText(namaDebet);
             }
         } else if (requestCode == 2){
@@ -217,7 +240,7 @@ public class TambahJurnalActivity extends AppCompatActivity implements DatePicke
                 kodeKredit = data.getStringExtra("kodeKredit");
                 namaKredit = data.getStringExtra("namaKredit");
                 jenisKredit = data.getStringExtra("jenisKredit");
-                Toast.makeText(TambahJurnalActivity.this, kodeKredit + " " + namaKredit + " " + jenisKredit,Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditDataJurnalActivity.this, kodeKredit + " " + namaKredit + " " + jenisKredit,Toast.LENGTH_SHORT).show();
                 btKredit.setText(namaKredit);
             }
         }

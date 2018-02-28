@@ -33,6 +33,9 @@
         <activity android:name=".LaporanLabaRugi"/>
         <activity android:name=".LaporanPerubahanEkuitas"/>
         <activity android:name=".LaporanNeracaActivity"/>
+        <activity android:name=".LaporanArusKas"/>
+        <activity android:name=".EditDataJurnalActivity"/>
+        <activity android:name=".TambahDataJurnalActivity"/>
 
     </application>
 

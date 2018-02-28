@@ -196,15 +196,16 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                 DataSaldo dataSaldo4;
 
                 int modalPemilik = 0;
+                String sModalPemilik = "";
 
                 for (int i = 0; i< dataSaldos4.size(); i++){
                     dataSaldo4 = dataSaldos4.get(i);
 
-                    String nominal = String.valueOf(dataSaldo4.getNominal());
+                    sModalPemilik = String.valueOf(dataSaldo4.getNominal());
 
                     modalPemilik += dataSaldo4.getNominal();
 
-                    webView.loadUrl("javascript:tambahDataPasiva('" + "3101" + "', '" + "Modal Pemilik" + "', '" + nominal + "');");
+                    webView.loadUrl("javascript:tambahDataPasiva('" + "3101" + "', '" + "Modal Pemilik" + "', '" + sModalPemilik + "');");
 
                 }
 

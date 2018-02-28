@@ -24,4 +24,14 @@ public class DataModal {
     }
 
     int nominal;
+
+    public int getNominalKas() {
+        return nominalKas;
+    }
+
+    public void setNominalKas(int nominalKas) {
+        this.nominalKas = nominalKas;
+    }
+
+    int nominalKas;
 }

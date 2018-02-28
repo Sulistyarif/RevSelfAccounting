@@ -11,6 +11,16 @@ public class DataJurnal {
     String tgl;
     String namaDebet;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    String id;
+
     public String getNamaDebet() {
         return namaDebet;
     }
