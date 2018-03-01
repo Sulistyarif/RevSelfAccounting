@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,13 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
-import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.EditDataTransMar;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,39 +32,69 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Created by Sulistyarif on 02/02/2018.
+ * Created by sulistyarif on 28/02/18.
+ * id juga dimasukkan ke dalam attribute button karena digunakan insert or update
  */
 
-public class EditDataJurnalActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class EditDataJurnalActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
-    Spinner spinner;
-    EditText etNominalTrans, etKeterangan;
-    Button btAddJurnal, btTgl, btDebet, btKredit;
+    LinearLayout llDebet, llKredit;
+    Button btAddDebet, btAddKredit, btAddJurnal, btTgl;
+    Button pilihDebet, pilihKredit;
+    EditText etNomDebet, etNomKredit, etKeterangan;
+    int jumDebet, etJumDebet, jumKredit, etJumKredit;
+    List<Button> dataBtDebet = new ArrayList<Button>();
+    List<Button> dataBtKredit = new ArrayList<Button>();
+    List<EditText> dataEtDebet = new ArrayList<EditText>();
+    List<EditText> dataEtKredit = new ArrayList<EditText>();
+    List<Integer> kodeDebetAl = new ArrayList<Integer>();
+    List<Integer> kodeKreditAl = new ArrayList<Integer>();
+    List<Integer> jenisDebetAl = new ArrayList<Integer>();
+    List<Integer> jenisKreditAl = new ArrayList<Integer>();
+    List<Integer> idDebet = new ArrayList<Integer>();
+    List<Integer> idKredit = new ArrayList<Integer>();
+    int pilihanTransaksi, index;
+    String namaDebet;
+    int kodeDebet, jenisDebet;
+    String namaKredit;
+    int kodeKredit, jenisKredit;
+    int kodeId;
     Calendar calendar;
-    int pilihanTransaksi;
-    String kodeDebet, namaDebet, jenisDebet;
-    String kodeKredit, namaKredit, jenisKredit;
     String tglStor;
-    String idInt,tglInt,ketInt,debtint,kredInt,nomInt;
-    int kodeDebetint, kodeKreditInt;
+    Spinner spinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tambah_jurnal_activity);
+        setContentView(R.layout.tambah_data_activity);
 
-        etKeterangan = (EditText)findViewById(R.id.etKeterangan);
-        etNominalTrans = (EditText)findViewById(R.id.etNominalTrans);
-        btDebet = (Button)findViewById(R.id.btPildeb);
-        btKredit = (Button)findViewById(R.id.btPilKred);
+//        ngambil data dari class jurnal kecil
+        Intent intent = getIntent();
+        String editPid = intent.getStringExtra("pid");
+        String editTgl = intent.getStringExtra("tgl");
+        String editKet = intent.getStringExtra("ket");
+        String editKodeTrans = intent.getStringExtra("kodeTrans");
 
-        btTgl = (Button)findViewById(R.id.btTgl);
+        llDebet = (LinearLayout)findViewById(R.id.llDebet);
+        llKredit = (LinearLayout)findViewById(R.id.llKredit);
+
+        btAddDebet = (Button)findViewById(R.id.btAddDebet);
+        btAddKredit = (Button)findViewById(R.id.btAddKredit);
+        btAddJurnal = (Button)findViewById(R.id.btAddData);
+        btTgl = (Button)findViewById(R.id.btTgl2);
 
 //        set tanggal sekarang pada button pemilihan tanggal
         Date tgl = new Date();
-        tgl.setTime(System.currentTimeMillis());
         SimpleDateFormat formatTgl = new SimpleDateFormat("dd/MM/YYYY");
         SimpleDateFormat formatTglStor = new SimpleDateFormat("YYYY-MM-dd");
+
+//        ngisi tanggal dari db ke button
+        try {
+            tgl = formatTglStor.parse(editTgl);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         tglStor = formatTglStor.format(tgl);
         btTgl.setText(formatTgl.format(tgl));
 
@@ -68,12 +102,15 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
             @Override
             public void onClick(View v) {
                 calendar = Calendar.getInstance(TimeZone.getDefault());
-                DatePickerDialog dialog = new
-                        DatePickerDialog(EditDataJurnalActivity.this, EditDataJurnalActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                DatePickerDialog dialog = new DatePickerDialog(EditDataJurnalActivity.this,EditDataJurnalActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dialog.show();
             }
         });
 
+        etKeterangan = (EditText)findViewById(R.id.etKeterangan2);
+        etKeterangan.setText(editKet);
+
+//        setting spinner
         spinner = (Spinner)findViewById(R.id.spinner);
         List<String> listSpinner = new ArrayList<String>();
         listSpinner.add("Pilih Jenis Transaksi");
@@ -88,87 +125,9 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
         ArrayAdapter adapterSpinner = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, listSpinner);
         adapterSpinner.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapterSpinner);
+        spinner.setSelection(Integer.parseInt(editKodeTrans));
 
-        btAddJurnal = (Button)findViewById(R.id.btAddData);
-        btAddJurnal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                int nominalTransaksi = Integer.parseInt(etNominalTrans.getText().toString());
-
-                DataJurnal dataJurnal = new DataJurnal();
-                dataJurnal.setId(idInt);
-//                dataJurnal.setTgl(tglStor);
-                dataJurnal.setKeterangan(etKeterangan.getText().toString());
-//                dataJurnal.setAkunDebet(Integer.parseInt(kodeDebet));
-//                dataJurnal.setNamaDebet(namaDebet);
-//                dataJurnal.setAkunKredit(Integer.parseInt(kodeKredit));
-//                dataJurnal.setNamaKredit(namaKredit);
-                dataJurnal.setNominalDebet(nominalTransaksi);
-                dataJurnal.setNominalKredit(nominalTransaksi);
-
-                new DBAdapterMix(EditDataJurnalActivity.this).updateJurnal(dataJurnal);
-                Toast.makeText(EditDataJurnalActivity.this, "Data Jurnal Telah Tersimpan",Toast.LENGTH_LONG).show();
-
-//                kodeDebetint = Integer.parseInt(jenisDebet);
-//                kodeKreditInt = Integer.parseInt(jenisKredit);
-
-                int nominalTransaksiDebet = nominalTransaksi;
-                int nominalTransaksiKredit = nominalTransaksi;
-
-                if (kodeDebetint == 2 || kodeDebetint == 3 || kodeDebetint == 4 || kodeDebetint == 5  || kodeDebetint == 6){
-                    nominalTransaksiDebet = -1 * nominalTransaksi;
-                }else if (kodeDebetint == 0 || kodeDebetint == 1 || kodeDebetint == 7 || kodeDebetint == 8 || kodeDebetint == 9){
-                    nominalTransaksiDebet = 1 * nominalTransaksi;
-                }
-
-                if (kodeKreditInt == 2 || kodeKreditInt == 3 || kodeKreditInt == 4 || kodeKreditInt == 5  || kodeKreditInt == 6){
-                    nominalTransaksiKredit = 1 * nominalTransaksi;
-                }else if (kodeKreditInt == 0 || kodeKreditInt == 1 || kodeKreditInt == 7 || kodeKreditInt == 8 || kodeKreditInt == 9){
-                    nominalTransaksiKredit = -1 * nominalTransaksi;
-                }
-
-                Log.i("TambahJurnalActivity","jenis debet : " + kodeDebetint + ", besar transaksi : " + nominalTransaksiDebet + ", jenis kredit : " + kodeKreditInt + ", besar transaksi : "+ nominalTransaksiKredit);
-
-                DataSaldo dataSaldo = new DataSaldo();
-                dataSaldo.setKodeAkun(kodeDebet);
-                dataSaldo.setTgl(tglStor);
-                dataSaldo.setNominal(nominalTransaksiDebet);
-                int idDebet = (Integer.parseInt(idInt)*2) - 1;
-                new DBAdapterMix(EditDataJurnalActivity.this).updateRiwayatSaldo(dataSaldo,idDebet);
-//                Toast.makeText(TambahJurnalActivity.this, "Data riwayat debet telah tersimpan",Toast.LENGTH_LONG).show();
-
-                DataSaldo dataSaldo1 = new DataSaldo();
-                dataSaldo1.setKodeAkun(kodeKredit);
-                dataSaldo1.setTgl(tglStor);
-                dataSaldo1.setNominal(nominalTransaksiKredit);
-                int idKredit = (Integer.parseInt(idInt)*2);
-                new DBAdapterMix(EditDataJurnalActivity.this).updateRiwayatSaldo(dataSaldo1,idKredit);
-//                Toast.makeText(TambahJurnalActivity.this, "Data riwayat kredit telah tersimpan",Toast.LENGTH_LONG).show();
-
-                finish();
-
-            }
-        });
-
-        btDebet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(EditDataJurnalActivity.this, PilihDebetActivity.class);
-                i.putExtra("pilihan", pilihanTransaksi);
-                startActivityForResult(i,1);
-            }
-        });
-
-        btKredit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(EditDataJurnalActivity.this, PilihKreditActivity.class);
-                i.putExtra("pilihan", pilihanTransaksi);
-                startActivityForResult(i,2);
-            }
-        });
-
+//        spinner on data change listener
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -181,29 +140,225 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
             }
         });
 
-//        disetting sesuai data yang diklik
-        idInt = getIntent().getStringExtra("id");
-        tglInt = getIntent().getStringExtra("tgl");
-        ketInt = getIntent().getStringExtra("ket");
-        debtint = getIntent().getStringExtra("debet");
-        kredInt = getIntent().getStringExtra("kredit");
-        nomInt = getIntent().getStringExtra("nominal");
+        jumDebet = 1;
+        etJumDebet = 101;
+        jumKredit = 201;
+        etJumKredit = 301;
 
-        btTgl.setText(tglInt);
-        btTgl.setClickable(false);
+        String idTrans, pidTrans, kodeAkunTrans, namaAkunTrans;
+        int nominalTrans, jenisTrans, posTrans;
 
-        spinner.setVisibility(View.GONE);
-        btDebet.setText(debtint);
-        btKredit.setText(kredInt);
-        btDebet.setClickable(false);
-        btKredit.setClickable(false);
+        ArrayList<EditDataTransMar> editDataTransMarArrayList = new DBAdapterMix(EditDataJurnalActivity.this).selectTransToEdit(editPid);
+        EditDataTransMar editDataTransMar;
+        for (int i = 0; i < editDataTransMarArrayList.size(); i++){
+            editDataTransMar = editDataTransMarArrayList.get(i);
 
-        etKeterangan.setText(ketInt);
-        etNominalTrans.setText(nomInt);
+            idTrans = editDataTransMar.getId();
+            pidTrans = editDataTransMar.getPid();
+            kodeAkunTrans = editDataTransMar.getKodeAkun();
+            namaAkunTrans = editDataTransMar.getNamaAkun();
+            nominalTrans = editDataTransMar.getNominal();
+            jenisTrans = editDataTransMar.getJenisAkun();
+            posTrans = editDataTransMar.getPos();
 
-        btAddJurnal.setText("UBAH DATA");
+//            kalo posTrans bernilai 0 berarti debet
+            if (posTrans == 0){
+                loadDebet(idTrans,pidTrans,kodeAkunTrans,namaAkunTrans,nominalTrans,jenisTrans,jumDebet,etJumDebet);
+                jumDebet++;
+                etJumDebet++;
+            }else {
+                loadKredit(idTrans,pidTrans,kodeAkunTrans,namaAkunTrans,nominalTrans,jenisTrans,jumKredit,etJumKredit);
+                jumKredit++;
+                etJumKredit++;
+            }
+
+        }
+
+//        ini nanti tidak dipakai karena nggak bikin baru, tapi load dari db
+//        tambahDebet(jumDebet,etJumDebet);
+//        jumDebet++;
+//        etJumDebet++;
+//
+//        tambahKredit(jumKredit,etJumKredit);
+//        jumKredit++;
+//        etJumKredit++;
+
+//        yang ini tetep karena misal editnya mau nambah data lagi
+        btAddDebet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tambahDebet(jumDebet, etJumDebet);
+                jumDebet++;
+                etJumDebet++;
+            }
+        });
+
+        btAddKredit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tambahKredit(jumKredit, etJumKredit);
+                jumKredit++;
+                etJumKredit++;
+            }
+        });
+
+        btAddJurnal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                kodeId = new DBAdapterMix(EditDataJurnalActivity.this).selectLastId();
+                int jenisAkunDebet, jenisAkunKredit;
+                int nominalAkunDebet, nominalAkunKredit;
+                String pid = "p" + kodeId;
+                String keterangan = etKeterangan.getText().toString();
+
+                DataJurnalMar dataJurnalMar = new DataJurnalMar();
+                dataJurnalMar.setPid(pid);
+                dataJurnalMar.setTgl(tglStor);
+                dataJurnalMar.setKet(keterangan);
+                dataJurnalMar.setKode_trans(pilihanTransaksi);
+
+                new DBAdapterMix(EditDataJurnalActivity.this).insertJurnalMar(dataJurnalMar);
+                Log.i("queryJurnal","insert into jurnal(pid,tgl,keterangan,trans) values (" + pid + "," + tglStor + ", " + keterangan +", " + pilihanTransaksi + ");" );
+
+//                testing input data transaksi bagian debet
+                for (int i = 0; i < dataEtDebet.size() ; i++){
+                    jenisAkunDebet = jenisDebetAl.get(i);
+                    nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getText().toString());
+                    if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
+                        nominalAkunDebet *= -1;
+                    }
+
+                    DataTransMar dataTransMar = new DataTransMar();
+                    dataTransMar.setPid(pid);
+                    dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
+                    dataTransMar.setNominal(nominalAkunDebet);
+                    dataTransMar.setNominal(0);
+
+                    new DBAdapterMix(EditDataJurnalActivity.this).insertTrans(dataTransMar);
+                    Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
+                }
+
+//                testing input data transaksi bagian kredit
+                for (int i = 0 ; i < dataEtKredit.size() ; i++){
+                    jenisAkunKredit = jenisKreditAl.get(i);
+                    nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getText().toString());
+                    Log.i("jenisAkun","" + jenisAkunKredit);
+                    if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
+                        nominalAkunKredit *= -1;
+                    }
+                    Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
+                }
+                finish();
+            }
+        });
 
     }
+
+    private void loadKredit(String idTrans, String pidTrans, String kodeAkunTrans, String namaAkunTrans, int nominalTrans, int jenisTrans, int jumKredit, int etJumKredit) {
+        pilihKredit = new Button(this);
+        pilihKredit.setId(jumKredit);
+        pilihKredit.setText(namaAkunTrans);
+        pilihKredit.setOnClickListener(viewOnclick);
+
+        etNomKredit = new EditText(this);
+        etNomKredit.setId(etJumKredit);
+        etNomKredit.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etNomKredit.setHint("Masukkan Nominal Debet");
+        etNomKredit.setText(nominalTrans);
+
+        llKredit.addView(pilihKredit);
+        llKredit.addView(etNomKredit);
+
+        dataBtKredit.add(pilihKredit);
+        dataEtKredit.add(etNomKredit);
+
+        kodeKreditAl.add(Integer.valueOf(kodeAkunTrans));
+        jenisKreditAl.add(jenisTrans);
+        idKredit.add(Integer.valueOf(idTrans));
+
+    }
+
+    private void loadDebet(String idTrans, String pidTrans, String kodeAkunTrans, String namaAkunTrans, int nominalTrans, int jenisTrans, int jumDebet, int etJumDebet) {
+        pilihDebet = new Button(this);
+        pilihDebet.setId(jumDebet);
+        pilihDebet.setText(namaAkunTrans);
+        pilihDebet.setOnClickListener(viewOnclick);
+
+        etNomDebet = new EditText(this);
+        etNomDebet.setId(etJumDebet);
+        etNomDebet.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etNomDebet.setHint("Masukkan Nominal Debet");
+        etNomDebet.setText(nominalTrans);
+
+        llDebet.addView(pilihDebet);
+        llDebet.addView(etNomDebet);
+
+        dataBtDebet.add(pilihDebet);
+        dataEtDebet.add(etNomDebet);
+
+        kodeDebetAl.add(Integer.valueOf(kodeAkunTrans));
+        jenisDebetAl.add(jenisTrans);
+        idDebet.add(Integer.valueOf(idTrans));
+
+    }
+
+    private void tambahDebet(int jumDebet, int etJumDebet) {
+        pilihDebet = new Button(this);
+        pilihDebet.setId(jumDebet);
+        pilihDebet.setText("Pilih Debet");
+        pilihDebet.setOnClickListener(viewOnclick);
+
+        etNomDebet = new EditText(this);
+        etNomDebet.setId(etJumDebet);
+        etNomDebet.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etNomDebet.setHint("Masukkan Nominal Debet");
+
+        llDebet.addView(pilihDebet);
+        dataBtDebet.add(pilihDebet);
+
+        llDebet.addView(etNomDebet);
+        dataEtDebet.add(etNomDebet);
+    }
+
+    private void tambahKredit(int jumKredit, int etJumKredit) {
+        pilihKredit = new Button(this);
+        pilihKredit.setId(jumKredit);
+        pilihKredit.setText("Pilih Kredit");
+        pilihKredit.setOnClickListener(viewOnclick);
+
+        etNomKredit = new EditText(this);
+        etNomKredit.setId(etJumKredit);
+        etNomKredit.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etNomKredit.setHint("Masukkan Nominal Kredit");
+
+        llKredit.addView(pilihKredit);
+        dataBtKredit.add(pilihKredit);
+
+        llKredit.addView(etNomKredit);
+        dataEtKredit.add(etNomKredit);
+    }
+
+    View.OnClickListener viewOnclick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            int idClick = view.getId();
+            if (idClick < 200){
+//                Toast.makeText(TambahDataJurnalActivity.this, "id : " + idClick, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(EditDataJurnalActivity.this, PilihDebetActivity.class);
+                intent.putExtra("pilihan", pilihanTransaksi);
+                intent.putExtra("sumber", idClick);
+                Log.i("noid","" + idClick);
+                startActivityForResult(intent,idClick);
+            }else {
+//                Toast.makeText(TambahDataJurnalActivity.this, "id : " + idClick, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(EditDataJurnalActivity.this, PilihKreditActivity.class);
+                intent.putExtra("pilihan", pilihanTransaksi);
+                intent.putExtra("sumber", idClick);
+                Log.i("noid","" + idClick);
+                startActivityForResult(intent,idClick);
+            }
+        }
+    };
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -225,24 +380,63 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
     }
 
     @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1){
+
+        if (requestCode < 200){
             if (resultCode == RESULT_OK){
-                kodeDebet = data.getStringExtra("kodeDebet");
+                index = (data.getIntExtra("index",0)) - 1;
+                kodeDebet = Integer.parseInt(data.getStringExtra("kodeDebet"));
                 namaDebet = data.getStringExtra("namaDebet");
-                jenisDebet = data.getStringExtra("jenisDebet");
-                Toast.makeText(EditDataJurnalActivity.this, kodeDebet + " " + namaDebet + " " + jenisDebet,Toast.LENGTH_SHORT).show();
-                btDebet.setText(namaDebet);
+                jenisDebet = Integer.parseInt(data.getStringExtra("jenisDebet"));
+                setDebetButton();
+                Log.i("account","succeed " + index + " " + resultCode + " " + data.getStringExtra("kodeDebet"));
             }
-        } else if (requestCode == 2){
+        }else {
             if (resultCode == RESULT_OK){
-                kodeKredit = data.getStringExtra("kodeKredit");
+                index = (data.getIntExtra("index",0)) - 201;
+                Log.i("account","succeed " + index + " " + resultCode + " " + data.getStringExtra("kodeKredit"));
+                kodeKredit = Integer.parseInt(data.getStringExtra("kodeKredit"));
                 namaKredit = data.getStringExtra("namaKredit");
-                jenisKredit = data.getStringExtra("jenisKredit");
-                Toast.makeText(EditDataJurnalActivity.this, kodeKredit + " " + namaKredit + " " + jenisKredit,Toast.LENGTH_SHORT).show();
-                btKredit.setText(namaKredit);
+                jenisKredit = Integer.parseInt(data.getStringExtra("jenisKredit"));
+                setKreditButton();
+                dataBtKredit.get(index).setText(namaKredit);
             }
         }
+    }
+
+    private void setKreditButton() {
+        try{
+            kodeKreditAl.set(index,kodeKredit);
+        }catch (Exception e){
+            kodeKreditAl.add(kodeKredit);
+        }
+        try{
+            jenisKreditAl.set(index,jenisKredit);
+        }catch (Exception e){
+            jenisKreditAl.add(jenisKredit);
+        }
+        dataBtKredit.get(index).setText(namaKredit);
+        Toast.makeText(EditDataJurnalActivity.this, kodeKredit + namaKredit + jenisKredit,Toast.LENGTH_SHORT).show();
+    }
+
+    private void setDebetButton() {
+        try{
+            kodeDebetAl.set(index,kodeDebet);
+        }catch (Exception e){
+            kodeDebetAl.add(kodeDebet);
+        }
+        try{
+            jenisDebetAl.set(index,jenisDebet);
+        }catch (Exception e){
+            jenisDebetAl.add(jenisDebet);
+        }
+        dataBtDebet.get(index).setText(namaDebet);
+        Toast.makeText(EditDataJurnalActivity.this, kodeDebet + namaDebet + jenisDebet,Toast.LENGTH_SHORT).show();
     }
 }

@@ -44,7 +44,7 @@ public class JurnalKecActivity extends AppCompatActivity {
         tableView.setColumnCount(2);
         tableView.setHeaderBackgroundColor(Color.parseColor("#3498db"));
         tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this,tableHelperDataJurnalKec.getColHeader()));
-        tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataJurnalKec.getDataJurnal2()));
+        tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataJurnalKec.getDataJurnal3()));
 
         fab = (FloatingActionButton)findViewById(R.id.btnAddJurnal);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -60,13 +60,12 @@ public class JurnalKecActivity extends AppCompatActivity {
             public void onDataClicked(int rowIndex, String[] clickedData) {
 
 //                mendapatkan id dari data tersebut yang berguna untuk menghapus data
-//                Toast.makeText(JurnalKecActivity.this, " " + clickedData[2].toString(),Toast.LENGTH_SHORT).show();
-                final String id = clickedData[2].toString();
+
+                final String pid = clickedData[2].toString();
                 final String tglTrans = clickedData[0].toString();
                 final String ketTrans = clickedData[1].toString();
-                final String namaDebet = clickedData[3].toString();
-                final String namakredit = clickedData[4].toString();
-                final String nominal = clickedData[5].toString();
+                final String kodeTrans = clickedData[3].toString();
+
 
 
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -74,22 +73,19 @@ public class JurnalKecActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i){
                             case DialogInterface.BUTTON_POSITIVE:{
-                                new DBAdapterMix(JurnalKecActivity.this).deleteJurnal(id);
-                                int debetID = (Integer.parseInt(id)*2) - 1;
-                                int kreditID = Integer.parseInt(id)*2;
-                                new DBAdapterMix(JurnalKecActivity.this).deleteRiwayat(debetID);
-                                new DBAdapterMix(JurnalKecActivity.this).deleteRiwayat(kreditID);
-                                tableView.setDataAdapter(new SimpleTableDataAdapter(JurnalKecActivity.this, tableHelperDataJurnalKec.getDataJurnal2()));
+//                                wes didelete sak data neng trans e
+                                new DBAdapterMix(JurnalKecActivity.this).deleteJurnalMar(pid);
+                                tableView.setDataAdapter(new SimpleTableDataAdapter(JurnalKecActivity.this, tableHelperDataJurnalKec.getDataJurnal3()));
                                 break;
                             }
                             case DialogInterface.BUTTON_NEGATIVE:{
                                 Intent intent = new Intent(getBaseContext(), EditDataJurnalActivity.class);
-                                intent.putExtra("id",id);
-                                intent.putExtra("tgl",tglTrans);
+
+                                intent.putExtra("pid",pid);
+                                intent.putExtra("tgl", tglTrans);
                                 intent.putExtra("ket", ketTrans);
-                                intent.putExtra("debet",namaDebet);
-                                intent.putExtra("kredit",namakredit);
-                                intent.putExtra("nominal",nominal);
+                                intent.putExtra("kodeTrans",kodeTrans);
+
                                 startActivity(intent);
                                 break;
                             }
@@ -118,6 +114,6 @@ public class JurnalKecActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataJurnalKec.getDataJurnal2()));
+        tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataJurnalKec.getDataJurnal3()));
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapter;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
@@ -63,6 +64,23 @@ public class TableHelperDataJurnalKec {
 
         }
 
+        return this.dataJurnal;
+    }
+
+    public String[][] getDataJurnal3(){
+        ArrayList<DataJurnalMar> dataJurnalMars = new DBAdapterMix(context).selectJurnalMar();
+        DataJurnalMar dataJurnalMar;
+
+        this.dataJurnal = new String[dataJurnalMars.size()][4];
+        for (int i = 0; i < dataJurnalMars.size(); i++){
+            dataJurnalMar = dataJurnalMars.get(i);
+
+            this.dataJurnal[i][0] = dataJurnalMar.getTgl();
+            this.dataJurnal[i][1] = dataJurnalMar.getKet();
+            this.dataJurnal[i][2] = dataJurnalMar.getPid();
+            this.dataJurnal[i][3] = String.valueOf(dataJurnalMar.getKode_trans());
+
+        }
         return this.dataJurnal;
     }
 

@@ -9,13 +9,15 @@ import android.util.Log;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.EditDataTransMar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -69,8 +71,10 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
     private static final String DROP_TABLE = "DROP TABLE IF EXIST " + TABLE_AKUN;
     private static final String DROP_TABLE_PEMILIK = "DROP TABLE IF EXIST " + TABLE_DATA_PERUSAHAAN;
-    private static final String DROP_TABLE_JURNAL = "DROP TABLE IF EXIST " + TABLE_JURNAL;
-    private static final String DROP_TABLE_RIWAYAT_NOMINAL = "DROP TABLE IF EXIST" + TABLE_RIWAYAT_NOMINAL;
+//    private static final String DROP_TABLE_JURNAL = "DROP TABLE IF EXIST " + TABLE_JURNAL;
+//    private static final String DROP_TABLE_RIWAYAT_NOMINAL = "DROP TABLE IF EXIST" + TABLE_RIWAYAT_NOMINAL;
+    private static final String DROP_TABLE_JURNAL = "DROP TABLE IF EXIST jurnal";
+    private static final String DROP_TABLE_TRANS = "DROP TABLE IF EXIST trans";
     private static final String DROP_TABLE_MODAL = "DROP TABLE IF EXIST " + TABLE_MODAL;
 
 
@@ -83,14 +87,16 @@ public class DBAdapterMix extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE_AKUN = "CREATE TABLE " + TABLE_AKUN + "(" + KODE_AKUN + " INTEGER PRIMARY KEY," + NAMA_AKUN + " TEXT," + JENIS_AKUN + " INTEGER)";
         String CREATE_DATA_PERUSAHAAN = "CREATE TABLE data_perusahaan(id INTEGER PRIMARY KEY, nama_perusahaan TEXT, nama_pemilik TEXT, alamat TEXT, telp TEXT, email TEXT)";
-        String CREATE_TABEL_JURNAL = "CREATE TABLE jurnal(id INTEGER PRIMARY KEY, tgl INTEGER, keterangan TEXT, akun_debet INTEGER, nama_debet TEXT, akun_kredit INTEGER, nama_kredit TEXT, nominal_debet INTEGER, nominal_kredit INTEGER)";
-        String CREATE_RIWAYAT_NOMINAL = "CREATE TABLE riwayat_nominal(id INTEGER PRIMARY KEY, kode_akun INTEGER, nominal INTEGER, tgl TEXT)";
+//        String CREATE_TABEL_JURNAL = "CREATE TABLE jurnal(id INTEGER PRIMARY KEY, tgl INTEGER, keterangan TEXT, akun_debet INTEGER, nama_debet TEXT, akun_kredit INTEGER, nama_kredit TEXT, nominal_debet INTEGER, nominal_kredit INTEGER)";
+//        String CREATE_RIWAYAT_NOMINAL = "CREATE TABLE riwayat_nominal(id INTEGER PRIMARY KEY, kode_akun INTEGER, nominal INTEGER, tgl TEXT)";
+        String CREATE_TABLE_JURNAL = "CREATE TABLE jurnal(id INTEGER PRIMARY KEY AUTOINCREMENT, pid TEXT, tgl TEXT, ket TEXT, kode_trans int);";
+        String CREATE_TABLE_TRANS = "CREATE TABLE trans(id INTEGER PRIMARY KEY AUTOINCREMENT, pid TEXT, kode_akun TEXT, nominal INTEGER, pos INTEGER);";
         String CREATE_TABLE_MODAL = "CREATE TABLE modal(tgl TEXT PRIMARY KEY, nominal INTEGER, nominalKas INTEGER)";
 
         db.execSQL(CREATE_TABLE_AKUN);
         db.execSQL(CREATE_DATA_PERUSAHAAN);
-        db.execSQL(CREATE_TABEL_JURNAL);
-        db.execSQL(CREATE_RIWAYAT_NOMINAL);
+        db.execSQL(CREATE_TABLE_JURNAL);
+        db.execSQL(CREATE_TABLE_TRANS);
         db.execSQL(CREATE_TABLE_MODAL);
     }
 
@@ -99,12 +105,146 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         db.execSQL(DROP_TABLE);
         db.execSQL(DROP_TABLE_PEMILIK);
         db.execSQL(DROP_TABLE_JURNAL);
-        db.execSQL(DROP_TABLE_RIWAYAT_NOMINAL);
+        db.execSQL(DROP_TABLE_TRANS);
         db.execSQL(DROP_TABLE_MODAL);
 
         onCreate(db);
     }
 
+//    digunakan untuk menentukan pid
+    public int selectLastId() {
+        String querySaldo = "SELECT MAX(id) FROM jurnal";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        int id = 0;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                id = cursor.getInt(0);
+                Log.i("idSeharusnya", ""+id);
+            }
+        }
+        Log.i("idDireturn", ""+id);
+        return id;
+    }
+
+//    insert data jurnal dengan model bulan maret
+    public void insertJurnalMar(DataJurnalMar dataJurnalMar) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put("pid", dataJurnalMar.getPid());
+        cv.put("tgl", dataJurnalMar.getTgl());
+        cv.put("ket", dataJurnalMar.getKet());
+        cv.put("kode_trans", dataJurnalMar.getKode_trans());
+
+        db.insert("jurnal", null, cv);
+        db.close();
+    }
+
+//    digunakan untuk melakukan select semua data pada tabel jurnal yang dilakukan oleh jurnal kecil dan laporan jurnal umum
+    public ArrayList<DataJurnalMar> selectJurnalMar() {
+        ArrayList<DataJurnalMar> dataJurnalMars = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM jurnal";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        DataJurnalMar dataJurnalMar;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+//                karena col 0 itu id
+                String pid = cursor.getString(1);
+                String tgl = cursor.getString(2);
+                String ket = cursor.getString(3);
+                int kodeTrans = cursor.getInt(4);
+
+                dataJurnalMar = new DataJurnalMar();
+                dataJurnalMar.setPid(pid);
+                dataJurnalMar.setTgl(tgl);
+                dataJurnalMar.setKet(ket);
+                dataJurnalMar.setKode_trans(kodeTrans);
+
+                Log.i("dataJurnal", "pid: " + pid + ", tgl: " + tgl + ", ket:" + ket + ", kodeTrans: " + kodeTrans);
+
+                dataJurnalMars.add(dataJurnalMar);
+
+            }
+        }
+        return dataJurnalMars;
+    }
+
+    public void deleteJurnalMar(String pid) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete("jurnal", "pid=?", new String[]{pid});
+        db.delete("trans","pid=?", new String[]{pid});
+        db.close();
+    }
+
+//    digunakan untuk memasukkan data
+    public void insertTrans(DataTransMar dataTransMar) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put("pid", dataTransMar.getPid());
+        cv.put("kode_akun", dataTransMar.getKode_akun());
+        cv.put("nominal", dataTransMar.getNominal());
+        cv.put("pos", dataTransMar.getPos());
+
+        db.insert("trans", null, cv);
+        db.close();
+    }
+
+//    digunakan untuk melakukan select data transaksi yang mau di edit
+    public ArrayList<EditDataTransMar> selectTransToEdit(String editPid) {
+        ArrayList<EditDataTransMar> editDataTransMarArrayList = new ArrayList<>();
+
+        String selectQuery = "SELECT trans.id, trans.pid, trans.kode_akun, akun.nama_akun, trans.nominal, akun.jenis, trans.pos \n" +
+                "FROM trans \n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun \n" +
+                "WHERE trans.pid = '" + editPid + "';";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        EditDataTransMar editDataTransMar;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String id = cursor.getString(0);
+                String pid = cursor.getString(1);
+                String kodeAkun = cursor.getString(2);
+                String namaAkun = cursor.getString(3);
+                int nominal = cursor.getInt(4);
+                int jenis = cursor.getInt(5);
+                int transPos = cursor.getInt(6);
+
+                editDataTransMar = new EditDataTransMar();
+
+                editDataTransMar.setId(id);
+                editDataTransMar.setPid(pid);
+                editDataTransMar.setKodeAkun(kodeAkun);
+                editDataTransMar.setNamaAkun(namaAkun);
+                editDataTransMar.setNominal(nominal);
+                editDataTransMar.setJenisAkun(jenis);
+                editDataTransMar.setPos(transPos);
+
+                Log.i("dataDiEdit", "id: " + id + ", pid:" + pid + ", kodeAkun:" + kodeAkun + ", namaAkun:" + namaAkun + ", nominal:" + nominal + ", jenis:" + jenis + ", pos:" + transPos);
+
+                editDataTransMarArrayList.add(editDataTransMar);
+
+            }
+        }
+        return editDataTransMarArrayList;
+    }
+
+//    digunakan untuk insert data akun, dipanggil di splashscreen dan juga di setting
     public void insertAkun(DataAkun dataAkun, int jenisAkun){
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1223,18 +1363,4 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         db.close();
     }
 
-    public int selectLastId() {
-        String querySaldo = "SELECT last_insert_rowid() FROM jurnal";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(querySaldo, null);
-
-        int id = 0;
-
-        if (cursor != null){
-            while (cursor.moveToNext()){
-                id = cursor.getInt(0);
-            }
-        }
-        return id;
-    }
 }
