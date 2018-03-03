@@ -105,7 +105,7 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                 int labaBersih = 0;
 
 //                pengambilan data untuk aktiva lancar
-                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(0, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnMar(0, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo;
 
                 int aktivaLancar = 0;
@@ -125,7 +125,7 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                     webView.loadUrl("javascript:separatorAktiva('" + "Total Aset Lancar " + "', '" + aktivaLancar + "');");
 
 //                pengambilan data untuk aktiva tetap
-                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(1, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnMar(1, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo1;
 
                 int aktivaTetap = 0;
@@ -150,7 +150,7 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                 webView.loadUrl("javascript:bigSeparatorAktiva('" + "TOTAL ASET" + "', '" + totalAktiva + "');");
 
 //                pengambilan data untuk hutang lancar
-                ArrayList<DataSaldo> dataSaldos2 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(2, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos2 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnMar(2, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo2;
 
                 int totalHutangLancar = 0;
@@ -171,7 +171,7 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                 webView.loadUrl("javascript:separatorPasiva('" + "Total Hutang Lancar" + "', '" + totalHutangLancar + "');");
 
 //                pengambilan data untuk biaya luar usaha
-                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThn(3, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnMar(3, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo3;
 
                 int totalHutangJangkaPanjang = 0;
@@ -192,7 +192,7 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                 webView.loadUrl("javascript:separatorPasiva('" + "Total Hutang Jangka Panjang" + "', '" + totalHutangJangkaPanjang + "');");
 
 //                menghitung total laba tanggal tersebut
-                ArrayList<DataSaldo> dataSaldos4 = new DBAdapterMix(LaporanNeracaActivity.this).selectModalNeraca(bulanDipilih,tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos4 = new DBAdapterMix(LaporanNeracaActivity.this).selectModalNeracaMar(bulanDipilih,tahunDipilih);
                 DataSaldo dataSaldo4;
 
                 int modalPemilik = 0;

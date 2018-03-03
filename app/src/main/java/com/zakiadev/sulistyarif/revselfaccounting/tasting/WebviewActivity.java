@@ -14,8 +14,11 @@ import android.widget.Toast;
 
 import com.zakiadev.sulistyarif.revselfaccounting.R;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransaksiMar;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -51,23 +54,53 @@ public class WebviewActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(WebviewActivity.this).selectJurnal();
-                DataJurnal dataJurnal;
+                ArrayList<DataTransaksiMar> dataTransaksiMarArrayList = new DBAdapterMix(WebviewActivity.this).selectTransMar();
+                DataTransaksiMar dataTransaksiMar;
+                DataTransaksiMar dataTransaksiMar0 = dataTransaksiMarArrayList.get(0);
+                String pidSebelum = dataTransaksiMar0.getPid();
+                int j = 0;
+                String[][] data = new String[dataTransaksiMarArrayList.size()][8];
 
-                for (int i = 0; i< dataJurnals.size(); i++){
-                    dataJurnal = dataJurnals.get(i);
-
-                    String tgl = dataJurnal.getTgl();
-                    String ket = dataJurnal.getKeterangan();
-                    String akunDebt = String.valueOf(dataJurnal.getAkunDebet());
-                    String namaDebt = dataJurnal.getNamaDebet();
-                    String nomDebt = String.valueOf(dataJurnal.getNominalDebet());
-                    String akunKred = String.valueOf(dataJurnal.getAkunKredit());
-                    String namaKred = dataJurnal.getNamaKredit();
-                    String nomKred = String.valueOf(dataJurnal.getNominalKredit());
-                    webView.loadUrl("javascript:addRow('" + tgl + "', '" + ket + "', '" + akunDebt + "', '" + namaDebt + "', '" + nomDebt + "', '" + akunKred + "', '" + namaKred + "', '" + nomKred + "');");
+                for (int i = 0; i < dataTransaksiMarArrayList.size(); i++){
+                    dataTransaksiMar = dataTransaksiMarArrayList.get(i);
+                    if (dataTransaksiMar.getPid().equals(pidSebelum)){
+                        data[j][0] = dataTransaksiMar.getPid();
+                        data[j][1] = dataTransaksiMar.getTgl();
+                        data[j][2] = dataTransaksiMar.getKet();
+                        data[j][3] = dataTransaksiMar.getKodeAkun();
+                        data[j][4] = dataTransaksiMar.getNamaAkun();
+                        data[j][5] = String.valueOf(Math.abs(dataTransaksiMar.getNominal()));
+                        data[j][6] = String.valueOf(dataTransaksiMar.getJenis());
+                        data[j][7] = String.valueOf(dataTransaksiMar.getPos());
+                        pidSebelum = dataTransaksiMar.getPid();
+                        j++;
+                    }else {
+                        webView.loadUrl("javascript:addRow('" + data[0][1] + "', '" + data[0][3] +"', '" + data[0][4] +"','" + data[0][5] +"','" + data[0][7] +"');");
+                        for (int k = 1; k < j; k++){
+                            webView.loadUrl("javascript:addRow('', '" + data[k][3] +"', '" + data[k][4] +"','" + data[k][5] +"','" + data[k][7] +"');");
+                        }
+                        webView.loadUrl("javascript:addRow('','','(" + data[0][2] + ")','','');");
+                        j = 0;
+                        data[j][0] = dataTransaksiMar.getPid();
+                        data[j][1] = dataTransaksiMar.getTgl();
+                        data[j][2] = dataTransaksiMar.getKet();
+                        data[j][3] = dataTransaksiMar.getKodeAkun();
+                        data[j][4] = dataTransaksiMar.getNamaAkun();
+                        data[j][5] = String.valueOf(Math.abs(dataTransaksiMar.getNominal()));
+                        data[j][6] = String.valueOf(dataTransaksiMar.getJenis());
+                        data[j][7] = String.valueOf(dataTransaksiMar.getPos());
+                        pidSebelum = dataTransaksiMar.getPid();
+                        j++;
+                        Log.i("bleketek","bleketek " + i);
+                    }
 
                 }
+                webView.loadUrl("javascript:addRow('" + data[0][1] + "', '" + data[0][3] +"', '" + data[0][4] +"','" + data[0][5] +"','" + data[0][7] +"');");
+                for (int k = 1; k < j; k++){
+                    webView.loadUrl("javascript:addRow('', '" + data[k][3] +"', '" + data[k][4] +"','" + data[k][5] +"','" + data[k][7] +"');");
+                }
+                webView.loadUrl("javascript:addRow('','','(" + data[0][2] + ")','','');");
+
             }
         });
 

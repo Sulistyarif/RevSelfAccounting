@@ -111,7 +111,7 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectRiwayat(bulanDipilih,tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectNeracaSaldoMar(bulanDipilih,tahunDipilih);
                 DataSaldo dataSaldo;
                 int saldoDebet = 0 ,saldoKredit = 0;
 

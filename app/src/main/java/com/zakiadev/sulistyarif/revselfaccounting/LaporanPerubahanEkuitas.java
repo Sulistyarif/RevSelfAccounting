@@ -112,7 +112,7 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 super.onPageFinished(view, url);
 
 //                mencari modal awal sesuai tangggal yang diinputkan
-                ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalAwal(bulanDipilih,tahunDipilih);
+                ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalAwalMar(bulanDipilih,tahunDipilih);
                 DataJurnal dataJurnal;
 
                 int modalAwal = 0;
@@ -130,7 +130,7 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 webView.loadUrl("javascript:separator('" + "Modal Awal Per Tanggal 1 "  + strBulan + "', '" + modalAwal + "');");
 
 //                  mencari modal tambahan, atau modal yang selain tanggal 1
-                ArrayList<DataJurnal> dataJurnals1 = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalTambahan(bulanDipilih,tahunDipilih);
+                ArrayList<DataJurnal> dataJurnals1 = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalTambahanMar(bulanDipilih,tahunDipilih);
                 DataJurnal dataJurnal1;
 
                 int modalTambahan = 0;
@@ -148,7 +148,7 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 webView.loadUrl("javascript:tambahData('" + "Tambahan Modal " + "', '" + modalTambahan + "');");
 
 //                Laba Rugi pada periode yang diinputkan
-                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectLabaRugi(bulanDipilih,tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectLabaRugiMar(bulanDipilih,tahunDipilih);
                 DataSaldo dataSaldo ;
 
                 int labaRugi = 0;
@@ -166,7 +166,7 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 webView.loadUrl("javascript:tambahData('" + "Laba atau Rugi Periode Berjalan " + "', '" + labaRugi + "');");
 
 //                mengambil data prive di bulan dan tahun pada input
-                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectPriveBlnThn(bulanDipilih,tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectPriveBlnThnMar(bulanDipilih,tahunDipilih);
                 DataSaldo dataSaldo1 ;
 
                 int prive = 0;

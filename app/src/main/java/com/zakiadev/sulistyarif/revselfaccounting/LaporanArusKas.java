@@ -105,7 +105,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 super.onPageFinished(view, url);
 
 //                mengambil data arus kas yang didapat dari aset lancar
-                ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,0);
+                ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,0);
                 DataJurnal dataJurnal ;
 
                 int kasDariAsetLancar = 0;
@@ -124,7 +124,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang didapat dari hutang jangka pendek
-                ArrayList<DataJurnal> dataJurnals1 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,2);
+                ArrayList<DataJurnal> dataJurnals1 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,2);
                 DataJurnal dataJurnal1 ;
 
                 int kasDariHutangJangkaPendek = 0;
@@ -143,7 +143,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang didapat dari pendapatan operasional
-                ArrayList<DataJurnal> dataJurnals2 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,5);
+                ArrayList<DataJurnal> dataJurnals2 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,5);
                 DataJurnal dataJurnal2 ;
 
                 int kasDariPendapatanOp = 0;
@@ -162,7 +162,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang didapat dari pendapatan non operasional
-                ArrayList<DataJurnal> dataJurnals3 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,6);
+                ArrayList<DataJurnal> dataJurnals3 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,6);
                 DataJurnal dataJurnal3 ;
 
                 int kasDariPendapatanNonOp = 0;
@@ -181,7 +181,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang didapat dari biaya Operasional
-                ArrayList<DataJurnal> dataJurnals4 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,7);
+                ArrayList<DataJurnal> dataJurnals4 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,7);
                 DataJurnal dataJurnal4 ;
 
                 int kasDariBiayaOp = 0;
@@ -200,7 +200,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang didapat dari biaya Non Operasional
-                ArrayList<DataJurnal> dataJurnals5 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,8);
+                ArrayList<DataJurnal> dataJurnals5 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,8);
                 DataJurnal dataJurnal5 ;
 
                 int kasDariBiayaNonOp = 0;
@@ -223,7 +223,7 @@ public class LaporanArusKas extends AppCompatActivity {
 
 
 //                mengambil data arus kas yang bayar untuk aset lancar
-                ArrayList<DataJurnal> dataJurnals01 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,0);
+                ArrayList<DataJurnal> dataJurnals01 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,0);
                 DataJurnal dataJurnal01 ;
 
                 int kasUntukAsetLancar = 0;
@@ -242,7 +242,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang diabayar untuk hutang jangka pendek
-                ArrayList<DataJurnal> dataJurnals11 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,2);
+                ArrayList<DataJurnal> dataJurnals11 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,2);
                 DataJurnal dataJurnal11 ;
 
                 int kasUntukHutangJangkaPendek = 0;
@@ -261,7 +261,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang dibayar untuk pendapatan operasional
-                ArrayList<DataJurnal> dataJurnals21 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,5);
+                ArrayList<DataJurnal> dataJurnals21 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,5);
                 DataJurnal dataJurnal21 ;
 
                 int kasUntukPendapatanOp = 0;
@@ -280,7 +280,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang dibayar untuk pendapatan non operasional
-                ArrayList<DataJurnal> dataJurnals31 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,6);
+                ArrayList<DataJurnal> dataJurnals31 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,6);
                 DataJurnal dataJurnal31 ;
 
                 int kasUntukPendapatanNonOp = 0;
@@ -299,7 +299,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang dibayar untuk biaya Operasional
-                ArrayList<DataJurnal> dataJurnals41 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,7);
+                ArrayList<DataJurnal> dataJurnals41 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,7);
                 DataJurnal dataJurnal41 ;
 
                 int kasUntukBiayaOp = 0;
@@ -318,7 +318,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang dibayar untuk biaya Non Operasional
-                ArrayList<DataJurnal> dataJurnals51 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,8);
+                ArrayList<DataJurnal> dataJurnals51 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,8);
                 DataJurnal dataJurnal51 ;
 
                 int kasUntukBiayaNonOp = 0;
@@ -346,7 +346,7 @@ public class LaporanArusKas extends AppCompatActivity {
 //                PINDAH MENUJU KE AKTIVITAS INVESTASI
 
 //                mengambil data arus kas yang didapat dari aset tetap
-                ArrayList<DataJurnal> dataJurnals02 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,1);
+                ArrayList<DataJurnal> dataJurnals02 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,1);
                 DataJurnal dataJurnal02 ;
 
                 int kasDariAsetTetap = 0;
@@ -368,7 +368,7 @@ public class LaporanArusKas extends AppCompatActivity {
 //                PINDAH KE KAS DIBAYAR UNTUK ASET TETAP
 
 //                mengambil data arus kas yang dibayar untuk aset tetap
-                ArrayList<DataJurnal> dataJurnals12 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,1);
+                ArrayList<DataJurnal> dataJurnals12 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,1);
                 DataJurnal dataJurnal12 ;
 
                 int kasUntukAsetTetap = 0;
@@ -394,7 +394,7 @@ public class LaporanArusKas extends AppCompatActivity {
 //                PINDAH KE KAS DARI AKTIVITAS PENDANAAN
 
 //                mengambil data arus kas yang didapat dari HUTANG JANGKA PANJANG
-                ArrayList<DataJurnal> dataJurnals03 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,3);
+                ArrayList<DataJurnal> dataJurnals03 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,3);
                 DataJurnal dataJurnal03 ;
 
                 int kasDariHutangJangkaPanjang = 0;
@@ -413,7 +413,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang didapat dari ekuitas
-                ArrayList<DataJurnal> dataJurnals13 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,4);
+                ArrayList<DataJurnal> dataJurnals13 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,4);
                 DataJurnal dataJurnal13 ;
 
                 int kasDariEkuitas = 0;
@@ -432,7 +432,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang didapat dari pengembalian ekuitas
-                ArrayList<DataJurnal> dataJurnals23 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebet(bulanDipilih,tahunDipilih,9);
+                ArrayList<DataJurnal> dataJurnals23 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,9);
                 DataJurnal dataJurnal23 ;
 
                 int kasDariPengembalianEkuitas = 0;
@@ -454,7 +454,7 @@ public class LaporanArusKas extends AppCompatActivity {
 //                MULAI MENYEBERANG KE DIBAYAR UNTUK AKTIVITAS PENDANAAN
 
 //                mengambil data arus kas yang bayar untuk HUTANG JANGKA PANJANG
-                ArrayList<DataJurnal> dataJurnals04 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,3);
+                ArrayList<DataJurnal> dataJurnals04 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,3);
                 DataJurnal dataJurnal04 ;
 
                 int kasUntukHutangJangkaPanjang = 0;
@@ -473,7 +473,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang diabayar untuk ekuitas
-                ArrayList<DataJurnal> dataJurnals14 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,4);
+                ArrayList<DataJurnal> dataJurnals14 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,4);
                 DataJurnal dataJurnal14 ;
 
                 int kasUntukEkuitas = 0;
@@ -492,7 +492,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 }
 
 //                mengambil data arus kas yang dibayar untuk Pengembalian Ekuitas
-                ArrayList<DataJurnal> dataJurnals24 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKredit(bulanDipilih,tahunDipilih,9);
+                ArrayList<DataJurnal> dataJurnals24 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnKreditMar(bulanDipilih,tahunDipilih,9);
                 DataJurnal dataJurnal24 ;
 
                 int kasUntukPengembalianEkui = 0;
@@ -516,7 +516,7 @@ public class LaporanArusKas extends AppCompatActivity {
                 webView.loadUrl("javascript:separator('" + "ARUS KAS DARI AKTIVITAS PENDANAAN" + "', '" + totalAktivitasPendanaan +"', '" + "kasDana" +"');");
 
 //                MENAMPILKAN DATA SALDO KAS AWAL BULAN INI YANG MERUPAKAN HASIL SUM KAS BULAN LALU
-                ArrayList<DataJurnal> dataJurnalsaldo = new DBAdapterMix(LaporanArusKas.this).selectKasAwal(bulanDipilih,tahunDipilih);
+                ArrayList<DataJurnal> dataJurnalsaldo = new DBAdapterMix(LaporanArusKas.this).selectKasAwalMar(bulanDipilih,tahunDipilih);
                 DataJurnal dataJurnalSaldo ;
 
                 int saldoKasAwal = 0;

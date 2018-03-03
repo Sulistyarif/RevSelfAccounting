@@ -18,20 +18,30 @@
     <![endif]-->
 
     <script>
-        function addRow(tgl, ket, akunDebt, namaDebt, nomDebt, akunKred, namaKred, nomKred){
+        function addRow(tgl, kodeAkun, namaAkun, nomAkun, pos){
 
         var table = document.getElementById("myTableData");
-
-        <!--Android.showToast(name + "telah dimasukkan");-->
 
         var rowCount = table.rows.length;
         var row = table.insertRow(rowCount);
 
         row.insertCell(0).innerHTML= tgl;
-        row.insertCell(1).innerHTML= namaDebt + "<br>&ensp;&ensp;&ensp;" + namaKred + "<br>(" + ket + ")";
-        row.insertCell(2).innerHTML= akunDebt + "<br>&ensp;&ensp;&ensp;" + akunKred;
-        row.insertCell(3).innerHTML= nomDebt;
-        row.insertCell(4).innerHTML= "<br>" + nomKred;
+        if(pos == "0"){
+            row.insertCell(1).innerHTML= namaAkun;
+            row.insertCell(2).innerHTML= kodeAkun;
+            row.insertCell(3).innerHTML= nomAkun;
+            row.insertCell(4).innerHTML= "-";
+        }else if(pos == ""){
+            row.insertCell(1).innerHTML= namaAkun;
+            row.insertCell(2).innerHTML= "";
+            row.insertCell(3).innerHTML= "";
+            row.insertCell(4).innerHTML= "";
+        }else{
+            row.insertCell(1).innerHTML= "&emsp;" + namaAkun;
+            row.insertCell(2).innerHTML= "&emsp;" + kodeAkun;
+            row.insertCell(3).innerHTML= "-";
+            row.insertCell(4).innerHTML= nomAkun;
+        }
 
     }
 

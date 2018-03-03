@@ -181,7 +181,7 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
                     dataTransMar.setPid(pid);
                     dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
                     dataTransMar.setNominal(nominalAkunDebet);
-                    dataTransMar.setNominal(0);
+                    dataTransMar.setPos(0);
 
 //                    tidak menggunakan insert namun menggunakan insert or update
                     new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar);
@@ -196,6 +196,14 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
                     if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
                         nominalAkunKredit *= -1;
                     }
+
+                    DataTransMar dataTransMar = new DataTransMar();
+                    dataTransMar.setPid(pid);
+                    dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
+                    dataTransMar.setNominal(nominalAkunKredit);
+                    dataTransMar.setPos(1);
+
+                    new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar);
                     Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
                 }
                 finish();

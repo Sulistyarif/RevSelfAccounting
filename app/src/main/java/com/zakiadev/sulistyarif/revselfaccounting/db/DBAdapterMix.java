@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
@@ -13,6 +14,7 @@ import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransaksiMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.EditDataTransMar;
 
 import java.text.ParseException;
@@ -178,6 +180,18 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         return dataJurnalMars;
     }
 
+    public void updateJurnalMar(DataJurnalMar dataJurnalMar) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put("tgl", dataJurnalMar.getTgl());
+        cv.put("ket", dataJurnalMar.getKet());
+        cv.put("kode_trans", dataJurnalMar.getKode_trans());
+
+        db.update("jurnal",cv,"pid=?", new String[]{dataJurnalMar.getPid()});
+        db.close();
+    }
+
     public void deleteJurnalMar(String pid) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -197,6 +211,18 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         cv.put("pos", dataTransMar.getPos());
 
         db.insert("trans", null, cv);
+        db.close();
+    }
+
+    public void updateTrans(DataTransMar dataTransMar, Integer integer) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put("kode_akun", dataTransMar.getKode_akun());
+        cv.put("nominal", dataTransMar.getNominal());
+        cv.put("pos", dataTransMar.getPos());
+
+        db.update("trans", cv, "id=?", new String[]{String.valueOf(integer)});
         db.close();
     }
 
@@ -242,6 +268,543 @@ public class DBAdapterMix extends SQLiteOpenHelper {
             }
         }
         return editDataTransMarArrayList;
+    }
+
+//    digunakan untuk melihat jurnak umum
+    public ArrayList<DataTransaksiMar> selectTransMar() {
+        ArrayList<DataTransaksiMar> dataTransaksiMarArrayList = new ArrayList<DataTransaksiMar>();
+
+        String selectQuery = "SELECT jurnal.pid, jurnal.tgl, jurnal.ket, trans.kode_akun, akun.nama_akun, trans.nominal, trans.pos, akun.jenis\n" +
+                "FROM jurnal\n" +
+                "LEFT JOIN trans ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "ORDER BY jurnal.pid ASC, trans.pos ASC;";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        DataTransaksiMar dataTransaksiMar;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String pid = cursor.getString(0);
+                String tgl = cursor.getString(1);
+                String ket = cursor.getString(2);
+                String kodeAkun = cursor.getString(3);
+                String namaAkun = cursor.getString(4);
+                int nominal = cursor.getInt(5);
+                int pos = cursor.getInt(6);
+                int jenis = cursor.getInt(7);
+
+                dataTransaksiMar = new DataTransaksiMar();
+
+                dataTransaksiMar.setPid(pid);
+                dataTransaksiMar.setTgl(tgl);
+                dataTransaksiMar.setKet(ket);
+                dataTransaksiMar.setKodeAkun(kodeAkun);
+                dataTransaksiMar.setNamaAkun(namaAkun);
+                dataTransaksiMar.setNominal(nominal);
+                dataTransaksiMar.setPos(pos);
+                dataTransaksiMar.setJenis(jenis);
+
+                Log.i("dataJurnal", "pid:" + pid + ", tgl:" + tgl + ", ket:" + ket + ", kodeAkun:" + kodeAkun + ", namaAkun:" + namaAkun + ", nominal:" + nominal + ", pos:" + pos + ", jenis:" + jenis);
+
+                dataTransaksiMarArrayList.add(dataTransaksiMar);
+
+            }
+        }
+        return dataTransaksiMarArrayList;
+    }
+
+//    digunakan untuk melihat neraca saldo
+    public ArrayList<DataSaldo> selectNeracaSaldoMar(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<DataSaldo>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+        String querySaldo = "SELECT trans.kode_akun, akun.nama_akun, sum(trans.nominal), akun.jenis\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "'\n" +
+                "GROUP BY trans.kode_akun;";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                String kodeAkun = String.valueOf(cursor.getInt(0));
+                String namaAkun = cursor.getString(1);
+                long nominal = cursor.getLong(2);
+                int jenis = cursor.getInt(3);
+
+//                untuk pengecekan
+                System.out.println("Data yang diambil : " + kodeAkun);
+
+                dataSaldo = new DataSaldo();
+                dataSaldo.setKodeAkun(kodeAkun);
+                dataSaldo.setNamaAkun(namaAkun);
+                dataSaldo.setNominal(nominal);
+                dataSaldo.setJenis(jenis);
+
+                dataSaldos.add(dataSaldo);
+            }
+        }
+        return dataSaldos;
+    }
+
+//    digunakn untuk laporan labarugi
+    public ArrayList<DataSaldo> selectRiwayatJenisBlnThnMar(int i, int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<DataSaldo>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+        String querySaldo = "SELECT trans.kode_akun, akun.nama_akun, sum(trans.nominal), akun.jenis\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan +"' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '" + i + "'\n" +
+                "GROUP BY trans.kode_akun;";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                    String kodeAkun = String.valueOf(cursor.getInt(0));
+                    String namaAkun = cursor.getString(1);
+                    long nominal = cursor.getLong(2);
+                    int jenis = cursor.getInt(3);
+
+                    dataSaldo = new DataSaldo();
+                    dataSaldo.setKodeAkun(kodeAkun);
+                    dataSaldo.setNamaAkun(namaAkun);
+                    dataSaldo.setNominal(nominal);
+                    dataSaldo.setJenis(jenis);
+
+                    dataSaldos.add(dataSaldo);
+            }
+        }
+        return dataSaldos;
+    }
+
+//    digunakan untuk mengambil data modal yang dimasukkan di tanggal 1 bulan dan tahun custom
+    public ArrayList<DataJurnal> selectModalAwalMar(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+        String querySelect = "SELECT jurnal.tgl, trans.nominal\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%d', jurnal.tgl) = '01' AND strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '4';";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                long nominal_kredit = cursor.getLong(1);
+
+                Log.i("ModalBlnLalu", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
+
+                    dataJurnal = new DataJurnal();
+                    dataJurnal.setTgl(tgl);
+                    dataJurnal.setNominalKredit(nominal_kredit);
+                    dataJurnals.add(dataJurnal);
+            }
+        }
+
+        String querySelectModalBulanKemarin = "SELECT tgl, nominal\n" +
+                "FROM modal\n" +
+                "WHERE strftime('%m',tgl) = '" + bulan + "' AND strftime('%Y',tgl) = '" + tahun + "';";
+
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor1 = db1.rawQuery(querySelectModalBulanKemarin, null);
+
+//        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor1.moveToNext()){
+
+                String tgl = formatter(cursor1.getString(0));
+                long nominal_kredit = cursor1.getLong(1);
+
+                Log.i("Isi modal", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
+
+                dataJurnal = new DataJurnal();
+
+                    dataJurnal.setTgl(tgl);
+                    dataJurnal.setNominalKredit(nominal_kredit);
+                    dataJurnals.add(dataJurnal);
+
+            }
+        }
+
+        return dataJurnals;
+
+    }
+
+//    digunakan untuk mencari modal tambahan (modal yang didapatkan jika tidak pada tanggal 1)
+    public ArrayList<DataJurnal> selectModalTambahanMar(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+        String querySelect = "SELECT jurnal.tgl, trans.nominal\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%d', jurnal.tgl) != '01' AND strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '4';";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                long nominal_kredit = cursor.getLong(1);
+
+                Log.i("DBAdapterMix", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
+
+                String[] splitTgl = tgl.split("/");
+
+
+                dataJurnal = new DataJurnal();
+
+                    Log.i("DBAdapterMix", "Masuk di hasil true");
+                    dataJurnal.setTgl(tgl);
+                    dataJurnal.setNominalKredit(nominal_kredit);
+                    dataJurnals.add(dataJurnal);
+
+
+            }
+        }
+        return dataJurnals;
+    }
+
+//    digunakan untuk mencari laba/rugi disuatu bulan
+    public ArrayList<DataSaldo> selectLabaRugiMar(int bulanDipilih, int tahunDipilih) {
+
+        int saldoPendapatan = 0;
+        int saldoBeban = 0;
+        int labaRugi = 0;
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
+        DataSaldo dataSaldo;
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+    //        mencari data pendapatan
+        String querySaldo = "SELECT trans.kode_akun, trans.nominal, jurnal.tgl\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' \n" +
+                "AND strftime('%Y',jurnal.tgl) = '" + tahun + "' \n" +
+                "AND (akun.jenis = '5' OR akun.jenis = '6');";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+    //                mengambil data tanggal biar diparse
+                String tgl = formatter(cursor.getString(2));
+
+    //                ngeparse tanggal
+                String splitTgl[] = tgl.split("/");
+
+    //                ngecek, cuma data yang bertanggal seperti input yang boleh dimasukkan
+                    saldoPendapatan += cursor.getInt(1);
+                    Log.i("SaldoPendapatan", "akun : " + cursor.getString(0) + ", dengan nominal : " + cursor.getString(1) + ", ditambahkan pada " + cursor.getString(2));
+            }
+        }
+        Log.i("Pendapatane : ", String.valueOf(saldoPendapatan));
+        db.close();
+
+    //        mencari data beban biaya
+        String queryBeban = "SELECT trans.kode_akun, trans.nominal, jurnal.tgl\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' \n" +
+                "AND strftime('%Y',jurnal.tgl) = '" + tahun + "' \n" +
+                "AND (akun.jenis = '7' OR akun.jenis = '8');";
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor1 = db1.rawQuery(queryBeban, null);
+
+        if (cursor1 != null){
+            while (cursor1.moveToNext()){
+
+    //                mengambil data tanggal biar diparse
+                String tgl = formatter(cursor1.getString(2));
+
+    //                ngeparse tanggal
+
+    //                ngecek, cuma data yang bertanggal seperti input yang boleh dimasukkan
+                    saldoBeban += cursor1.getInt(1);
+                    Log.i("BebanBiaya", "akun : " + cursor1.getString(0) + ", dengan nominal : " + cursor1.getString(1) + ", ditambahkan pada " + cursor1.getString(2));
+            }
+        }
+        Log.i("Bebane : ", String.valueOf(saldoBeban));
+
+    //        Menghitung saldo laba
+        labaRugi = saldoPendapatan - saldoBeban;
+        Log.i("Labane :", String.valueOf(labaRugi));
+
+        dataSaldo = new DataSaldo();
+        dataSaldo.setNominal(labaRugi);
+        dataSaldos.add(dataSaldo);
+
+        return dataSaldos;
+    }
+
+//    mencari prive suatu waktu
+    public ArrayList<DataSaldo> selectPriveBlnThnMar(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+        int prive = 0;
+
+        String querySaldo = "SELECT trans.kode_akun, trans.nominal, jurnal.tgl\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' \n" +
+                "AND strftime('%Y',jurnal.tgl) = '" + tahun + "' \n" +
+                "AND akun.kode_akun = '6101';";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                Log.i("priveSelect","data : " + cursor.getString(0) + ", " + cursor.getString(1) + ", " + cursor.getString(2));
+
+                String tgl = formatter(cursor.getString(2));
+
+                    prive += cursor.getInt(1);
+                    Log.i("Prive", String.valueOf(prive));
+
+            }
+        }
+
+    //                kirim ke laporan perubahan dengan lewat datasaldo
+        dataSaldo = new DataSaldo();
+        dataSaldo.setNominal(prive);
+
+        dataSaldos.add(dataSaldo);
+
+        return dataSaldos;
+    }
+
+//    digunakan untuk mencari modal neraca
+    public ArrayList<DataSaldo> selectModalNeracaMar(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<>();
+
+
+        String bulan = String.format("%02d", bulanDipilih + 1);
+        String tahun = String.valueOf(tahunDipilih);
+        String querySelect = "SELECT tgl, nominal FROM modal WHERE strftime('%m', tgl) = '" + bulan + "' AND strftime('%Y', tgl) = '" + tahun + "'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                long nominal_kredit = cursor.getLong(1);
+
+                Log.i("NeracaModalPemilik", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
+
+    //                String[] splitTgl = tgl.split("/");
+
+    //                dibikin begini karena inputnya modal buat bulan depan
+    //                int custBulan = Integer.parseInt(splitTgl[1]) - 1;
+    //                String custBulanStr = String.format("%02d", custBulan);
+    //                Log.i("hasilCustBulan ", "custBulanInt : " + custBulan + "custBulanStr0 : " + custBulanStr);
+
+                dataSaldo = new DataSaldo();
+    //                if (custBulanStr.equals(bulan) && splitTgl[2].equals(tahun)){
+
+                dataSaldo.setTgl(tgl);
+                dataSaldo.setNominal(nominal_kredit);
+                dataSaldos.add(dataSaldo);
+
+    //                }
+            }
+        }
+
+        return dataSaldos;
+    }
+
+//    digunakan untuk mencari kas yang berhubungan dengan akun lain pada bagian debet
+    public ArrayList<DataJurnal> selectArusKasOnDebetMar(int bulanDipilih, int tahunDipilih, int kodeAkun) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+
+
+        String querySelect = "SELECT jurnal.tgl, trans.kode_akun, akun.nama_akun, trans.nominal\n" +
+                "FROM trans\n" +
+                "LEFT JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE jurnal.pid IN (SELECT trans.pid FROM trans WHERE trans.kode_akun = '1101' AND trans.pos = '0') AND akun.jenis = '" + kodeAkun + "' AND strftime('%m', jurnal.tgl) = '" + bulan + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "'\n" +
+                "EXCEPT \n" +
+                "SELECT jurnal.tgl, trans.kode_akun, akun.nama_akun, trans.nominal\n" +
+                "FROM trans\n" +
+                "LEFT JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE trans.kode_akun = '1101';";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                int sKodeAkun = cursor.getInt(1);
+                String namaAkun = cursor.getString(2);
+                int nominalkredit = cursor.getInt(3);
+
+                Log.i("hasilArusKas : ", tgl + ", " + sKodeAkun + ", " + namaAkun + ", " + nominalkredit);
+
+//                String[] splitTgl = tgl.split("/");
+
+//                if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
+
+                    dataJurnal = new DataJurnal();
+                    dataJurnal.setTgl(tgl);
+                    dataJurnal.setAkunKredit(sKodeAkun);
+                    dataJurnal.setNamaKredit(namaAkun);
+                    dataJurnal.setNominalKredit(nominalkredit);
+
+                    dataJurnals.add(dataJurnal);
+
+//                }
+
+            }
+        }
+        return dataJurnals;
+    }
+
+//    mencari data arus kas yang posisi kas berada pada kredit
+    public ArrayList<DataJurnal> selectArusKasOnKreditMar(int bulanDipilih, int tahunDipilih, int kodeAkun) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+
+
+        String querySelect = "SELECT jurnal.tgl, trans.kode_akun, akun.nama_akun, trans.nominal\n" +
+                "FROM trans\n" +
+                "LEFT JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE jurnal.pid IN (SELECT trans.pid FROM trans WHERE trans.kode_akun = '1101' AND trans.pos = '1') AND akun.jenis = '" + kodeAkun + "' AND strftime('%m', jurnal.tgl) = '" + bulan + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "'\n" +
+                "EXCEPT \n" +
+                "SELECT jurnal.tgl, trans.kode_akun, akun.nama_akun, trans.nominal\n" +
+                "FROM trans\n" +
+                "LEFT JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE trans.kode_akun = '1101';";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                int sKodeAkun = cursor.getInt(1);
+                String namaAkun = cursor.getString(2);
+                int nominalkredit = cursor.getInt(3);
+
+                Log.i("hasilArusKas : ", tgl + ", " + sKodeAkun + ", " + namaAkun + ", " + nominalkredit);
+
+//                String[] splitTgl = tgl.split("/");
+
+//                if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
+
+                dataJurnal = new DataJurnal();
+                dataJurnal.setTgl(tgl);
+                dataJurnal.setAkunKredit(sKodeAkun);
+                dataJurnal.setNamaKredit(namaAkun);
+                dataJurnal.setNominalKredit(nominalkredit);
+
+                dataJurnals.add(dataJurnal);
+
+//                }
+
+            }
+        }
+        return dataJurnals;
+    }
+
+//    buat cari data kas awal sebelum adanya transaksi
+    public ArrayList<DataJurnal> selectKasAwalMar(int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+
+        String tahun = String.valueOf(tahunDipilih);
+        String bulan = String.format("%02d", bulanDipilih - 1);
+
+        String querySelect = "SELECT jurnal.tgl, trans.nominal\n" +
+                "FROM jurnal\n" +
+                "INNER JOIN trans ON jurnal.pid = trans.pid\n" +
+                "WHERE kode_akun = 1101 AND strftime('%m', jurnal.tgl) = '" + bulan + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "';";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        DataJurnal dataJurnal;
+        int totalkas = 0;
+        int i = 0;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String tgl = formatter(cursor.getString(0));
+                int saldoKas = cursor.getInt(1);
+
+                String[] splitTgl = tgl.split("/");
+
+//                yang dicari itu bulan kemarin
+//                int bulanKmrn = bulanDipilih - 1;
+//                String bulan = String.format("%02d", bulanKmrn);
+
+//                if (splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
+                    totalkas += saldoKas;
+//                }
+            }
+        }
+        dataJurnal = new DataJurnal();
+        dataJurnal.setNominalDebet(totalkas);
+        dataJurnals.add(dataJurnal);
+        Log.i("totalkas ", " " + totalkas);
+        return dataJurnals;
     }
 
 //    digunakan untuk insert data akun, dipanggil di splashscreen dan juga di setting
