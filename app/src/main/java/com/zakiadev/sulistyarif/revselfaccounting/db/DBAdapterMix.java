@@ -887,12 +887,14 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
         if (cursor != null){
             while (cursor.moveToNext()){
-                String kodeAkun = cursor.getString(1);
-                String namaAkun = cursor.getString(2);
+                String kodeAkun = cursor.getString(0);
+                String namaAkun = cursor.getString(1);
+                String jenisAkun = cursor.getString(2);
 
                 dataAkun = new DataAkun();
                 dataAkun.setKodeAkun(kodeAkun);
                 dataAkun.setNamaAkun(namaAkun);
+                dataAkun.setJenis(jenisAkun);
 
                 dataAkuns.add(dataAkun);
 
@@ -904,14 +906,9 @@ public class DBAdapterMix extends SQLiteOpenHelper {
     public void insertDataPerusahaan(String namaPers, String namaPemilik, String alamat, String telp, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues cv = new ContentValues();
-        cv.put(NAMA_PERUSAHAAN, namaPers);
-        cv.put(NAMA_PEMILIK, namaPemilik);
-        cv.put(ALAMAT_PEMILIK, alamat);
-        cv.put(TELP_PEMILIK, telp);
-        cv.put(EMAIL_PEMILIK, email);
+        String query = "INSERT OR REPLACE INTO data_perusahaan('id','nama_perusahaan','nama_pemilik','alamat','telp','email') VALUES ('1', '" + namaPers +"', '" + namaPemilik +"', '" + alamat + "', '" + telp + "', '" + email +"');";
+        db.execSQL(query);
 
-        db.insert(TABLE_DATA_PERUSAHAAN, null, cv);
         db.close();
     }
 

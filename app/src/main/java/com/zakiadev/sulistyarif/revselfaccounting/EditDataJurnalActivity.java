@@ -86,8 +86,8 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
 
 //        set tanggal sekarang pada button pemilihan tanggal
         Date tgl = new Date();
-        SimpleDateFormat formatTgl = new SimpleDateFormat("dd/MM/YYYY");
-        SimpleDateFormat formatTglStor = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat formatTgl = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatTglStor = new SimpleDateFormat("yyyy-MM-dd");
 
 //        ngisi tanggal dari db ke button
         try {

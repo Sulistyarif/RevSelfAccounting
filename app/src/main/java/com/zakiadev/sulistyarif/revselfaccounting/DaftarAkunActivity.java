@@ -64,7 +64,7 @@ public class DaftarAkunActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog dialog = new Dialog(DaftarAkunActivity.this);
+                final Dialog dialog = new Dialog(DaftarAkunActivity.this);
                 dialog.setTitle("Tambah Data Akun");
                 dialog.setContentView(R.layout.card_tambah_data);
 
@@ -86,6 +86,10 @@ public class DaftarAkunActivity extends AppCompatActivity {
                         new DBAdapterMix(DaftarAkunActivity.this).insertAkun(dataAkun,jenisAkun);
 
                         tableView.setDataAdapter(new SimpleTableDataAdapter(DaftarAkunActivity.this, tableHelperDataAkun.getDataAkun(jenisAkun)));
+
+                        etKodeAkun.setText("");
+                        etNamaAkun.setText("");
+                        dialog.dismiss();
 
                     }
                 });

@@ -1,5 +1,6 @@
 package com.zakiadev.sulistyarif.revselfaccounting;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,7 +65,7 @@ public class MenuPengaturanActivity extends AppCompatActivity{
                                 }
                             }
                         };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MenuPengaturanActivity.this);
                         builder.setMessage("Apakah anda yakin akan menghapus semua data yang ada ?").setPositiveButton("Ya",dialogClickListener).setNegativeButton("Tidak", dialogClickListener).show();
                         break;
                     }

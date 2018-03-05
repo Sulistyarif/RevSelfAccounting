@@ -37,6 +37,9 @@
         <activity android:name=".EditDataJurnalActivity"/>
         <activity android:name=".TambahDataJurnalActivity"/>
         <activity android:name=".ClearDataActivity"/>
+        <activity android:name=".SettingAwalPerusahaanActivity"/>
+        <activity android:name=".SettingNeracaAwalActivity"/>
+        <activity android:name=".PilihAkunNeracaAwal"/>
 
     </application>
 

@@ -33,22 +33,30 @@ public class SplashScreenActivity extends AppCompatActivity{
 //            Toast.makeText(SplashScreenActivity.this, "Hanya akan muncul pertama kali install", Toast.LENGTH_LONG).show();
             Log.i("firstInstallation", "Hanya akan berjalan pada saat pertama kali install");
             masukanDataDefault();
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("firstTime", true);
-            editor.commit();
+//            nanti dipindah ke simpan data yang di simpan neraca awal
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putBoolean("firstTime", true);
+//            editor.commit();
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(SplashScreenActivity.this, SettingAwalPerusahaanActivity.class));
+                    finish();
+                }
+            }, 2000L);
+
+        }else {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(SplashScreenActivity.this, MenuUtamaActivity.class));
+                    finish();
+                }
+            }, 2000L);
         }
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(SplashScreenActivity.this, MenuUtamaActivity.class));
-                finish();
-            }
-        }, 2000L);
-
-        new DBAdapterMix(SplashScreenActivity.this).selectDateJurnal();
-        Log.i("caution", "Method selectDateJurnal telah dipanggil");
 
     }
 

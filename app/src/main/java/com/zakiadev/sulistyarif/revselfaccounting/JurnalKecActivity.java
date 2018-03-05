@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
@@ -47,11 +48,13 @@ public class JurnalKecActivity extends AppCompatActivity {
         tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataJurnalKec.getDataJurnal3()));
 
         fab = (FloatingActionButton)findViewById(R.id.btnAddJurnal);
+        fab.setImageResource(R.drawable.plus);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(JurnalKecActivity.this, TambahDataJurnalActivity.class);
                 startActivity(intent);
+                Log.i("loli", "intent ke tambah data telah dipanggil");
             }
         });
 

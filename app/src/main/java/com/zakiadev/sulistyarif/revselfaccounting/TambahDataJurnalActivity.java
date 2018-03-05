@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
@@ -38,7 +41,7 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
 
     LinearLayout llDebet, llKredit;
     Button btAddDebet, btAddKredit, btAddJurnal, btTgl;
-    Button pilihDebet, pilihKredit;
+    Button pilihDebet, pilihKredit, btTestLoli;
     EditText etNomDebet, etNomKredit, etKeterangan;
     int jumDebet, etJumDebet, jumKredit, etJumKredit;
     List<Button> dataBtDebet = new ArrayList<Button>();
@@ -63,6 +66,8 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tambah_data_activity);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         llDebet = (LinearLayout)findViewById(R.id.llDebet);
         llKredit = (LinearLayout)findViewById(R.id.llKredit);
@@ -75,8 +80,8 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
 //        set tanggal sekarang pada button pemilihan tanggal
         Date tgl = new Date();
         tgl.setTime(System.currentTimeMillis());
-        SimpleDateFormat formatTgl = new SimpleDateFormat("dd/MM/YYYY");
-        SimpleDateFormat formatTglStor = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat formatTgl = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatTglStor = new SimpleDateFormat("yyyy-MM-dd");
         tglStor = formatTglStor.format(tgl);
         btTgl.setText(formatTgl.format(tgl));
 
@@ -97,7 +102,7 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
         listSpinner.add("Pilih Jenis Transaksi");
         listSpinner.add("Setoran Modal");
         listSpinner.add("Pembelian");
-        listSpinner.add("Penjualan Aset/Jasa");
+        listSpinner.add("Penjualan Aset - Pendapatan Jasa");
         listSpinner.add("Pinjaman dari Pihak Luar (Utang)");
         listSpinner.add("Pembayaran Biaya");
         listSpinner.add("Pengambilan untuk Pribadi");
@@ -154,62 +159,104 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
         btAddJurnal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                kodeId = new DBAdapterMix(TambahDataJurnalActivity.this).selectLastId();
-                int jenisAkunDebet, jenisAkunKredit;
-                int nominalAkunDebet, nominalAkunKredit;
-                String pid = "p" + kodeId;
-                String keterangan = etKeterangan.getText().toString();
 
-                DataJurnalMar dataJurnalMar = new DataJurnalMar();
-                dataJurnalMar.setPid(pid);
-                dataJurnalMar.setTgl(tglStor);
-                dataJurnalMar.setKet(keterangan);
-                dataJurnalMar.setKode_trans(pilihanTransaksi);
-
-                new DBAdapterMix(TambahDataJurnalActivity.this).insertJurnalMar(dataJurnalMar);
-                Log.i("queryJurnal","insert into jurnal(pid,tgl,keterangan,trans) values (" + pid + "," + tglStor + ", " + keterangan +", " + pilihanTransaksi + ");" );
-
-//                testing input data transaksi bagian debet
-                for (int i = 0; i < dataEtDebet.size() ; i++){
-                    jenisAkunDebet = jenisDebetAl.get(i);
-                    nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getText().toString());
-                    if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
-                        nominalAkunDebet *= -1;
+                debetloop:
+                for (int i = 0; i < dataEtDebet.size(); i++){
+                    if (dataEtDebet.get(i).getText().toString().equals("") || jenisDebetAl.size() != dataBtDebet.size()){
+                        Toast.makeText(TambahDataJurnalActivity.this,"Lengkapi data debet",Toast.LENGTH_SHORT).show();
+                        break debetloop;
+                    }else if (i == (dataEtDebet.size() - 1)){
+                        Log.i("nilaiLoopDb", "nilai loop:" + i);
+                        kreditloop:
+                        for (int j = 0; j < dataEtKredit.size(); j++){
+                            if (dataEtKredit.get(j).getText().toString().equals("") || jenisKreditAl.size() != dataBtKredit.size()){
+                                Toast.makeText(TambahDataJurnalActivity.this,"Lengkapi data kredit",Toast.LENGTH_SHORT).show();
+                                break debetloop;
+                            } else if (j == ((dataBtKredit.size()) - 1)){
+                                Log.i("nilaiLoopKr", "nilai loop:" + j);
+                                int nominalDebet = 0;
+                                int nominalKredit = 0;
+                                for (int k = 0; k < dataEtDebet.size(); k++){
+                                    nominalDebet += Integer.parseInt(dataEtDebet.get(k).getText().toString());
+                                }
+                                for (int k = 0; k< dataEtKredit.size(); k++){
+                                    nominalKredit += Integer.parseInt(dataEtKredit.get(k).getText().toString());
+                                }
+                                if (nominalDebet == nominalKredit){
+                                    tambahJurnal();
+                                } else {
+                                    Toast.makeText(TambahDataJurnalActivity.this, "Nominal debet dan kredit tidak seimbang", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
                     }
-
-                    DataTransMar dataTransMar = new DataTransMar();
-                    dataTransMar.setPid(pid);
-                    dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
-                    dataTransMar.setNominal(nominalAkunDebet);
-                    dataTransMar.setPos(0);
-
-//                    tidak menggunakan insert namun menggunakan insert or update
-                    new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar);
-                    Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
                 }
-
-//                testing input data transaksi bagian kredit
-                for (int i = 0 ; i < dataEtKredit.size() ; i++){
-                    jenisAkunKredit = jenisKreditAl.get(i);
-                    nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getText().toString());
-                    Log.i("jenisAkun","" + jenisAkunKredit);
-                    if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
-                        nominalAkunKredit *= -1;
-                    }
-
-                    DataTransMar dataTransMar = new DataTransMar();
-                    dataTransMar.setPid(pid);
-                    dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
-                    dataTransMar.setNominal(nominalAkunKredit);
-                    dataTransMar.setPos(1);
-
-                    new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar);
-                    Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
-                }
-                finish();
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_action_bar, menu);
+        return true;
+    }
+
+    private void tambahJurnal() {
+        kodeId = new DBAdapterMix(TambahDataJurnalActivity.this).selectLastId();
+        int jenisAkunDebet, jenisAkunKredit;
+        int nominalAkunDebet, nominalAkunKredit;
+        String pid = "p" + kodeId;
+        String keterangan = etKeterangan.getText().toString();
+
+        DataJurnalMar dataJurnalMar = new DataJurnalMar();
+        dataJurnalMar.setPid(pid);
+        dataJurnalMar.setTgl(tglStor);
+        dataJurnalMar.setKet(keterangan);
+        dataJurnalMar.setKode_trans(pilihanTransaksi);
+
+        new DBAdapterMix(TambahDataJurnalActivity.this).insertJurnalMar(dataJurnalMar);
+        Log.i("queryJurnal","insert into jurnal(pid,tgl,keterangan,trans) values (" + pid + "," + tglStor + ", " + keterangan +", " + pilihanTransaksi + ");" );
+
+//                testing input data transaksi bagian debet
+        for (int i = 0; i < dataEtDebet.size() ; i++){
+            jenisAkunDebet = jenisDebetAl.get(i);
+            nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getText().toString());
+            if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
+                nominalAkunDebet *= -1;
+            }
+
+            DataTransMar dataTransMar = new DataTransMar();
+            dataTransMar.setPid(pid);
+            dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
+            dataTransMar.setNominal(nominalAkunDebet);
+            dataTransMar.setPos(0);
+
+//                    tidak menggunakan insert namun menggunakan insert or update
+            new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar);
+            Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
+        }
+
+//                testing input data transaksi bagian kredit
+        for (int i = 0 ; i < dataEtKredit.size() ; i++){
+            jenisAkunKredit = jenisKreditAl.get(i);
+            nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getText().toString());
+            Log.i("jenisAkun","" + jenisAkunKredit);
+            if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
+                nominalAkunKredit *= -1;
+            }
+
+            DataTransMar dataTransMar = new DataTransMar();
+            dataTransMar.setPid(pid);
+            dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
+            dataTransMar.setNominal(nominalAkunKredit);
+            dataTransMar.setPos(1);
+
+            new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar);
+            Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
+        }
+        finish();
     }
 
     private void tambahKredit(int jumKredit, int etJumKredit) {
@@ -348,5 +395,19 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
         }
         dataBtDebet.get(index).setText(namaDebet);
         Toast.makeText(TambahDataJurnalActivity.this, kodeDebet + namaDebet + jenisDebet,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_restart:{
+                startActivity(getIntent());
+                finish();
+                return true;
+            }
+            default:{
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 }
