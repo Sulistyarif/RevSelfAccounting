@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +22,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataPerusahaan;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
 import java.util.List;
@@ -45,41 +47,6 @@ public class MenuUtamaActivity extends AppCompatActivity {
         setContentView(R.layout.menu_utama_activity);
 
         tvNamaPerusahaan = (TextView)findViewById(R.id.tvNamaPerusahaan);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!sharedPreferences.getBoolean("firstTime1", false)){
-//            do code here
-
-            final Dialog dialog = new Dialog(this);
-            dialog.setTitle("Nama Perusahaan");
-            dialog.setContentView(R.layout.card_nama_perusahaan);
-
-            etAwalNamaPers = (EditText)dialog.findViewById(R.id.etAwalNamaPers);
-            btAwalNamaPers = (Button) dialog.findViewById(R.id.btAwalSimpanNamaPers);
-
-            dialog.setCanceledOnTouchOutside(false);
-            Window window = dialog.getWindow();
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-
-            btAwalNamaPers.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String namaPers = etAwalNamaPers.getText().toString();
-                    if (namaPers.isEmpty()){
-                        Toast.makeText(MenuUtamaActivity.this, "Mohon Masukkan Nama Perusahaan",Toast.LENGTH_SHORT).show();
-                    }else {
-                        new DBAdapterMix(MenuUtamaActivity.this).insertDataPerusahaan(namaPers,"","","","");
-                    }
-                    tvNamaPerusahaan.setText(namaPers);
-                    dialog.dismiss();
-                }
-            });
-
-            dialog.show();
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("firstTime1", true);
-            editor.commit();
-        }
 
         CustomListAdapterMenuUtama adapter = new CustomListAdapterMenuUtama(this, menu, icMenu);
         lvMenuUtama = (ListView) findViewById(R.id.lvMenuUtama);
@@ -117,5 +84,14 @@ public class MenuUtamaActivity extends AppCompatActivity {
             }
         });
 
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DataPerusahaan dataPerusahaan = new DBAdapterMix(MenuUtamaActivity.this).selectDataPerusahaan();
+        tvNamaPerusahaan.setText(dataPerusahaan.getNamaPers());
     }
 }

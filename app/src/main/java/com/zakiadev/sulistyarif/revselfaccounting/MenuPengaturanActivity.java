@@ -41,6 +41,11 @@ public class MenuPengaturanActivity extends AppCompatActivity{
 //                Toast.makeText(MenuPengaturanActivity.this, parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
                 Log.i("YangDiklik", "yang dipilih adalah : " + parent.getItemAtPosition(position).toString());
                 switch (position){
+                    case 0:{
+                        Intent intent = new Intent(MenuPengaturanActivity.this, SettingDataPerusahaan.class);
+                        startActivity(intent);
+                        break;
+                    }
                     case 1:{
 //                        pindah ke aktiviti pengaturan kode akun
                         Intent intent = new Intent(MenuPengaturanActivity.this, DaftarJenisAkun.class);

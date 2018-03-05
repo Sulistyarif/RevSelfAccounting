@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_marginTop="7dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="parent"
+        tools:layout_editor_absoluteX="8dp"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/tvNamausaha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nama Usaha"
+            android:textColor="#111" />
+
+        <EditText
+            android:id="@+id/etSettNamaUsaha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Masukkan Nama Usaha"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/tvPemilik"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nama Pemilik"
+            android:textColor="#111" />
+
+        <EditText
+            android:id="@+id/etSettPemilik"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Masukkan Nama Pemilik Usaha"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/tvAlamat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alamat"
+            android:textColor="#111" />
+
+        <EditText
+            android:id="@+id/etSettAlamat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Masukkan Alamat Usaha"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/tvTelp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Telepon"
+            android:textColor="#111" />
+
+        <EditText
+            android:id="@+id/etSettTelepon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Masukkan Nomor Telepon Usaha"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alamat Email"
+            android:textColor="#111" />
+
+        <EditText
+            android:id="@+id/etSettEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Masukkan Alamat Email Usaha"
+            android:inputType="textEmailAddress" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btSettEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Edit" />
+
+            <Button
+                android:id="@+id/btSettSimpan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Simpan" />
+        </LinearLayout>
+        />
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

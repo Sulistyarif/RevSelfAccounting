@@ -1,17 +1,22 @@
 package com.zakiadev.sulistyarif.revselfaccounting;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataPerusahaan;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
+
+import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 
 /**
  * Created by sulistyarif on 04/03/18.
@@ -45,15 +50,39 @@ public class SettingAwalPerusahaanActivity extends AppCompatActivity {
                     String alamat = etAlamat.getText().toString();
                     String telp = etAlamat.getText().toString();
                     String email = etEmail.getText().toString();
-                    new DBAdapterMix(SettingAwalPerusahaanActivity.this).insertDataPerusahaan(namaPers,pemilik,alamat,telp,email);
-                }
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("firstTime", true);
-                editor.commit();
 
-                Intent intent = new Intent(SettingAwalPerusahaanActivity.this, SettingNeracaAwalActivity.class);
-                startActivity(intent);
+                    DataPerusahaan dataPerusahaan = new DataPerusahaan();
+                    dataPerusahaan.setNamaPers(namaPers);
+                    dataPerusahaan.setNamaPemilik(pemilik);
+                    dataPerusahaan.setAlamat(alamat);
+                    dataPerusahaan.setTelp(telp);
+                    dataPerusahaan.setEmail(email);
+
+                    new DBAdapterMix(SettingAwalPerusahaanActivity.this).insertDataPerusahaan(dataPerusahaan);
+                }
+
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i){
+                            case DialogInterface.BUTTON_POSITIVE:{
+                                Intent intent = new Intent(SettingAwalPerusahaanActivity.this, MenuUtamaActivity.class);
+                                startActivity(intent);
+                                finish();
+                                break;
+                            }
+                            case DialogInterface.BUTTON_NEGATIVE:{
+                                Intent intent = new Intent(SettingAwalPerusahaanActivity.this, SettingNeracaAwalActivity.class);
+                                startActivity(intent);
+                                finish();
+                                break;
+                            }
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingAwalPerusahaanActivity.this);
+                builder.setMessage("Apakah anda akan memasukkan data Neraca Awal ?").setPositiveButton("Tidak",dialogClickListener).setNegativeButton("Ya",dialogClickListener).show();
             }
         });
 

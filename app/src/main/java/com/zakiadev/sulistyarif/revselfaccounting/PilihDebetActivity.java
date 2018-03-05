@@ -78,6 +78,10 @@ public class PilihDebetActivity extends AppCompatActivity {
                 tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataAkun.getDataPil(0,2,7,8)));
                 break;
             }
+            case 99:{
+                tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataAkun.getDataPil(0,1,7,8,9)));
+                break;
+            }
         }
 
 //        ketika dipilih itemnya, lalu akan kembali ke activity sebelumnya dengan melakukan passing data akun yang dipilih

@@ -48,7 +48,6 @@ public class JurnalKecActivity extends AppCompatActivity {
         tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataJurnalKec.getDataJurnal3()));
 
         fab = (FloatingActionButton)findViewById(R.id.btnAddJurnal);
-        fab.setImageResource(R.drawable.plus);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

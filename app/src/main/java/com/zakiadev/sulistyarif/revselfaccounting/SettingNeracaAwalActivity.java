@@ -2,17 +2,29 @@ package com.zakiadev.sulistyarif.revselfaccounting;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
+import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,32 +35,48 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Created by sulistyarif on 04/03/18.
+ * Created by sulistyarif on 28/02/18.
  */
 
 public class SettingNeracaAwalActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
-    Button btTgl,btAddAkun,btSaveData, pilihAkun;
-    LinearLayout llAkun;
-    EditText etNomAkun;
+    LinearLayout llDebet, llKredit;
+    Button btAddDebet, btAddKredit, btAddJurnal, btTgl;
+    Button pilihDebet, pilihKredit, btTestLoli;
+    EditText etNomDebet, etNomKredit, etKeterangan;
+    int jumDebet, etJumDebet, jumKredit, etJumKredit;
+    List<Button> dataBtDebet = new ArrayList<Button>();
+    List<Button> dataBtKredit = new ArrayList<Button>();
+    List<EditText> dataEtDebet = new ArrayList<EditText>();
+    List<EditText> dataEtKredit = new ArrayList<EditText>();
+    List<Integer> kodeDebetAl = new ArrayList<Integer>();
+    List<Integer> kodeKreditAl = new ArrayList<Integer>();
+    List<Integer> jenisDebetAl = new ArrayList<Integer>();
+    List<Integer> jenisKreditAl = new ArrayList<Integer>();
+    int pilihanTransaksi, index;
+    String namaDebet;
+    int kodeDebet, jenisDebet;
+    String namaKredit;
+    int kodeKredit, jenisKredit;
+    int kodeId;
     Calendar calendar;
     String tglStor;
-    int jumAkun,etJumAkun, index, kodeAkun, jenisAkun;
-    String namaAkun;
-    List<Button> dataBtAkun = new ArrayList<Button>();
-    List<EditText> dataEtAkun = new ArrayList<EditText>();
-    List<Integer> kodeAkunAl = new ArrayList<Integer>();
-    List<Integer> jenisAkunAl = new ArrayList<Integer>();
+    Spinner spinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting_neraca_awal_activity);
+        setContentView(R.layout.tambah_data_activity);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        llAkun = (LinearLayout)findViewById(R.id.llWadahNeraca);
-        btTgl = (Button)findViewById(R.id.btTglNeracaAwal);
-        btAddAkun = (Button)findViewById(R.id.btAddAkunNeracaAwal);
-        btSaveData = (Button)findViewById(R.id.btSaveNeracaAwal);
+        llDebet = (LinearLayout)findViewById(R.id.llDebet);
+        llKredit = (LinearLayout)findViewById(R.id.llKredit);
+
+        btAddDebet = (Button)findViewById(R.id.btAddDebet);
+        btAddKredit = (Button)findViewById(R.id.btAddKredit);
+        btAddJurnal = (Button)findViewById(R.id.btAddData);
+        btTgl = (Button)findViewById(R.id.btTgl2);
 
 //        set tanggal sekarang pada button pemilihan tanggal
         Date tgl = new Date();
@@ -67,33 +95,216 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
             }
         });
 
+        etKeterangan = (EditText)findViewById(R.id.etKeterangan2);
 
-        jumAkun = 1;
-        etJumAkun = 101;
+//        setting spinner
+        spinner = (Spinner)findViewById(R.id.spinner);
+        List<String> listSpinner = new ArrayList<String>();
+        listSpinner.add("Pilih Jenis Transaksi");
+        listSpinner.add("Setoran Modal");
+        listSpinner.add("Pembelian");
+        listSpinner.add("Penjualan Aset - Pendapatan Jasa");
+        listSpinner.add("Pinjaman dari Pihak Luar (Utang)");
+        listSpinner.add("Pembayaran Biaya");
+        listSpinner.add("Pengambilan untuk Pribadi");
+        listSpinner.add("Barter");
+        listSpinner.add("Penyesuaian");
+        ArrayAdapter adapterSpinner = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, listSpinner);
+        adapterSpinner.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinner.setAdapter(adapterSpinner);
 
-        tambahAkun(jumAkun,etJumAkun);
-        jumAkun++;
-        etJumAkun++;
+//        spinner on data change listener
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                pilihanTransaksi = position;
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spinner.setVisibility(View.GONE);
+        etKeterangan.setVisibility(View.GONE);
+
+        jumDebet = 1;
+        etJumDebet = 101;
+        jumKredit = 201;
+        etJumKredit = 301;
+
+        tambahDebet(jumDebet,etJumDebet);
+        jumDebet++;
+        etJumDebet++;
+
+        tambahKredit(jumKredit,etJumKredit);
+        jumKredit++;
+        etJumKredit++;
+
+        btAddDebet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tambahDebet(jumDebet, etJumDebet);
+                jumDebet++;
+                etJumDebet++;
+            }
+        });
+
+        btAddKredit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tambahKredit(jumKredit, etJumKredit);
+                jumKredit++;
+                etJumKredit++;
+            }
+        });
+
+        btAddJurnal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                debetloop:
+                for (int i = 0; i < dataEtDebet.size(); i++){
+                    if (dataEtDebet.get(i).getText().toString().equals("") || jenisDebetAl.size() != dataBtDebet.size()){
+                        Toast.makeText(SettingNeracaAwalActivity.this,"Lengkapi data debet",Toast.LENGTH_SHORT).show();
+                        break debetloop;
+                    }else if (i == (dataEtDebet.size() - 1)){
+                        Log.i("nilaiLoopDb", "nilai loop:" + i);
+                        kreditloop:
+                        for (int j = 0; j < dataEtKredit.size(); j++){
+                            if (dataEtKredit.get(j).getText().toString().equals("") || jenisKreditAl.size() != dataBtKredit.size()){
+                                Toast.makeText(SettingNeracaAwalActivity.this,"Lengkapi data kredit",Toast.LENGTH_SHORT).show();
+                                break debetloop;
+                            } else if (j == ((dataBtKredit.size()) - 1)){
+                                Log.i("nilaiLoopKr", "nilai loop:" + j);
+                                int nominalDebet = 0;
+                                int nominalKredit = 0;
+                                for (int k = 0; k < dataEtDebet.size(); k++){
+                                    nominalDebet += Integer.parseInt(dataEtDebet.get(k).getText().toString());
+                                }
+                                for (int k = 0; k< dataEtKredit.size(); k++){
+                                    nominalKredit += Integer.parseInt(dataEtKredit.get(k).getText().toString());
+                                }
+                                if (nominalDebet == nominalKredit){
+                                    tambahJurnal();
+                                } else {
+                                    Toast.makeText(SettingNeracaAwalActivity.this, "Nominal debet dan kredit tidak seimbang", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
     }
 
-    private void tambahAkun(int jumAkun, int etJumAkun) {
-        pilihAkun = new Button(this);
-        pilihAkun.setId(jumAkun);
-        pilihAkun.setText("Pilih Debet");
-        pilihAkun.setOnClickListener(viewOnclick);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_action_bar, menu);
+        return true;
+    }
 
-        etNomAkun = new EditText(this);
-        etNomAkun.setId(etJumAkun);
-        etNomAkun.setInputType(InputType.TYPE_CLASS_NUMBER);
-        etNomAkun.setHint("Masukkan Nominal");
+    private void tambahJurnal() {
+        kodeId = new DBAdapterMix(SettingNeracaAwalActivity.this).selectLastId();
+        int jenisAkunDebet, jenisAkunKredit;
+        int nominalAkunDebet, nominalAkunKredit;
+        String pid = "p" + kodeId;
+        String keterangan = "Neraca Awal";
 
-        llAkun.addView(pilihAkun);
-        dataBtAkun.add(pilihAkun);
+        DataJurnalMar dataJurnalMar = new DataJurnalMar();
+        dataJurnalMar.setPid(pid);
+        dataJurnalMar.setTgl(tglStor);
+        dataJurnalMar.setKet(keterangan);
+        dataJurnalMar.setKode_trans(pilihanTransaksi);
 
-        llAkun.addView(etNomAkun);
-        dataEtAkun.add(etNomAkun);
+        new DBAdapterMix(SettingNeracaAwalActivity.this).insertJurnalMar(dataJurnalMar);
+        Log.i("queryJurnal","insert into jurnal(pid,tgl,keterangan,trans) values (" + pid + "," + tglStor + ", " + keterangan +", " + pilihanTransaksi + ");" );
+
+//                testing input data transaksi bagian debet
+        for (int i = 0; i < dataEtDebet.size() ; i++){
+            jenisAkunDebet = jenisDebetAl.get(i);
+            nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getText().toString());
+            if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
+                nominalAkunDebet *= -1;
+            }
+
+            DataTransMar dataTransMar = new DataTransMar();
+            dataTransMar.setPid(pid);
+            dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
+            dataTransMar.setNominal(nominalAkunDebet);
+            dataTransMar.setPos(0);
+
+//                    tidak menggunakan insert namun menggunakan insert or update
+            new DBAdapterMix(SettingNeracaAwalActivity.this).insertTrans(dataTransMar);
+            Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
+        }
+
+//                testing input data transaksi bagian kredit
+        for (int i = 0 ; i < dataEtKredit.size() ; i++){
+            jenisAkunKredit = jenisKreditAl.get(i);
+            nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getText().toString());
+            Log.i("jenisAkun","" + jenisAkunKredit);
+            if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
+                nominalAkunKredit *= -1;
+            }
+
+            DataTransMar dataTransMar = new DataTransMar();
+            dataTransMar.setPid(pid);
+            dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
+            dataTransMar.setNominal(nominalAkunKredit);
+            dataTransMar.setPos(1);
+
+            new DBAdapterMix(SettingNeracaAwalActivity.this).insertTrans(dataTransMar);
+            Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
+        }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingNeracaAwalActivity.this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("firstTime", true);
+        editor.commit();
+
+        Intent intent = new Intent(SettingNeracaAwalActivity.this, MenuUtamaActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void tambahKredit(int jumKredit, int etJumKredit) {
+        pilihKredit = new Button(this);
+        pilihKredit.setId(jumKredit);
+        pilihKredit.setText("Pilih Kredit");
+        pilihKredit.setOnClickListener(viewOnclick);
+
+        etNomKredit = new EditText(this);
+        etNomKredit.setId(etJumKredit);
+        etNomKredit.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etNomKredit.setHint("Masukkan Nominal Kredit");
+
+        llKredit.addView(pilihKredit);
+        dataBtKredit.add(pilihKredit);
+
+        llKredit.addView(etNomKredit);
+        dataEtKredit.add(etNomKredit);
+    }
+
+    private void tambahDebet(int jumDebet, int etJumDebet) {
+        pilihDebet = new Button(this);
+        pilihDebet.setId(jumDebet);
+        pilihDebet.setText("Pilih Debet");
+        pilihDebet.setOnClickListener(viewOnclick);
+
+        etNomDebet = new EditText(this);
+        etNomDebet.setId(etJumDebet);
+        etNomDebet.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etNomDebet.setHint("Masukkan Nominal Debet");
+
+        llDebet.addView(pilihDebet);
+        dataBtDebet.add(pilihDebet);
+
+        llDebet.addView(etNomDebet);
+        dataEtDebet.add(etNomDebet);
     }
 
     View.OnClickListener viewOnclick = new View.OnClickListener() {
@@ -102,45 +313,21 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
             int idClick = view.getId();
             if (idClick < 200){
 //                Toast.makeText(TambahDataJurnalActivity.this, "id : " + idClick, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(SettingNeracaAwalActivity.this, PilihAkunNeracaAwal.class);
-//                intent.putExtra("pilihan", pilihanTransaksi);
-//                intent.putExtra("sumber", idClick);
-//                Log.i("noid","" + idClick);
+                Intent intent = new Intent(SettingNeracaAwalActivity.this, PilihDebetActivity.class);
+                intent.putExtra("pilihan", 99);
+                intent.putExtra("sumber", idClick);
+                Log.i("noid","" + idClick);
+                startActivityForResult(intent,idClick);
+            }else {
+//                Toast.makeText(TambahDataJurnalActivity.this, "id : " + idClick, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SettingNeracaAwalActivity.this, PilihKreditActivity.class);
+                intent.putExtra("pilihan", 99);
+                intent.putExtra("sumber", idClick);
+                Log.i("noid","" + idClick);
                 startActivityForResult(intent,idClick);
             }
         }
     };
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode < 200){
-            if (resultCode == RESULT_OK){
-                index = (data.getIntExtra("index",0)) - 1;
-                kodeAkun = Integer.parseInt(data.getStringExtra("kodeDebet"));
-                namaAkun = data.getStringExtra("namaDebet");
-                jenisAkun = Integer.parseInt(data.getStringExtra("jenisDebet"));
-                setAkunButton();
-                Log.i("account","succeed " + index + " " + resultCode + " " + data.getStringExtra("kodeDebet"));
-            }
-        }
-    }
-
-    private void setAkunButton() {
-        try{
-            kodeAkunAl.set(index,kodeAkun);
-        }catch (Exception e){
-            kodeAkunAl.add(kodeAkun);
-        }
-        try{
-            jenisAkunAl.set(index,jenisAkun);
-        }catch (Exception e){
-            jenisAkunAl.add(jenisAkun);
-        }
-        dataBtAkun.get(index).setText(namaAkun);
-        Toast.makeText(SettingNeracaAwalActivity.this, kodeAkun + namaAkun + jenisAkun,Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -164,5 +351,75 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode < 200){
+            if (resultCode == RESULT_OK){
+                index = (data.getIntExtra("index",0)) - 1;
+                kodeDebet = Integer.parseInt(data.getStringExtra("kodeDebet"));
+                namaDebet = data.getStringExtra("namaDebet");
+                jenisDebet = Integer.parseInt(data.getStringExtra("jenisDebet"));
+                setDebetButton();
+                Log.i("account","succeed " + index + " " + resultCode + " " + data.getStringExtra("kodeDebet"));
+            }
+        }else {
+            if (resultCode == RESULT_OK){
+                index = (data.getIntExtra("index",0)) - 201;
+                Log.i("account","succeed " + index + " " + resultCode + " " + data.getStringExtra("kodeKredit"));
+                kodeKredit = Integer.parseInt(data.getStringExtra("kodeKredit"));
+                namaKredit = data.getStringExtra("namaKredit");
+                jenisKredit = Integer.parseInt(data.getStringExtra("jenisKredit"));
+                setKreditButton();
+                dataBtKredit.get(index).setText(namaKredit);
+            }
+        }
+    }
+
+    private void setKreditButton() {
+        try{
+            kodeKreditAl.set(index,kodeKredit);
+        }catch (Exception e){
+            kodeKreditAl.add(kodeKredit);
+        }
+        try{
+            jenisKreditAl.set(index,jenisKredit);
+        }catch (Exception e){
+            jenisKreditAl.add(jenisKredit);
+        }
+        dataBtKredit.get(index).setText(namaKredit);
+        Toast.makeText(SettingNeracaAwalActivity.this, kodeKredit + namaKredit + jenisKredit,Toast.LENGTH_SHORT).show();
+    }
+
+    private void setDebetButton() {
+        try{
+            kodeDebetAl.set(index,kodeDebet);
+        }catch (Exception e){
+            kodeDebetAl.add(kodeDebet);
+        }
+        try{
+            jenisDebetAl.set(index,jenisDebet);
+        }catch (Exception e){
+            jenisDebetAl.add(jenisDebet);
+        }
+        dataBtDebet.get(index).setText(namaDebet);
+        Toast.makeText(SettingNeracaAwalActivity.this, kodeDebet + namaDebet + jenisDebet,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_restart:{
+                startActivity(getIntent());
+                finish();
+                return true;
+            }
+            default:{
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 }

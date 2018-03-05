@@ -12,6 +12,7 @@ import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataPerusahaan;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransaksiMar;
@@ -807,6 +808,31 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         return dataJurnals;
     }
 
+//    melakukan select pada data perusahaan
+    public DataPerusahaan selectDataPerusahaan() {
+
+        DataPerusahaan dataPerusahaan = new DataPerusahaan();
+        String querySelect = "SELECT * FROM data_perusahaan";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelect, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                dataPerusahaan.setNamaPers(cursor.getString(1));
+                dataPerusahaan.setNamaPemilik(cursor.getString(2));
+                dataPerusahaan.setAlamat(cursor.getString(3));
+                dataPerusahaan.setTelp(cursor.getString(4));
+                dataPerusahaan.setEmail(cursor.getString(5));
+
+            }
+        }
+
+        return dataPerusahaan;
+
+    }
+
 //    digunakan untuk insert data akun, dipanggil di splashscreen dan juga di setting
     public void insertAkun(DataAkun dataAkun, int jenisAkun){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -903,8 +929,14 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         return dataAkuns;
     }
 
-    public void insertDataPerusahaan(String namaPers, String namaPemilik, String alamat, String telp, String email) {
+    public void insertDataPerusahaan(DataPerusahaan dataPerusahaan) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        String namaPers = dataPerusahaan.getNamaPers();
+        String namaPemilik = dataPerusahaan.getNamaPemilik();
+        String alamat = dataPerusahaan.getAlamat();
+        String telp = dataPerusahaan.getTelp();
+        String email = dataPerusahaan.getEmail();
 
         String query = "INSERT OR REPLACE INTO data_perusahaan('id','nama_perusahaan','nama_pemilik','alamat','telp','email') VALUES ('1', '" + namaPers +"', '" + namaPemilik +"', '" + alamat + "', '" + telp + "', '" + email +"');";
         db.execSQL(query);
