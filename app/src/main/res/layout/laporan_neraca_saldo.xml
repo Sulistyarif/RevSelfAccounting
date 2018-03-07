@@ -37,11 +37,11 @@
 
     <!--</LinearLayout>-->
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
+        android:id="@+id/fabNeracaSaldo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

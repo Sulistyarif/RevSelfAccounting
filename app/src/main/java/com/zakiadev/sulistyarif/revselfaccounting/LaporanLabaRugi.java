@@ -1,7 +1,13 @@
 package com.zakiadev.sulistyarif.revselfaccounting;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,7 +16,9 @@ import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataPerusahaan;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
@@ -30,11 +38,14 @@ public class LaporanLabaRugi extends AppCompatActivity {
     private String[] listTahun = new String[50];
     int bulanDipilih, tahunDipilih;
     String strBulan, strTahun;
+    FloatingActionButton fabPrint;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_laba_rugi_activity);
+
+        fabPrint = (FloatingActionButton)findViewById(R.id.fabLabaRugi);
 
         webView = (WebView)findViewById(R.id.wvLabaRugi);
 
@@ -102,6 +113,11 @@ public class LaporanLabaRugi extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 int labaBersih = 0;
+
+//                setting header
+                DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanLabaRugi.this).selectDataPerusahaan();
+                webView.loadUrl("javascript:setNamaPres('" + dataPerusahaan.getNamaPers() + "');");
+                webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
 //                pengambilan data untuk pendapatan
                 ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMar(5, bulanDipilih, tahunDipilih);
@@ -193,8 +209,36 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
                 webView.loadUrl("javascript:separator('" + "Laba Bersih" + "', '" + labaBersih + "');");
 
+                fabPrint.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                            createWebPrintJob(webView);
+                        } else {
+                            Toast.makeText(LaporanLabaRugi.this, "Versi Android Anda Tidak Mendukung Export PDF",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+
             }
         });
 
+    }
+
+    private void createWebPrintJob(WebView webView) {
+        PrintManager printManager = (PrintManager) this
+                .getSystemService(Context.PRINT_SERVICE);
+
+        PrintDocumentAdapter printAdapter =
+                this.webView.createPrintDocumentAdapter();
+
+        String jobName = getString(R.string.app_name) + " Print Test";
+
+        if (printManager != null) {
+            printManager.print(jobName, printAdapter,
+                    new PrintAttributes.Builder().build());
+        }
     }
 }

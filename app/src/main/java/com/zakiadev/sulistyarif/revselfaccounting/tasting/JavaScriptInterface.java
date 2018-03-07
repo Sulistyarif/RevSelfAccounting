@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 public class JavaScriptInterface {
     Context context;
-    WebviewActivity webviewActivity;
+    LaporanJurnalUmum laporanJurnalUmum;
 
     public JavaScriptInterface(Context context) {
         this.context = context;

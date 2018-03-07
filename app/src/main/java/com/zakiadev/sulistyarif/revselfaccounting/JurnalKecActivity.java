@@ -10,18 +10,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataJurnalKec;
-import com.zakiadev.sulistyarif.revselfaccounting.tasting.WebviewActivity;
 
 import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.listeners.TableDataClickListener;
-import de.codecrafters.tableview.listeners.TableDataLongClickListener;
 import de.codecrafters.tableview.listeners.TableHeaderClickListener;
-import de.codecrafters.tableview.model.TableColumnWeightModel;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 

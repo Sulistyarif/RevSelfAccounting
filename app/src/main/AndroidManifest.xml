@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zakiadev.sulistyarif.revselfaccounting">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -29,7 +32,7 @@
         <activity android:name=".PilihKreditActivity"/>
         <activity android:name=".MenuUtamaActivity"/>
         <activity android:name=".LaporanNeracaSaldoActivity"/>
-        <activity android:name=".tasting.WebviewActivity"/>
+        <activity android:name=".tasting.LaporanJurnalUmum"/>
         <activity android:name=".LaporanLabaRugi"/>
         <activity android:name=".LaporanPerubahanEkuitas"/>
         <activity android:name=".LaporanNeracaActivity"/>

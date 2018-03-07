@@ -1,8 +1,14 @@
 package com.zakiadev.sulistyarif.revselfaccounting;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,9 +19,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataPerusahaan;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
@@ -37,11 +45,14 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
     private String[] listBulan = {"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
     private String[] listTahun = new String[50];
     int bulanDipilih, tahunDipilih;
+    FloatingActionButton fabPrint;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_perubahan_ekuitas_activity);
+
+        fabPrint = (FloatingActionButton)findViewById(R.id.fabPErubahanEkui);
 
 //        dikasi di awal biar ga null pointer
         webView = (WebView)findViewById(R.id.wvEkuitas);
@@ -110,6 +121,11 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+
+//                setting header
+                DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectDataPerusahaan();
+                webView.loadUrl("javascript:setNamaPres('" + dataPerusahaan.getNamaPers() + "');");
+                webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
 //                mencari modal awal sesuai tangggal yang diinputkan
                 ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalAwalMar(bulanDipilih,tahunDipilih);
@@ -199,12 +215,40 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 dataModal.setNominal(modalAkhirBulan);
                 new DBAdapterMix(LaporanPerubahanEkuitas.this).insertModal(dataModal);
 
+                fabPrint.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                            createWebPrintJob(webView);
+                        } else {
+                            Toast.makeText(LaporanPerubahanEkuitas.this, "Versi Android Anda Tidak Mendukung Export PDF",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+
             }
 
         });
 
 
 
+    }
+
+    private void createWebPrintJob(WebView webView) {
+        PrintManager printManager = (PrintManager) this
+                .getSystemService(Context.PRINT_SERVICE);
+
+        PrintDocumentAdapter printAdapter =
+                this.webView.createPrintDocumentAdapter();
+
+        String jobName = getString(R.string.app_name) + " Print Test";
+
+        if (printManager != null) {
+            printManager.print(jobName, printAdapter,
+                    new PrintAttributes.Builder().build());
+        }
     }
 
 }

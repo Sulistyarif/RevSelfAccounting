@@ -53,23 +53,37 @@
         row.insertCell(3).innerHTML= saldoKredit;
 
     }
+
+    function setNamaPers(nama){
+        document.getElementById("namaPers").innerHTML= nama;
+    }
+
+    function setPeriode(bulan, tahun){
+        document.getElementById("periode").innerHTML= "periode " + bulan + " " + tahun;
+    }
+
     </script>
 
 </head>
 <body>
-<div class="table-responsive">
-    <table class="table table-bordered" id="myTableData">
-        <thead class="thead-dark">
-        <tr>
-            <th>Kode Akun</th>
-            <th>Nama Akun</th>
-            <th>Debet</th>
-            <th>Kredit</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<div class="container-fluid">
+    <h1 id="namaPers" align="center"></h1>
+    <h3 align="center">Laporan Neraca Saldo</h3>
+    <h4 id="periode" align="center"></h4>
+    <div class="table-responsive">
+        <table class="table table-bordered" id="myTableData">
+            <thead class="thead-dark">
+            <tr>
+                <th>Kode Akun</th>
+                <th>Nama Akun</th>
+                <th>Debet</th>
+                <th>Kredit</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

@@ -226,12 +226,25 @@
       myTableDiv.appendChild(table);
     }
 
+    function setNamaPers(nama){
+        document.getElementById("namaPers").innerHTML= nama;
+    }
+
+    function setPeriode(bulan, tahun){
+        document.getElementById("periode").innerHTML= "untuk perioda yang berakhir 31 " + bulan + " " + tahun + " (dalam rupiah)";
+    }
 
     </script>
 
 </head>
 <body>
-<div id="dynamicTable" class="table-responsive">
+<div class="container-fluid">
+    <h1 id="namaPers" align="center"></h1>
+    <h3 align="center">Laporan Laba/Rugi</h3>
+    <h4 id="periode" align="center"></h4>
+    <div id="dynamicTable" class="table-responsive">
+    </div>
+
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

@@ -1,8 +1,13 @@
 package com.zakiadev.sulistyarif.revselfaccounting;
 
-import android.graphics.Color;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -11,23 +16,15 @@ import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnal;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataPerusahaan;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
-import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataAkun;
-import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataSaldo;
-import com.zakiadev.sulistyarif.revselfaccounting.tasting.JavaScriptInterface;
-import com.zakiadev.sulistyarif.revselfaccounting.tasting.WebviewActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
-import de.codecrafters.tableview.TableView;
-import de.codecrafters.tableview.model.TableColumnDpWidthModel;
-import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
-import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
 /**
  * Created by sulistyarif on 13/02/18.
@@ -40,12 +37,15 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
     private String[] listTahun = new String[50];
     int bulanDipilih, tahunDipilih;
     String strBulan, strTahun;
+    FloatingActionButton fabPrint;
     WebView webView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_neraca_saldo);
+
+        fabPrint = (FloatingActionButton)findViewById(R.id.fabNeracaSaldo);
 
         webView = (WebView)findViewById(R.id.wvNeracaSaldo);
 
@@ -111,6 +111,12 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+
+//                setting header
+                DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectDataPerusahaan();
+                webView.loadUrl("javascript:setNamaPres('" + dataPerusahaan.getNamaPers() + "');");
+                webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
+
                 ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectNeracaSaldoMar(bulanDipilih,tahunDipilih);
                 DataSaldo dataSaldo;
                 int saldoDebet = 0 ,saldoKredit = 0;
@@ -134,9 +140,40 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
                 }
                 webView.loadUrl("javascript:addRowTotal('" + saldoDebet + "', '" + saldoKredit + "');");
 
+                fabPrint.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                            createWebPrintJob(webView);
+                        } else {
+                            Toast.makeText(LaporanNeracaSaldoActivity.this, "Versi Android Anda Tidak Mendukung Export PDF",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+
             }
+
+
         });
 
 
     }
+
+    private void createWebPrintJob(WebView webView) {
+        PrintManager printManager = (PrintManager) this
+                .getSystemService(Context.PRINT_SERVICE);
+
+        PrintDocumentAdapter printAdapter =
+                this.webView.createPrintDocumentAdapter();
+
+        String jobName = getString(R.string.app_name) + " Print Test";
+
+        if (printManager != null) {
+            printManager.print(jobName, printAdapter,
+                    new PrintAttributes.Builder().build());
+        }
+    }
+
 }

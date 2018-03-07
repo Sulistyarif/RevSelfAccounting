@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Masukkan Nama Usaha"
-            android:inputType="textPersonName" />
+            android:inputType="textCapWords|textPersonName" />
 
         <TextView
             android:id="@+id/tvPemilik"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Masukkan Nama Pemilik Usaha"
-            android:inputType="textPersonName" />
+            android:inputType="textCapWords|textPersonName" />
 
         <TextView
             android:id="@+id/tvAlamat"
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Masukkan Alamat Usaha"
-            android:inputType="textPersonName" />
+            android:inputType="textPostalAddress" />
 
         <TextView
             android:id="@+id/tvTelp"

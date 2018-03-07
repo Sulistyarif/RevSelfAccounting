@@ -93,21 +93,35 @@
       myTableDiv.appendChild(table);
     }
 
+    function setNamaPers(nama){
+        document.getElementById("namaPers").innerHTML= nama;
+    }
+
+    function setPeriode(bulan, tahun){
+        document.getElementById("periode").innerHTML= "untuk perioda yang berakhir 31 " + bulan + " " + tahun + " (dalam rupiah)";
+    }
+
     </script>
 
 </head>
 <body>
-<h2><Center>ARUS KAS</Center></h2>
-<div id="kasOp" class="table-responsive">
+<div class="container-fluid">
 
-</div>
+    <h1 id="namaPers" align="center"></h1>
+    <h3 align="center">Laporan Arus Kas</h3>
+    <h4 id="periode" align="center"></h4>
+    <h2><Center>ARUS KAS</Center></h2>
+    <div id="kasOp" class="table-responsive">
 
-<div id="kasInvest" class="table-responsive">
+    </div>
 
-</div>
+    <div id="kasInvest" class="table-responsive">
 
-<div id="kasDana" class="table-responsive">
+    </div>
 
+    <div id="kasDana" class="table-responsive">
+
+    </div>
 </div>
 
 <script src="js/bootstrap.min.js"></script>
