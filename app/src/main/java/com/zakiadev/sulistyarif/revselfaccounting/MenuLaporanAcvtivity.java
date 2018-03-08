@@ -18,7 +18,7 @@ import com.zakiadev.sulistyarif.revselfaccounting.tasting.LaporanJurnalUmum;
 public class MenuLaporanAcvtivity extends AppCompatActivity {
 
     ListView lvMenuLaporan;
-    String[] menu = {"Jurnal", "Neraca Saldo", "Laba Rugi", "Perubahan Ekuitas", "Neraca", "Arus Kas"};
+    String[] menu = {"Jurnal Umum", "Neraca Saldo", "Laba Rugi", "Perubahan Ekuitas", "Neraca", "Arus Kas"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

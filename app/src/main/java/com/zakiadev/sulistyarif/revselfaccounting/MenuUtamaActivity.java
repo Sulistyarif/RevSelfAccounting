@@ -78,6 +78,8 @@ public class MenuUtamaActivity extends AppCompatActivity {
 
                     case 3:{
 //                        untuk menuju ke materi
+                        Intent intent = new Intent(MenuUtamaActivity.this, MenuUtamaMateri.class);
+                        startActivity(intent);
                         break;
                     }
                 }

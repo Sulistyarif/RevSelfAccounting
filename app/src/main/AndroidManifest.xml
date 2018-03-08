@@ -44,6 +44,9 @@
         <activity android:name=".PilihAkunNeracaAwal"/>
         <activity android:name=".SettingNeracaAwalActivity"/>
         <activity android:name=".SettingDataPerusahaan"/>
+        <activity android:name=".MenuUtamaMateri"/>
+        <activity android:name=".MateriWebView1"/>
+        <activity android:name=".MateriWebView2"/>
 
     </application>
 
