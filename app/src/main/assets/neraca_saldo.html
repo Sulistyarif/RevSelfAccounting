@@ -1,22 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Bootstrap 101 Template</title>
-
-    <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <!--<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>-->
-    <!--<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
-    <![endif]-->
-
+    <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
+    <script language="JavaScript" type="text/javascript" src="/js/sprinkle.js"></script>
     <script>
         function addRow(kodeAkun, namaAkun, nominal, jenis){
 
@@ -30,11 +20,11 @@
         row.insertCell(1).innerHTML= namaAkun;
 
         if (jenis == 0 || jenis == 1 || jenis == 7 || jenis == 8 || jenis == 9){
-            row.insertCell(2).innerHTML= "<center>" + nominal + "</center>";
+            row.insertCell(2).innerHTML= "<center>" + numberWithCommas(nominal) + "</center>";
             row.insertCell(3).innerHTML= "<center>-</center>";
         }else{
             row.insertCell(2).innerHTML= "<center>-</center>";
-            row.insertCell(3).innerHTML= "<center>" + nominal + "</center>";
+            row.insertCell(3).innerHTML= "<center>" + numberWithCommas(nominal) + "</center>";
         }
 
     }
@@ -49,17 +39,25 @@
 
         row.insertCell(0).innerHTML= "";
         row.insertCell(1).innerHTML= "Total";
-        row.insertCell(2).innerHTML= saldoDebet;
-        row.insertCell(3).innerHTML= saldoKredit;
+        row.insertCell(2).innerHTML= numberWithCommas(saldoDebet);
+        row.insertCell(3).innerHTML= numberWithCommas(saldoKredit);
 
     }
 
-    function setNamaPers(nama){
-        document.getElementById("namaPers").innerHTML= nama;
+    var nama = "";
+
+    function setNamaPersNeracaSaldo(nama){
+        document.getElementById("namaPerusahaan").innerHTML= nama;
     }
 
     function setPeriode(bulan, tahun){
         document.getElementById("periode").innerHTML= "periode " + bulan + " " + tahun;
+    }
+
+    const numberWithCommas = (x) => {
+      var parts = x.toString().split(",");
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return parts.join(",");
     }
 
     </script>
@@ -67,7 +65,7 @@
 </head>
 <body>
 <div class="container-fluid">
-    <h1 id="namaPers" align="center"></h1>
+    <h2 id="namaPerusahaan" align="center"></h2>
     <h3 align="center">Laporan Neraca Saldo</h3>
     <h4 id="periode" align="center"></h4>
     <div class="table-responsive">
@@ -85,10 +83,5 @@
         </table>
     </div>
 </div>
-
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

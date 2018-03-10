@@ -78,14 +78,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="tambah debet" />
+                            android:text="tambah akun debet" />
 
                         <Button
                             android:id="@+id/btAddKredit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="tambah kredit" />
+                            android:text="tambah akun kredit" />
 
                     </LinearLayout>
 

@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
@@ -43,12 +44,13 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
     LinearLayout llDebet, llKredit;
     Button btAddDebet, btAddKredit, btAddJurnal, btTgl;
     Button pilihDebet, pilihKredit, btTestLoli;
-    EditText etNomDebet, etNomKredit, etKeterangan;
+    EasyMoneyEditText etNomDebet, etNomKredit;
+    EditText etKeterangan;
     int jumDebet, etJumDebet, jumKredit, etJumKredit;
     List<Button> dataBtDebet = new ArrayList<Button>();
     List<Button> dataBtKredit = new ArrayList<Button>();
-    List<EditText> dataEtDebet = new ArrayList<EditText>();
-    List<EditText> dataEtKredit = new ArrayList<EditText>();
+    List<EasyMoneyEditText> dataEtDebet = new ArrayList<EasyMoneyEditText>();
+    List<EasyMoneyEditText> dataEtKredit = new ArrayList<EasyMoneyEditText>();
     List<Integer> kodeDebetAl = new ArrayList<Integer>();
     List<Integer> kodeKreditAl = new ArrayList<Integer>();
     List<Integer> jenisDebetAl = new ArrayList<Integer>();
@@ -76,6 +78,9 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
         btAddDebet = (Button)findViewById(R.id.btAddDebet);
         btAddKredit = (Button)findViewById(R.id.btAddKredit);
         btAddJurnal = (Button)findViewById(R.id.btAddData);
+
+        btAddJurnal.setText("SIMPAN");
+
         btTgl = (Button)findViewById(R.id.btTgl2);
 
 //        set tanggal sekarang pada button pemilihan tanggal
@@ -166,14 +171,14 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
 
                 debetloop:
                 for (int i = 0; i < dataEtDebet.size(); i++){
-                    if (dataEtDebet.get(i).getText().toString().equals("") || jenisDebetAl.size() != dataBtDebet.size()){
+                    if (dataEtDebet.get(i).getValueString().equals("") || jenisDebetAl.size() != dataBtDebet.size()){
                         Toast.makeText(SettingNeracaAwalActivity.this,"Lengkapi data debet",Toast.LENGTH_SHORT).show();
                         break debetloop;
                     }else if (i == (dataEtDebet.size() - 1)){
                         Log.i("nilaiLoopDb", "nilai loop:" + i);
                         kreditloop:
                         for (int j = 0; j < dataEtKredit.size(); j++){
-                            if (dataEtKredit.get(j).getText().toString().equals("") || jenisKreditAl.size() != dataBtKredit.size()){
+                            if (dataEtKredit.get(j).getValueString().equals("") || jenisKreditAl.size() != dataBtKredit.size()){
                                 Toast.makeText(SettingNeracaAwalActivity.this,"Lengkapi data kredit",Toast.LENGTH_SHORT).show();
                                 break debetloop;
                             } else if (j == ((dataBtKredit.size()) - 1)){
@@ -181,10 +186,10 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
                                 int nominalDebet = 0;
                                 int nominalKredit = 0;
                                 for (int k = 0; k < dataEtDebet.size(); k++){
-                                    nominalDebet += Integer.parseInt(dataEtDebet.get(k).getText().toString());
+                                    nominalDebet += Integer.parseInt(dataEtDebet.get(k).getValueString());
                                 }
                                 for (int k = 0; k< dataEtKredit.size(); k++){
-                                    nominalKredit += Integer.parseInt(dataEtKredit.get(k).getText().toString());
+                                    nominalKredit += Integer.parseInt(dataEtKredit.get(k).getValueString());
                                 }
                                 if (nominalDebet == nominalKredit){
                                     tambahJurnal();
@@ -226,7 +231,7 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
 //                testing input data transaksi bagian debet
         for (int i = 0; i < dataEtDebet.size() ; i++){
             jenisAkunDebet = jenisDebetAl.get(i);
-            nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getText().toString());
+            nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getValueString());
             if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
                 nominalAkunDebet *= -1;
             }
@@ -245,7 +250,7 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
 //                testing input data transaksi bagian kredit
         for (int i = 0 ; i < dataEtKredit.size() ; i++){
             jenisAkunKredit = jenisKreditAl.get(i);
-            nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getText().toString());
+            nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getValueString());
             Log.i("jenisAkun","" + jenisAkunKredit);
             if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
                 nominalAkunKredit *= -1;
@@ -261,10 +266,10 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
             Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingNeracaAwalActivity.this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("firstTime", true);
-        editor.commit();
+        SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(SettingNeracaAwalActivity.this);
+        SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+        editor1.putBoolean("neracaSaldo", true);
+        editor1.commit();
 
         Intent intent = new Intent(SettingNeracaAwalActivity.this, MenuUtamaActivity.class);
         startActivity(intent);
@@ -274,10 +279,10 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
     private void tambahKredit(int jumKredit, int etJumKredit) {
         pilihKredit = new Button(this);
         pilihKredit.setId(jumKredit);
-        pilihKredit.setText("Pilih Kredit");
+        pilihKredit.setText("Pilih Akun Kredit");
         pilihKredit.setOnClickListener(viewOnclick);
 
-        etNomKredit = new EditText(this);
+        etNomKredit = new EasyMoneyEditText(this);
         etNomKredit.setId(etJumKredit);
         etNomKredit.setInputType(InputType.TYPE_CLASS_NUMBER);
         etNomKredit.setHint("Masukkan Nominal Kredit");
@@ -292,10 +297,10 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
     private void tambahDebet(int jumDebet, int etJumDebet) {
         pilihDebet = new Button(this);
         pilihDebet.setId(jumDebet);
-        pilihDebet.setText("Pilih Debet");
+        pilihDebet.setText("Pilih Akun Debet");
         pilihDebet.setOnClickListener(viewOnclick);
 
-        etNomDebet = new EditText(this);
+        etNomDebet = new EasyMoneyEditText(this);
         etNomDebet.setId(etJumDebet);
         etNomDebet.setInputType(InputType.TYPE_CLASS_NUMBER);
         etNomDebet.setHint("Masukkan Nominal Debet");
@@ -391,7 +396,7 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
             jenisKreditAl.add(jenisKredit);
         }
         dataBtKredit.get(index).setText(namaKredit);
-        Toast.makeText(SettingNeracaAwalActivity.this, kodeKredit + namaKredit + jenisKredit,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(SettingNeracaAwalActivity.this, kodeKredit + namaKredit + jenisKredit,Toast.LENGTH_SHORT).show();
     }
 
     private void setDebetButton() {
@@ -406,7 +411,7 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
             jenisDebetAl.add(jenisDebet);
         }
         dataBtDebet.get(index).setText(namaDebet);
-        Toast.makeText(SettingNeracaAwalActivity.this, kodeDebet + namaDebet + jenisDebet,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(SettingNeracaAwalActivity.this, kodeDebet + namaDebet + jenisDebet,Toast.LENGTH_SHORT).show();
     }
 
     @Override

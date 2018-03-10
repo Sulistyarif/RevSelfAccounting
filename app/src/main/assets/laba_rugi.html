@@ -43,7 +43,7 @@
       tr.appendChild(td1);
 
       var td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(nominal));
+      td2.appendChild(document.createTextNode(numberWithCommas(nominal)));
       tr.appendChild(td2);
 
       var td3 = document.createElement('TD');
@@ -53,114 +53,6 @@
       myTableDiv.appendChild(table);
 
     }
-
-    function totalPendapatan(total){
-
-
-        var myTableDiv = document.getElementById("dynamicTable");
-
-        var table = document.createElement('TABLE');
-        table.border = "1";
-        table.width = "100%";
-        table.setAttribute("class","table table-bordered");
-
-        var tableBody = document.createElement('TBODY');
-        table.appendChild(tableBody);
-
-        // separate
-
-      var tr1 = document.createElement('TR');
-      tableBody.appendChild(tr1);
-
-      td = document.createElement('TD');
-      td.appendChild(document.createTextNode(""));
-      tr1.appendChild(td);
-
-      td1 = document.createElement('TD');
-      td1.appendChild(document.createTextNode("Total Pendapatan Bersih"));
-      tr1.appendChild(td1);
-
-      td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(""));
-      tr1.appendChild(td2);
-
-      td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
-      tr1.appendChild(td3);
-
-      myTableDiv.appendChild(table);
-    }
-
-    function totalBeban(total){
-
-
-        var myTableDiv = document.getElementById("dynamicTable");
-
-        var table = document.createElement('TABLE');
-        table.setAttribute("class","table table-bordered");
-
-        var tableBody = document.createElement('TBODY');
-        table.appendChild(tableBody);
-
-        // separate
-
-      var tr1 = document.createElement('TR');
-      tableBody.appendChild(tr1);
-
-      td = document.createElement('TD');
-      td.appendChild(document.createTextNode(""));
-      tr1.appendChild(td);
-
-      td1 = document.createElement('TD');
-      td1.appendChild(document.createTextNode("Total Beban"));
-      tr1.appendChild(td1);
-
-      td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(""));
-      tr1.appendChild(td2);
-
-      td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
-      tr1.appendChild(td3);
-
-      myTableDiv.appendChild(table);
-    }
-
-    function labaBersih(total){
-
-
-        var myTableDiv = document.getElementById("dynamicTable");
-
-        var table = document.createElement('TABLE');
-        table.setAttribute("class","table table-bordered");
-
-        var tableBody = document.createElement('TBODY');
-        table.appendChild(tableBody);
-
-        // separate
-
-      var tr1 = document.createElement('TR');
-      tableBody.appendChild(tr1);
-
-      td = document.createElement('TD');
-      td.appendChild(document.createTextNode(""));
-      tr1.appendChild(td);
-
-      td1 = document.createElement('TD');
-      td1.appendChild(document.createTextNode("Laba Bersih"));
-      tr1.appendChild(td1);
-
-      td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(""));
-      tr1.appendChild(td2);
-
-      td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
-      tr1.appendChild(td3);
-
-      myTableDiv.appendChild(table);
-    }
-
 
     function separator(teks, total){
 
@@ -182,7 +74,7 @@
       tr1.appendChild(td1);
 
       td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
+      td3.appendChild(document.createTextNode(numberWithCommas(total)));
       td3.setAttribute("width","25%");
       tr1.appendChild(td3);
 
@@ -214,7 +106,7 @@
       tr1.appendChild(td1);
 
       td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(nominal));
+      td2.appendChild(document.createTextNode(numberWithCommas(nominal)));
       td2.setAttribute("width","20%");
       tr1.appendChild(td2);
 
@@ -226,12 +118,18 @@
       myTableDiv.appendChild(table);
     }
 
-    function setNamaPers(nama){
+    function setNamaPersLabaRugi(nama){
         document.getElementById("namaPers").innerHTML= nama;
     }
 
     function setPeriode(bulan, tahun){
         document.getElementById("periode").innerHTML= "untuk perioda yang berakhir 31 " + bulan + " " + tahun + " (dalam rupiah)";
+    }
+
+    const numberWithCommas = (x) => {
+      var parts = x.toString().split(",");
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return parts.join(",");
     }
 
     </script>

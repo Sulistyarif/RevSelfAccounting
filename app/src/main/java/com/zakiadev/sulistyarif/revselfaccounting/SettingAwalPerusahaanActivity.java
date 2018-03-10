@@ -69,12 +69,28 @@ public class SettingAwalPerusahaanActivity extends AppCompatActivity {
                                 Intent intent = new Intent(SettingAwalPerusahaanActivity.this, MenuUtamaActivity.class);
                                 startActivity(intent);
                                 finish();
+                                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("firstTime", true);
+                                editor.commit();
+
+                                SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
+                                SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                                editor1.putBoolean("neracaSaldo", true);
+                                editor1.commit();
+
                                 break;
                             }
                             case DialogInterface.BUTTON_NEGATIVE:{
                                 Intent intent = new Intent(SettingAwalPerusahaanActivity.this, SettingNeracaAwalActivity.class);
                                 startActivity(intent);
                                 finish();
+
+                                SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
+                                SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                                editor1.putBoolean("neracaSaldo", true);
+                                editor1.commit();
+
                                 break;
                             }
                         }

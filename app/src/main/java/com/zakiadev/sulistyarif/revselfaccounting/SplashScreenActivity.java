@@ -15,7 +15,12 @@ import com.zakiadev.sulistyarif.revselfaccounting.data.DataAkun;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataSaldo;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Sulistyarif on 07/02/2018.
@@ -34,6 +39,11 @@ public class SplashScreenActivity extends AppCompatActivity{
             Log.i("firstInstallation", "Hanya akan berjalan pada saat pertama kali install");
             masukanDataDefault();
 //            nanti dipindah ke simpan data yang di simpan neraca awal
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+
+//            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingNeracaAwalActivity.this);
 //            SharedPreferences.Editor editor = sharedPreferences.edit();
 //            editor.putBoolean("firstTime", true);
 //            editor.commit();
@@ -47,6 +57,15 @@ public class SplashScreenActivity extends AppCompatActivity{
                 }
             }, 2000L);
 
+        } else if (!sharedPreferences.getBoolean("neracaSaldo", false)){
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(SplashScreenActivity.this, SettingNeracaAwalActivity.class));
+                    finish();
+                }
+            }, 2000L);
         }else {
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {

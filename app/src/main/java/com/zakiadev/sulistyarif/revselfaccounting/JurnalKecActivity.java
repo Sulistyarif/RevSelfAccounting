@@ -17,6 +17,7 @@ import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataJur
 import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.listeners.TableDataClickListener;
 import de.codecrafters.tableview.listeners.TableHeaderClickListener;
+import de.codecrafters.tableview.model.TableColumnDpWidthModel;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
@@ -37,10 +38,14 @@ public class JurnalKecActivity extends AppCompatActivity {
 
         tableHelperDataJurnalKec = new TableHelperDataJurnalKec(this);
         tableView = (TableView<String[]>)findViewById(R.id.tvKecJurnal);
-        tableView.setColumnCount(2);
+//        tableView.setColumnCount(2);
         tableView.setHeaderBackgroundColor(Color.parseColor("#3498db"));
         tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this,tableHelperDataJurnalKec.getColHeader()));
         tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataJurnalKec.getDataJurnal3()));
+        TableColumnDpWidthModel columnModel = new TableColumnDpWidthModel(JurnalKecActivity.this, 2, 200);
+        columnModel.setColumnWidth(0, 120);
+        columnModel.setColumnWidth(1, 250);
+        tableView.setColumnModel(columnModel);
 
         fab = (FloatingActionButton)findViewById(R.id.btnAddJurnal);
         fab.setOnClickListener(new View.OnClickListener() {

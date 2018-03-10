@@ -114,7 +114,9 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
 
 //                setting header
                 DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectDataPerusahaan();
-                webView.loadUrl("javascript:setNamaPres('" + dataPerusahaan.getNamaPers() + "');");
+                Log.i("loadNamaPers",dataPerusahaan.getNamaPers());
+
+                webView.loadUrl("javascript:setNamaPersNeracaSaldo('" + dataPerusahaan.getNamaPers() + "');");
                 webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
                 ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectNeracaSaldoMar(bulanDipilih,tahunDipilih);

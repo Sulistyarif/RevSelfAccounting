@@ -16,6 +16,8 @@ import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataAkun;
 
 import de.codecrafters.tableview.TableView;
+import de.codecrafters.tableview.model.TableColumnDpWidthModel;
+import de.codecrafters.tableview.model.TableColumnWeightModel;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
@@ -50,7 +52,7 @@ public class DaftarAkunActivity extends AppCompatActivity {
 
         tableHelperDataAkun = new TableHelperDataAkun(this);
         tableView = (TableView<String[]>)findViewById(R.id.tvKecJurnal);
-        tableView.setColumnCount(2);
+//        tableView.setColumnCount(4);
         tableView.setHeaderBackgroundColor(Color.parseColor("#3498db"));
         tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableHelperDataAkun.getColHeader()));
         if (jenisAkun == 11){
@@ -60,6 +62,10 @@ public class DaftarAkunActivity extends AppCompatActivity {
             tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataAkun.getDataAkun(jenisAkun)));
             fab.setVisibility(View.VISIBLE);
         }
+        TableColumnDpWidthModel columnModel = new TableColumnDpWidthModel(DaftarAkunActivity.this, 2, 200);
+        columnModel.setColumnWidth(0, 105);
+        columnModel.setColumnWidth(1, 250);
+        tableView.setColumnModel(columnModel);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

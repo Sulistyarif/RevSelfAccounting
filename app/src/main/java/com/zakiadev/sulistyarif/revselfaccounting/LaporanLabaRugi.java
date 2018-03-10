@@ -116,7 +116,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
 //                setting header
                 DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanLabaRugi.this).selectDataPerusahaan();
-                webView.loadUrl("javascript:setNamaPres('" + dataPerusahaan.getNamaPers() + "');");
+                webView.loadUrl("javascript:setNamaPersLabaRugi('" + dataPerusahaan.getNamaPers() + "');");
                 webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
 //                pengambilan data untuk pendapatan

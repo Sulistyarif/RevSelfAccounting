@@ -167,7 +167,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
 //                karena col 0 itu id
                 String pid = cursor.getString(1);
-                String tgl = cursor.getString(2);
+                String tgl = formatter(cursor.getString(2));
                 String ket = cursor.getString(3);
                 int kodeTrans = cursor.getInt(4);
 
@@ -295,7 +295,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
             while (cursor.moveToNext()){
 
                 String pid = cursor.getString(0);
-                String tgl = cursor.getString(1);
+                String tgl = formatter(cursor.getString(1));
                 String ket = cursor.getString(2);
                 String kodeAkun = cursor.getString(3);
                 String namaAkun = cursor.getString(4);

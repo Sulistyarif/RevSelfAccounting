@@ -153,7 +153,7 @@ public class MenuPengaturanActivity extends AppCompatActivity{
             destination.transferFrom(source, 0, source.size());
             source.close();
             destination.close();
-            Toast.makeText(this, "Please wait", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Berhasil melakukan Restore", Toast.LENGTH_SHORT).show();
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -168,6 +168,8 @@ public class MenuPengaturanActivity extends AppCompatActivity{
         boolean success = true;
         if (!sd.exists()) {
             success = sd.mkdir();
+        }else {
+            Toast.makeText(MenuPengaturanActivity.this, "Terjadi kesalahan saat mengakses penyimpanan", Toast.LENGTH_SHORT).show();
         }
         if (success) {
 
@@ -184,10 +186,12 @@ public class MenuPengaturanActivity extends AppCompatActivity{
                 destination.transferFrom(source, 0, source.size());
                 source.close();
                 destination.close();
-                Toast.makeText(this, "Please wait", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Berhasil Melakukan Backup", Toast.LENGTH_SHORT).show();
             } catch(IOException e) {
                 e.printStackTrace();
             }
+        }else {
+            Toast.makeText(MenuPengaturanActivity.this, "Terjadi Kesalahan saat melakukan penyimpanan", Toast.LENGTH_SHORT).show();
         }
     }
 

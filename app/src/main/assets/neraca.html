@@ -38,7 +38,7 @@
       tr1.appendChild(td1);
 
       td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
+      td3.appendChild(document.createTextNode(numberWithCommas(total)));
       td3.setAttribute("width","25%");
       tr1.appendChild(td3);
 
@@ -65,7 +65,7 @@
       tr1.appendChild(td1);
 
       td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
+      td3.appendChild(document.createTextNode(numberWithCommas(total)));
       td3.setAttribute("width","25%");
       tr1.appendChild(td3);
 
@@ -97,7 +97,7 @@
       tr1.appendChild(td1);
 
       td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(nominal));
+      td2.appendChild(document.createTextNode(numberWithCommas(nominal)));
       td2.setAttribute("width","20%");
       tr1.appendChild(td2);
 
@@ -129,7 +129,7 @@
       tr1.appendChild(td1);
 
       td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
+      td3.appendChild(document.createTextNode(numberWithCommas(total)));
       td3.setAttribute("width","25%");
       tr1.appendChild(td3);
 
@@ -161,7 +161,7 @@
       tr1.appendChild(td1);
 
       td2 = document.createElement('TD');
-      td2.appendChild(document.createTextNode(nominal));
+      td2.appendChild(document.createTextNode(numberWithCommas(nominal)));
       td2.setAttribute("width","20%");
       tr1.appendChild(td2);
 
@@ -193,19 +193,25 @@
       tr1.appendChild(td1);
 
       td3 = document.createElement('TD');
-      td3.appendChild(document.createTextNode(total));
+      td3.appendChild(document.createTextNode(numberWithCommas(total)));
       td3.setAttribute("width","25%");
       tr1.appendChild(td3);
 
       myTableDiv.appendChild(table);
     }
 
-    function setNamaPers(nama){
+    function setNamaPersNeraca(nama){
         document.getElementById("namaPers").innerHTML= nama;
     }
 
     function setPeriode(bulan, tahun){
         document.getElementById("periode").innerHTML= "per 31 " + bulan + " " + tahun + " (dalam rupiah)";
+    }
+
+    const numberWithCommas = (x) => {
+      var parts = x.toString().split(",");
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return parts.join(",");
     }
 
     </script>

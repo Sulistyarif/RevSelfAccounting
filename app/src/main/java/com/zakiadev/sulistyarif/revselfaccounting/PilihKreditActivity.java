@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataAkun;
 
@@ -26,11 +27,15 @@ public class PilihKreditActivity extends AppCompatActivity {
     TableView<String[]> tableView;
     TableHelperDataAkun tableHelperDataAkun;
     int pilihanTrans, indexSumber;
+    TextView tvJudul;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.jurnal_kecil_activity);
+
+        tvJudul = (TextView)findViewById(R.id.tvJudul);
+        tvJudul.setText("Pilih Akun Kredit");
 
         fab = (FloatingActionButton)findViewById(R.id.btnAddJurnal);
         fab.setVisibility(View.GONE);

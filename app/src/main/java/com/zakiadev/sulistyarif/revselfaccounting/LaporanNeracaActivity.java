@@ -117,7 +117,7 @@ public class LaporanNeracaActivity extends AppCompatActivity {
 
 //                setting header
                 DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanNeracaActivity.this).selectDataPerusahaan();
-                webView.loadUrl("javascript:setNamaPres('" + dataPerusahaan.getNamaPers() + "');");
+                webView.loadUrl("javascript:setNamaPersNeraca('" + dataPerusahaan.getNamaPers() + "');");
                 webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
 //                pengambilan data untuk aktiva lancar
