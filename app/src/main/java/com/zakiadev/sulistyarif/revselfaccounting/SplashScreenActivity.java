@@ -89,7 +89,9 @@ public class SplashScreenActivity extends AppCompatActivity{
                 {"1105", "Alat Tulis Kantor"},
                 {"1106", "Sewa Dibayar Dimuka"},
                 {"1107", "Asuransi Dibayar Dimuka"},
-                {"1108", "Iklan Dibayar Dimuka"}
+                {"1108", "Iklan Dibayar Dimuka"},
+                {"1109", "Listrik Dibayar Dimuka"},
+                {"1110", "Piutang Sewa"}
         };
 
         String[][] assetTetap ={
@@ -107,7 +109,8 @@ public class SplashScreenActivity extends AppCompatActivity{
                 {"2104", "Utang Bunga"},
                 {"2105", "Utang Biaya"},
                 {"2106", "Utang Wesel"},
-                {"2107", "Pendapatan Diterima Dimuka"}
+                {"2107", "Pendapatan Diterima Dimuka"},
+                {"2108", "Pendapatan Sewa Diterima Dimuka"}
         };
 
         String[][] utangJangkaPanjang = {
@@ -122,7 +125,8 @@ public class SplashScreenActivity extends AppCompatActivity{
         };
 
         String[][] pendapatanUsaha = {
-                {"4101", "Pendapatan Jasa"}
+                {"4101", "Pendapatan Jasa"},
+                {"4102", "Pendapatan Sewa"}
         };
 
         String[][] pendapatanNonOperasional = {

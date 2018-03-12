@@ -42,13 +42,13 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
     LinearLayout llDebet, llKredit;
     Button btAddDebet, btAddKredit, btUpdateJurnal, btTgl;
     Button pilihDebet, pilihKredit;
-    EasyMoneyEditText etNomDebet, etNomKredit;
+    EditText etNomDebet, etNomKredit;
     EditText etKeterangan;
     int jumDebet, etJumDebet, jumKredit, etJumKredit;
     List<Button> dataBtDebet = new ArrayList<Button>();
     List<Button> dataBtKredit = new ArrayList<Button>();
-    List<EasyMoneyEditText> dataEtDebet = new ArrayList<EasyMoneyEditText>();
-    List<EasyMoneyEditText> dataEtKredit = new ArrayList<EasyMoneyEditText>();
+    List<EditText> dataEtDebet = new ArrayList<EditText>();
+    List<EditText> dataEtKredit = new ArrayList<EditText>();
     List<Integer> kodeDebetAl = new ArrayList<Integer>();
     List<Integer> kodeKreditAl = new ArrayList<Integer>();
     List<Integer> jenisDebetAl = new ArrayList<Integer>();
@@ -228,7 +228,7 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
 //                    kalo nggak null brarti update
                     if (idDebet.get(i) != 999){
                         jenisAkunDebet = jenisDebetAl.get(i);
-                        nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getValueString());
+                        nominalAkunDebet = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(i).getText().toString()));
                         if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
                             nominalAkunDebet *= -1;
                         }
@@ -244,7 +244,7 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
                     }else {
 //                        kalo null, brarti nambah baru lagi
                         jenisAkunDebet = jenisDebetAl.get(i);
-                        nominalAkunDebet = Integer.parseInt(dataEtDebet.get(i).getValueString());
+                        nominalAkunDebet = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(i).getText().toString()));
                         if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
                             nominalAkunDebet *= -1;
                         }
@@ -266,7 +266,7 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
 //                    kalo nggak null brarti update
                     if (idKredit.get(i) != 999){
                         jenisAkunKredit = jenisKreditAl.get(i);
-                        nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getValueString());
+                        nominalAkunKredit = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(i).getText().toString()));
                         Log.i("jenisAkun","" + jenisAkunKredit);
                         if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
                             nominalAkunKredit *= -1;
@@ -281,7 +281,7 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
                         Log.i("queryUpdate", "update into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
                     }else {
                         jenisAkunKredit = jenisKreditAl.get(i);
-                        nominalAkunKredit = Integer.parseInt(dataEtKredit.get(i).getValueString());
+                        nominalAkunKredit = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(i).getText().toString()));
                         Log.i("jenisAkun","" + jenisAkunKredit);
                         if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
                             nominalAkunKredit *= -1;
@@ -309,10 +309,9 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
         pilihKredit.setText(namaAkunTrans);
         pilihKredit.setOnClickListener(viewOnclick);
 
-        etNomKredit = new EasyMoneyEditText(this);
+        etNomKredit = new EditText(this);
         etNomKredit.setId(etJumKredit);
-        etNomKredit.hideCurrencySymbol();
-        etNomKredit.showCommas();
+        etNomKredit.addTextChangedListener(new NumberTextWatcherForThousand(etNomKredit));
         etNomKredit.setInputType(InputType.TYPE_CLASS_NUMBER);
         etNomKredit.setHint("Masukkan Nominal Debet");
         etNomKredit.setText(String.valueOf(Math.abs(nominalTrans)));
@@ -335,10 +334,9 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
         pilihDebet.setText(namaAkunTrans);
         pilihDebet.setOnClickListener(viewOnclick);
 
-        etNomDebet = new EasyMoneyEditText(this);
+        etNomDebet = new EditText(this);
         etNomDebet.setId(etJumDebet);
-        etNomDebet.hideCurrencySymbol();
-        etNomDebet.showCommas();
+        etNomDebet.addTextChangedListener(new NumberTextWatcherForThousand(etNomDebet));
         etNomDebet.setInputType(InputType.TYPE_CLASS_NUMBER);
         etNomDebet.setHint("Masukkan Nominal Debet");
         etNomDebet.setText(String.valueOf(Math.abs(nominalTrans)));
@@ -361,10 +359,9 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
         pilihDebet.setText("Pilih Akun Debet");
         pilihDebet.setOnClickListener(viewOnclick);
 
-        etNomDebet = new EasyMoneyEditText(this);
+        etNomDebet = new EditText(this);
         etNomDebet.setId(etJumDebet);
-        etNomDebet.hideCurrencySymbol();
-        etNomDebet.showCommas();
+        etNomDebet.addTextChangedListener(new NumberTextWatcherForThousand(etNomDebet));
         etNomDebet.setInputType(InputType.TYPE_CLASS_NUMBER);
         etNomDebet.setHint("Masukkan Nominal Debet");
 
@@ -382,10 +379,9 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
         pilihKredit.setText("Pilih Akun Kredit");
         pilihKredit.setOnClickListener(viewOnclick);
 
-        etNomKredit = new EasyMoneyEditText(this);
+        etNomKredit = new EditText(this);
         etNomKredit.setId(etJumKredit);
-        etNomKredit.hideCurrencySymbol();
-        etNomKredit.showCommas();
+        etNomKredit.addTextChangedListener(new NumberTextWatcherForThousand(etNomKredit));
         etNomKredit.setInputType(InputType.TYPE_CLASS_NUMBER);
         etNomKredit.setHint("Masukkan Nominal Kredit");
 

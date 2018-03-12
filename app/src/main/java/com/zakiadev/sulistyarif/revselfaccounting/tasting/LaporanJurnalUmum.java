@@ -102,7 +102,7 @@ public class LaporanJurnalUmum extends AppCompatActivity {
                         data[j][7] = String.valueOf(dataTransaksiMar.getPos());
                         pidSebelum = dataTransaksiMar.getPid();
                         j++;
-                        Log.i("bleketek","bleketek " + i);
+//                        Log.i("bleketek","bleketek " + i);
                     }
 
                 }

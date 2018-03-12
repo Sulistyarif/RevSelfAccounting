@@ -136,7 +136,7 @@ public class LaporanArusKas extends AppCompatActivity {
 
 //                menampilkan data aset lancar ke webview
                 if (kasDariAsetLancar != 0){
-                    webView.loadUrl("javascript:separator('" + "Kas didapat dari aset lancar" + "', '" + kasDariAsetLancar +"', '" + "kasOp" +"');");
+                    webView.loadUrl("javascript:separator('" + "Kas diterima dari aset lancar" + "', '" + kasDariAsetLancar +"', '" + "kasOp" +"');");
                 }
 
 //                mengambil data arus kas yang didapat dari hutang jangka pendek
@@ -196,7 +196,7 @@ public class LaporanArusKas extends AppCompatActivity {
                     webView.loadUrl("javascript:separator('" + "Kas didapat dari pendapatan non operasional" + "', '" + kasDariPendapatanNonOp +"', '" + "kasOp" +"');");
                 }
 
-//                mengambil data arus kas yang didapat dari biaya Operasional
+/*//                mengambil data arus kas yang didapat dari biaya Operasional
                 ArrayList<DataJurnal> dataJurnals4 = new DBAdapterMix(LaporanArusKas.this).selectArusKasOnDebetMar(bulanDipilih,tahunDipilih,7);
                 DataJurnal dataJurnal4 ;
 
@@ -232,7 +232,8 @@ public class LaporanArusKas extends AppCompatActivity {
 //                menampilkan datanya ke webview
                 if (kasDariPendapatanNonOp != 0){
                     webView.loadUrl("javascript:separator('" + "Kas didapat dari biaya operasional" + "', '" + kasDariBiayaNonOp +"', '" + "kasOp" +"');");
-                }
+                }*/
+
 
 //                CAUTION !!!!!
 //                MULAI YANG BERNILAI MINUS PADA AKTIVITAS OPERASI
@@ -355,7 +356,7 @@ public class LaporanArusKas extends AppCompatActivity {
 //                CAUTION
 //                MENGHITUNG TOTAL ARUS KAS DARI AKTIVITAS OPERASI
                 int totalAktivitasKas = kasDariAsetLancar - kasUntukAsetLancar + kasDariHutangJangkaPendek - kasUntukHutangJangkaPendek + kasDariPendapatanOp -
-                        kasUntukPendapatanOp + kasDariPendapatanNonOp - kasUntukPendapatanNonOp + kasDariBiayaOp - kasUntukBiayaOp + kasDariBiayaNonOp - kasUntukBiayaNonOp;
+                        kasUntukPendapatanOp + kasDariPendapatanNonOp - kasUntukPendapatanNonOp - kasUntukBiayaOp - kasUntukBiayaNonOp;
                 webView.loadUrl("javascript:separator('" + "ARUS KAS DARI AKTIVITAS OPERASI" + "', '" + totalAktivitasKas +"', '" + "kasOp" +"');");
 
 //                CAUTION
@@ -549,7 +550,7 @@ public class LaporanArusKas extends AppCompatActivity {
 
 //                SUPER CAUTION
 //                MENGHITUNG SALDO KAS AKHIR SEMUANYA
-                int saldoAkhir = totalAktivitasInvestasi + totalAktivitasKas + totalAktivitasPendanaan;
+                int saldoAkhir = totalAktivitasInvestasi + totalAktivitasKas + totalAktivitasPendanaan + saldoKasAwal;
                 webView.loadUrl("javascript:separator('" + "SALDO KAS AKHIR PERIODE" + "', '" + saldoAkhir +"', '" + "kasDana" +"');");
 
                 fabPrint.setOnClickListener(new View.OnClickListener() {

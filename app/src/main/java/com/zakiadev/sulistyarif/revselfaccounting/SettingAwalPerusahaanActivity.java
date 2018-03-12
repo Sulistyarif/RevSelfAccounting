@@ -26,6 +26,7 @@ public class SettingAwalPerusahaanActivity extends AppCompatActivity {
 
     EditText etNamaPerusahaan, etPemilik, etAlamat, etTelp, etEmail;
     Button btSimpan;
+    DialogInterface.OnClickListener dialogClickListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,46 +60,47 @@ public class SettingAwalPerusahaanActivity extends AppCompatActivity {
                     dataPerusahaan.setEmail(email);
 
                     new DBAdapterMix(SettingAwalPerusahaanActivity.this).insertDataPerusahaan(dataPerusahaan);
-                }
 
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switch (i){
-                            case DialogInterface.BUTTON_POSITIVE:{
-                                Intent intent = new Intent(SettingAwalPerusahaanActivity.this, MenuUtamaActivity.class);
-                                startActivity(intent);
-                                finish();
-                                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putBoolean("firstTime", true);
-                                editor.commit();
+                    dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            switch (i){
+                                case DialogInterface.BUTTON_POSITIVE:{
+                                    Intent intent = new Intent(SettingAwalPerusahaanActivity.this, MenuUtamaActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putBoolean("firstTime", true);
+                                    editor.commit();
 
-                                SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
-                                SharedPreferences.Editor editor1 = sharedPreferences1.edit();
-                                editor1.putBoolean("neracaSaldo", true);
-                                editor1.commit();
+                                    SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
+                                    SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                                    editor1.putBoolean("neracaSaldo", true);
+                                    editor1.commit();
 
-                                break;
-                            }
-                            case DialogInterface.BUTTON_NEGATIVE:{
-                                Intent intent = new Intent(SettingAwalPerusahaanActivity.this, SettingNeracaAwalActivity.class);
-                                startActivity(intent);
-                                finish();
+                                    break;
+                                }
+                                case DialogInterface.BUTTON_NEGATIVE:{
+                                    Intent intent = new Intent(SettingAwalPerusahaanActivity.this, SettingNeracaAwalActivity.class);
+                                    startActivity(intent);
+                                    finish();
 
-                                SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
-                                SharedPreferences.Editor editor1 = sharedPreferences1.edit();
-                                editor1.putBoolean("neracaSaldo", true);
-                                editor1.commit();
+                                    SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(SettingAwalPerusahaanActivity.this);
+                                    SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                                    editor1.putBoolean("neracaSaldo", true);
+                                    editor1.commit();
 
-                                break;
+                                    break;
+                                }
                             }
                         }
-                    }
-                };
+                    };
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingAwalPerusahaanActivity.this);
-                builder.setMessage("Apakah anda akan memasukkan data Neraca Awal ?").setPositiveButton("Tidak",dialogClickListener).setNegativeButton("Ya",dialogClickListener).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingAwalPerusahaanActivity.this);
+                    builder.setMessage("Apakah anda akan memasukkan data Neraca Awal ?").setPositiveButton("Tidak",dialogClickListener).setNegativeButton("Ya",dialogClickListener).show();
+                }
+
             }
         });
 

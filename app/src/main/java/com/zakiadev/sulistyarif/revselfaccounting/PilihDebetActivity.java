@@ -14,6 +14,7 @@ import com.zakiadev.sulistyarif.revselfaccounting.tablehelper.TableHelperDataAku
 
 import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.listeners.TableDataClickListener;
+import de.codecrafters.tableview.model.TableColumnDpWidthModel;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
@@ -46,9 +47,14 @@ public class PilihDebetActivity extends AppCompatActivity {
 
         tableHelperDataAkun = new TableHelperDataAkun(this);
         tableView = (TableView<String[]>)findViewById(R.id.tvKecJurnal);
-        tableView.setColumnCount(2);
+//        tableView.setColumnCount(2);
         tableView.setHeaderBackgroundColor(Color.parseColor("#3498db"));
         tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableHelperDataAkun.getColHeader()));
+
+        TableColumnDpWidthModel columnModel = new TableColumnDpWidthModel(PilihDebetActivity.this, 2, 200);
+        columnModel.setColumnWidth(0, 105);
+        columnModel.setColumnWidth(1, 250);
+        tableView.setColumnModel(columnModel);
 
         switch (pilihanTrans){
             case 1:{

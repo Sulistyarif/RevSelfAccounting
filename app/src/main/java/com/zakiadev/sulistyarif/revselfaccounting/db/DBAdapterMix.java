@@ -491,7 +491,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
                 dataJurnal = new DataJurnal();
 
-                    Log.i("DBAdapterMix", "Masuk di hasil true");
+//                    Log.i("DBAdapterMix", "Masuk di hasil true");
                     dataJurnal.setTgl(tgl);
                     dataJurnal.setNominalKredit(nominal_kredit);
                     dataJurnals.add(dataJurnal);
@@ -674,7 +674,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 "FROM trans\n" +
                 "LEFT JOIN jurnal ON jurnal.pid = trans.pid\n" +
                 "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
-                "WHERE jurnal.pid IN (SELECT trans.pid FROM trans WHERE trans.kode_akun = '1101' AND trans.pos = '0') AND akun.jenis = '" + kodeAkun + "' AND strftime('%m', jurnal.tgl) = '" + bulan + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "'\n" +
+                "WHERE jurnal.pid IN (SELECT trans.pid FROM trans WHERE trans.kode_akun = '1101' AND trans.pos = '0') AND akun.jenis = '" + kodeAkun + "' AND jurnal.ket != 'Neraca Awal' AND strftime('%m', jurnal.tgl) = '" + bulan + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "'\n" +
                 "EXCEPT \n" +
                 "SELECT jurnal.tgl, trans.kode_akun, akun.nama_akun, trans.nominal\n" +
                 "FROM trans\n" +
@@ -693,7 +693,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 String tgl = formatter(cursor.getString(0));
                 int sKodeAkun = cursor.getInt(1);
                 String namaAkun = cursor.getString(2);
-                int nominalkredit = cursor.getInt(3);
+                int nominalkredit = Math.abs(cursor.getInt(3));
 
                 Log.i("hasilArusKas : ", tgl + ", " + sKodeAkun + ", " + namaAkun + ", " + nominalkredit);
 
@@ -728,7 +728,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 "FROM trans\n" +
                 "LEFT JOIN jurnal ON jurnal.pid = trans.pid\n" +
                 "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
-                "WHERE jurnal.pid IN (SELECT trans.pid FROM trans WHERE trans.kode_akun = '1101' AND trans.pos = '1') AND akun.jenis = '" + kodeAkun + "' AND strftime('%m', jurnal.tgl) = '" + bulan + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "'\n" +
+                "WHERE jurnal.pid IN (SELECT trans.pid FROM trans WHERE trans.kode_akun = '1101' AND trans.pos = '1') AND akun.jenis = '" + kodeAkun + "' AND jurnal.ket != 'Neraca Awal' AND strftime('%m', jurnal.tgl) = '" + bulan + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "'\n" +
                 "EXCEPT \n" +
                 "SELECT jurnal.tgl, trans.kode_akun, akun.nama_akun, trans.nominal\n" +
                 "FROM trans\n" +
@@ -747,7 +747,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 String tgl = formatter(cursor.getString(0));
                 int sKodeAkun = cursor.getInt(1);
                 String namaAkun = cursor.getString(2);
-                int nominalkredit = cursor.getInt(3);
+                int nominalkredit = Math.abs(cursor.getInt(3));
 
                 Log.i("hasilArusKas : ", tgl + ", " + sKodeAkun + ", " + namaAkun + ", " + nominalkredit);
 
@@ -773,9 +773,30 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 //    buat cari data kas awal sebelum adanya transaksi
     public ArrayList<DataJurnal> selectKasAwalMar(int bulanDipilih, int tahunDipilih) {
         ArrayList<DataJurnal> dataJurnals = new ArrayList<>();
+        int totalkas = 0;
 
         String tahun = String.valueOf(tahunDipilih);
+        String bulanIni = String.format("%02d", bulanDipilih);
         String bulan = String.format("%02d", bulanDipilih - 1);
+
+        String querySelectNeraca = "SELECT jurnal.tgl, trans.nominal\n" +
+                "FROM jurnal\n" +
+                "INNER JOIN trans ON jurnal.pid = trans.pid\n" +
+                "WHERE kode_akun = 1101 AND jurnal.ket = 'Neraca Awal' AND strftime('%m', jurnal.tgl) = '" + bulanIni + "' AND strftime('%Y', jurnal.tgl) = '" + tahun + "';";
+
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor1 = db1.rawQuery(querySelectNeraca, null);
+
+        if (cursor1 != null){
+            while (cursor1.moveToNext()){
+
+                String tgl = formatter(cursor1.getString(0));
+                int kasNeracaAwal = cursor1.getInt(1);
+
+                totalkas += kasNeracaAwal;
+
+            }
+        }
 
         String querySelect = "SELECT jurnal.tgl, trans.nominal\n" +
                 "FROM jurnal\n" +
@@ -786,8 +807,6 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(querySelect, null);
 
         DataJurnal dataJurnal;
-        int totalkas = 0;
-        int i = 0;
 
         if (cursor != null){
             while (cursor.moveToNext()){
@@ -1504,7 +1523,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 dataJurnal = new DataJurnal();
                 if (!splitTgl[0].equals("1") && splitTgl[1].equals(bulan) && splitTgl[2].equals(tahun)){
 
-                    Log.i("DBAdapterMix", "Masuk di hasil true");
+//                    Log.i("DBAdapterMix", "Masuk di hasil true");
                     dataJurnal.setTgl(tgl);
                     dataJurnal.setNominalKredit(nominal_kredit);
                     dataJurnals.add(dataJurnal);
@@ -1905,7 +1924,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
     }
 
     public String formatter(String tanggalDbase){
-        Log.i("formatTglLama", tanggalDbase);
+//        Log.i("formatTglLama", tanggalDbase);
         Date oldFormatTgl = new Date();
         try {
             oldFormatTgl = new SimpleDateFormat("yyyy-MM-dd").parse(tanggalDbase);
@@ -1915,7 +1934,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         SimpleDateFormat formatTglStor = new SimpleDateFormat("dd/MM/yyyy");
         String newFormatTgl = formatTglStor.format(oldFormatTgl);
 
-        Log.i("formatTglBaru", newFormatTgl);
+//        Log.i("formatTglBaru", newFormatTgl);
         return newFormatTgl;
     }
 
