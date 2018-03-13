@@ -297,6 +297,7 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
                     }
 
                 }
+
                 finish();
             }
         });

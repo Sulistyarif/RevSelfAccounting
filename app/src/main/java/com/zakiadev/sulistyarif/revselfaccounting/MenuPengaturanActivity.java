@@ -1,11 +1,13 @@
 package com.zakiadev.sulistyarif.revselfaccounting;
 
-import android.app.Activity;
-import android.content.Context;
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +18,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.List;
 
@@ -35,10 +42,17 @@ public class MenuPengaturanActivity extends AppCompatActivity{
     ListView lvMenuPengaturan;
     String[] menu = {"Pengaturan Perusahaan", "Pengaturan Kode Akun", "Backup Data", "Restore Data", "Hapus Semua Data"};
 
+    private static final int EXTERNAL_STORAGE_PERMISSION_CONSTANT = 100;
+    private static final int REQUEST_PERMISSION_SETTING = 101;
+    private SharedPreferences permissionStatus;
+    private boolean sentToSettings = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_pengaturan_activity);
+
+        permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,R.layout.simple_listview, R.id.label, menu);
 
@@ -64,46 +78,12 @@ public class MenuPengaturanActivity extends AppCompatActivity{
                     }
                     case 2:{
 //                        melakukan backup
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                switch (i){
-                                    case DialogInterface.BUTTON_POSITIVE:{
-                                        dialogInterface.dismiss();
-                                        break;
-
-                                    }
-                                    case DialogInterface.BUTTON_NEGATIVE:{
-                                        exportDB("revaccounting");
-                                        break;
-                                    }
-                                }
-                            }
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MenuPengaturanActivity.this);
-                        builder.setMessage("Apakah anda yakin akan melakukan backup data ?").setPositiveButton("Tidak",dialogClickListener).setNegativeButton("Ya", dialogClickListener).show();
+                        cekPermission("backup");
                         break;
                     }
                     case 3:{
 //                        melakukan restore
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                switch (i){
-                                    case DialogInterface.BUTTON_POSITIVE:{
-                                        dialogInterface.dismiss();
-                                        break;
-
-                                    }
-                                    case DialogInterface.BUTTON_NEGATIVE:{
-                                        importDB("revaccounting");
-                                        break;
-                                    }
-                                }
-                            }
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MenuPengaturanActivity.this);
-                        builder.setMessage("Apakah anda yakin akan melakukan restore data ?").setPositiveButton("Tidak",dialogClickListener).setNegativeButton("Ya", dialogClickListener).show();
+                        cekPermission("restore");
                         break;
                     }
                     case 4:{
@@ -134,6 +114,106 @@ public class MenuPengaturanActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+    private void cekPermission(final String menu) {
+        Dexter.withActivity(MenuPengaturanActivity.this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()){
+                            if (menu.equals("restore")){
+                                dialogRestore();
+                            }else if (menu.equals("backup")){
+                                dialogbackUp();
+
+                            }
+                        }
+                        
+                        if (report.isAnyPermissionPermanentlyDenied()){
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).withErrorListener(new PermissionRequestErrorListener() {
+            @Override
+            public void onError(DexterError error) {
+                Toast.makeText(getApplicationContext(), "Error dalam meminta izin!", Toast.LENGTH_LONG).show();
+            }
+        }).onSameThread().check();
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MenuPengaturanActivity.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+
+    private void dialogRestore() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case DialogInterface.BUTTON_POSITIVE:{
+                        dialogInterface.dismiss();
+                        break;
+
+                    }
+                    case DialogInterface.BUTTON_NEGATIVE:{
+                        importDB("revaccounting");
+                        break;
+                    }
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(MenuPengaturanActivity.this);
+        builder.setMessage("Apakah anda yakin akan melakukan restore data ?").setPositiveButton("Tidak",dialogClickListener).setNegativeButton("Ya", dialogClickListener).show();
+    }
+
+    private void dialogbackUp() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case DialogInterface.BUTTON_POSITIVE:{
+                        dialogInterface.dismiss();
+                        break;
+
+                    }
+                    case DialogInterface.BUTTON_NEGATIVE:{
+                        exportDB("revaccounting");
+                        break;
+                    }
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(MenuPengaturanActivity.this);
+        builder.setMessage("Apakah anda yakin akan melakukan backup data ?").setPositiveButton("Tidak",dialogClickListener).setNegativeButton("Ya", dialogClickListener).show();
     }
 
     private void importDB(String db_name) {

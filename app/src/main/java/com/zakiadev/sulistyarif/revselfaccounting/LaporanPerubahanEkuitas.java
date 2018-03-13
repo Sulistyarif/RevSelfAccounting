@@ -2,6 +2,7 @@ package com.zakiadev.sulistyarif.revselfaccounting;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
@@ -214,6 +215,11 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 dataModal.setTgl(strTahun + "-" + bulanFormatted + "-01");
                 dataModal.setNominal(modalAkhirBulan);
                 new DBAdapterMix(LaporanPerubahanEkuitas.this).insertModal(dataModal);
+
+                Boolean isFinish = getIntent().getBooleanExtra("finish", false);
+                if (isFinish){
+                    finish();
+                }
 
                 fabPrint.setOnClickListener(new View.OnClickListener() {
                     @Override

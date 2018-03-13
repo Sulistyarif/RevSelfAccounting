@@ -1,6 +1,7 @@
 package com.zakiadev.sulistyarif.revselfaccounting;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
@@ -45,6 +46,10 @@ public class LaporanNeracaActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_neraca_activity);
+
+        Intent intent = new Intent(LaporanNeracaActivity.this, LaporanPerubahanEkuitas.class);
+        intent.putExtra("finish", true);
+        startActivity(intent);
 
         fabPrint = (FloatingActionButton)findViewById(R.id.fabNeraca);
 
