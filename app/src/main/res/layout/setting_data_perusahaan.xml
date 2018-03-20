@@ -110,7 +110,6 @@
                 android:layout_weight="1"
                 android:text="Simpan" />
         </LinearLayout>
-        />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

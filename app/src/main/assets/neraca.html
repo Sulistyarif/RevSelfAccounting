@@ -109,6 +109,43 @@
       myTableDiv.appendChild(table);
     }
 
+    function tambahDataAktivaMinus(kodeAkun, namaAkun, nominal){
+
+
+        var myTableDiv = document.getElementById("aktivaTable");
+
+        var table = document.createElement('TABLE');
+        table.setAttribute("class","table table-bordered");
+
+        var tableBody = document.createElement('TBODY');
+        table.appendChild(tableBody);
+
+      var tr1 = document.createElement('TR');
+      tableBody.appendChild(tr1);
+
+      td = document.createElement('TD');
+      td.appendChild(document.createTextNode(kodeAkun));
+      td.setAttribute("width","15%");
+      tr1.appendChild(td);
+
+      td1 = document.createElement('TD');
+      td1.appendChild(document.createTextNode(namaAkun));
+      td1.setAttribute("width","50%");
+      tr1.appendChild(td1);
+
+      td2 = document.createElement('TD');
+      td2.appendChild(document.createTextNode('-'));
+      td2.setAttribute("width","20%");
+      tr1.appendChild(td2);
+
+      td3 = document.createElement('TD');
+      td3.appendChild(document.createTextNode('(' + numberWithCommas(nominal) + ')'));
+      td3.setAttribute("width","15%");
+      tr1.appendChild(td3);
+
+      myTableDiv.appendChild(table);
+    }
+
         function separatorPasiva(teks, total){
 
 

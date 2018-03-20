@@ -86,7 +86,7 @@ public class PilihKreditActivity extends AppCompatActivity {
                 break;
             }
             case 8:{
-                tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataAkun.getDataPil(2,6,0,10)));
+                tableView.setDataAdapter(new SimpleTableDataAdapter(this, tableHelperDataAkun.getDataPil(2,6,5,0,10)));
                 break;
             }
             case 99:{

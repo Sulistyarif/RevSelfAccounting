@@ -125,24 +125,58 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                 webView.loadUrl("javascript:setNamaPersNeraca('" + dataPerusahaan.getNamaPers() + "');");
                 webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
-//                pengambilan data untuk aktiva lancar
-                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnMar(0, bulanDipilih, tahunDipilih);
-                DataSaldo dataSaldo;
-
                 int aktivaLancar = 0;
+                boolean isFirst = false;
+                isFirst = new DBAdapterMix(LaporanNeracaActivity.this).isFirstMonth(bulanDipilih,tahunDipilih);
+                Log.i("nilaiBoolean", "Nilainya: " + String.valueOf(isFirst));
 
-                for (int i = 0; i< dataSaldos.size(); i++){
-                    dataSaldo = dataSaldos.get(i);
+//                if (isFirst){
 
-                    String kodeAkun = dataSaldo.getKodeAkun();
-                    String namaAkun = dataSaldo.getNamaAkun();
-                    String nominal = String.valueOf(dataSaldo.getNominal());
+//                jika ini merupakan bulan pertama transaksi maka ngambil biasa aja
+//                pengambilan data untuk aktiva lancar
+                    ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnMar(0, bulanDipilih, tahunDipilih);
+                    DataSaldo dataSaldo;
 
-                    aktivaLancar += dataSaldo.getNominal();
+                    for (int i = 0; i< dataSaldos.size(); i++){
+                        dataSaldo = dataSaldos.get(i);
 
-                    webView.loadUrl("javascript:tambahDataAktiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+                        String kodeAkun = dataSaldo.getKodeAkun();
+                        String namaAkun = dataSaldo.getNamaAkun();
+                        String nominal = String.valueOf(dataSaldo.getNominal());
 
-                }
+                        aktivaLancar += dataSaldo.getNominal();
+
+                        webView.loadUrl("javascript:tambahDataAktiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+
+                    }
+
+//                }else {
+//
+////                    jika bukan bulan pertama maka untuk mengeluarkan data kas di aktiva lancarnya ada perbedaan
+//                    int saldoKasNeraca = 0;
+//                    saldoKasNeraca = new DBAdapterMix(LaporanNeracaActivity.this).selecModalKasNeraca(bulanDipilih,tahunDipilih);
+//                    aktivaLancar += saldoKasNeraca;
+//                    webView.loadUrl("javascript:tambahDataAktiva('1101', 'Kas', '" + saldoKasNeraca + "');");
+//
+////                pengambilan data untuk aktiva lancar
+//                    ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnNoKasMar(0, bulanDipilih, tahunDipilih);
+//                    DataSaldo dataSaldo;
+//
+//                    for (int i = 0; i< dataSaldos.size(); i++){
+//                        dataSaldo = dataSaldos.get(i);
+//
+//                        String kodeAkun = dataSaldo.getKodeAkun();
+//                        String namaAkun = dataSaldo.getNamaAkun();
+//                        String nominal = String.valueOf(dataSaldo.getNominal());
+//
+//                        aktivaLancar += dataSaldo.getNominal();
+//
+//                        webView.loadUrl("javascript:tambahDataAktiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+//
+//                    }
+//
+//                }
+
                     webView.loadUrl("javascript:separatorAktiva('" + "Total Aset Lancar " + "', '" + aktivaLancar + "');");
 
 //                pengambilan data untuk aktiva tetap
@@ -163,6 +197,23 @@ public class LaporanNeracaActivity extends AppCompatActivity {
                     webView.loadUrl("javascript:tambahDataAktiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
 
                 }
+
+//                total aset tetap merupakan aset tetap yang dikurangi dengan penyusutan bulan ini
+                ArrayList<DataSaldo> dataSaldosPeny = new DBAdapterMix(LaporanNeracaActivity.this).selectRiwayatJenisBlnThnMar(10, bulanDipilih, tahunDipilih);
+
+                for (int i = 0; i< dataSaldosPeny.size(); i++){
+                    dataSaldo1 = dataSaldosPeny.get(i);
+
+                    String kodeAkun = dataSaldo1.getKodeAkun();
+                    String namaAkun = dataSaldo1.getNamaAkun();
+                    String nominal = String.valueOf(dataSaldo1.getNominal());
+
+                    aktivaTetap -= dataSaldo1.getNominal();
+
+                    webView.loadUrl("javascript:tambahDataAktiva('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "');");
+
+                }
+
 
                 webView.loadUrl("javascript:separatorAktiva('" + "Total Aset Tetap" + "', '" + aktivaTetap + "');");
 

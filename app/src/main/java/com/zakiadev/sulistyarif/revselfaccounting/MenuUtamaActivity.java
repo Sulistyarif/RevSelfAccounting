@@ -38,8 +38,8 @@ public class MenuUtamaActivity extends AppCompatActivity {
     EditText etAwalNamaPers;
     Button btAwalNamaPers;
 
-    String[] menu = {"Jurnal", "Laporan", "Pengaturan", "Materi"};
-    int[] icMenu = {R.drawable.menut1, R.drawable.menut2, R.drawable.menut3, R.drawable.menut4};
+    String[] menu = {"Jurnal", "Laporan", "Pengaturan", "Materi", "Petunjuk", "Tentang"};
+    int[] icMenu = {R.drawable.menut1, R.drawable.menut2, R.drawable.menut3, R.drawable.menut4, R.drawable.menut5, R.drawable.menut6};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +79,16 @@ public class MenuUtamaActivity extends AppCompatActivity {
                     case 3:{
 //                        untuk menuju ke materi
                         Intent intent = new Intent(MenuUtamaActivity.this, MenuUtamaMateri.class);
+                        startActivity(intent);
+                        break;
+                    }
+                    case 4:{
+                        Intent intent = new Intent(MenuUtamaActivity.this, PetunjukActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
+                    case 5:{
+                        Intent intent = new Intent(MenuUtamaActivity.this, TentangActivity.class);
                         startActivity(intent);
                         break;
                     }

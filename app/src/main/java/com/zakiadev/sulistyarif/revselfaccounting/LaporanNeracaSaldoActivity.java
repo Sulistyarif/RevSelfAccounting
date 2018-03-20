@@ -65,7 +65,7 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 bulanDipilih = position+1;
                 strBulan = parent.getItemAtPosition(position).toString();
-                Log.i("Bulan yang dipilih : ", String.valueOf(position));
+//                Log.i("Bulan yang dipilih : ", String.valueOf(position));
                 webView.loadUrl("file:///android_asset/neraca_saldo.html");
             }
 
@@ -114,12 +114,14 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
 
 //                setting header
                 DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectDataPerusahaan();
-                Log.i("loadNamaPers",dataPerusahaan.getNamaPers());
+//                Log.i("loadNamaPers",dataPerusahaan.getNamaPers());
 
                 webView.loadUrl("javascript:setNamaPersNeracaSaldo('" + dataPerusahaan.getNamaPers() + "');");
                 webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
-                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectNeracaSaldoMar(bulanDipilih,tahunDipilih);
+//                pada neraca saldo terdapat 2 macam akun, akun yang akumulasi dan akun yang hanya sekali jalan, Aset, Utang, Modal itu merupakan Akumulasi
+//                Sedangkan sisanya hanya diambil dari bulan itu saja, tidak diakumulasi, seperti pada biaya, pendapatan,
+                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectNeracaSaldoAkumMar(bulanDipilih,tahunDipilih);
                 DataSaldo dataSaldo;
                 int saldoDebet = 0 ,saldoKredit = 0;
 
@@ -140,6 +142,47 @@ public class LaporanNeracaSaldoActivity extends AppCompatActivity {
                     webView.loadUrl("javascript:addRow('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "', '" + jenis +"');");
 
                 }
+
+                int modalBulanIni = 0;
+                modalBulanIni = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectModalBulanIni(bulanDipilih,tahunDipilih);
+
+                if (modalBulanIni != 0){
+                    saldoKredit += modalBulanIni;
+                    webView.loadUrl("javascript:addRow('" + "3101" + "', '" + "Modal Pemilik" + "', '" + modalBulanIni + "', '4');");
+                }
+
+//                ArrayList<DataSaldo> dataSaldos4 = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectModalNeracaMar(bulanDipilih,tahunDipilih);
+//                DataSaldo dataSaldo4;
+//
+//                for (int i = 0; i< dataSaldos4.size(); i++){
+//                    dataSaldo4 = dataSaldos4.get(i);
+//
+//                    saldoKredit += dataSaldo4.getNominal();
+//
+//                    webView.loadUrl("javascript:addRow('" + "3101" + "', '" + "Modal Pemilik" + "', '" + dataSaldo4.getNominal() + "', '4');");
+//
+//                }
+
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanNeracaSaldoActivity.this).selectNeracaSaldoMar(bulanDipilih,tahunDipilih);
+
+                for (int i = 0; i< dataSaldos1.size(); i++){
+                    dataSaldo = dataSaldos1.get(i);
+
+                    String kodeAkun = dataSaldo.getKodeAkun();
+                    String namaAkun = dataSaldo.getNamaAkun();
+                    String nominal = String.valueOf(dataSaldo.getNominal());
+                    int jenis = dataSaldo.getJenis();
+
+                    if (jenis == 0 || jenis == 1 || jenis == 7 || jenis == 8 || jenis == 9){
+                        saldoDebet += dataSaldo.getNominal();
+                    }else {
+                        saldoKredit += dataSaldo.getNominal();
+                    }
+
+                    webView.loadUrl("javascript:addRow('" + kodeAkun + "', '" + namaAkun + "', '" + nominal + "', '" + jenis +"');");
+
+                }
+
                 webView.loadUrl("javascript:addRowTotal('" + saldoDebet + "', '" + saldoKredit + "');");
 
                 fabPrint.setOnClickListener(new View.OnClickListener() {

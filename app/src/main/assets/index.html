@@ -29,7 +29,7 @@
         if(pos == "0"){
             row.insertCell(1).innerHTML= namaAkun;
             row.insertCell(2).innerHTML= kodeAkun;
-            row.insertCell(3).innerHTML= nomAkun;
+            row.insertCell(3).innerHTML= numberWithCommas(nomAkun);
             row.insertCell(4).innerHTML= "-";
         }else if(pos == ""){
             row.insertCell(1).innerHTML= namaAkun;
@@ -40,9 +40,30 @@
             row.insertCell(1).innerHTML= "&emsp;" + namaAkun;
             row.insertCell(2).innerHTML= "&emsp;" + kodeAkun;
             row.insertCell(3).innerHTML= "-";
-            row.insertCell(4).innerHTML= nomAkun;
+            row.insertCell(4).innerHTML= numberWithCommas(nomAkun);
         }
 
+    }
+
+    function total(debet, kredit){
+        var table = document.getElementById("myTableData");
+
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+
+            row.insertCell(0).innerHTML= "TOTAL";
+            row.insertCell(1).innerHTML= "";
+            row.insertCell(2).innerHTML= "";
+            row.insertCell(3).innerHTML= numberWithCommas(debet);
+            row.insertCell(4).innerHTML= numberWithCommas(kredit);
+
+    }
+
+
+    const numberWithCommas = (x) => {
+      var parts = x.toString().split(",");
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return parts.join(",");
     }
 
     function setNamaPers(nama){

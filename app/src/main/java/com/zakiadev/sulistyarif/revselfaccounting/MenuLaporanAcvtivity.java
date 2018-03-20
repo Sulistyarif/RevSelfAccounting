@@ -68,7 +68,7 @@ public class MenuLaporanAcvtivity extends AppCompatActivity {
                     }
                     case 5:{
 //                        Arus Kas
-                        Intent i = new Intent(MenuLaporanAcvtivity.this, LaporanArusKas.class);
+                        Intent i = new Intent(MenuLaporanAcvtivity.this, LaporanArusKas2.class);
                         startActivity(i);
                         break;
                     }

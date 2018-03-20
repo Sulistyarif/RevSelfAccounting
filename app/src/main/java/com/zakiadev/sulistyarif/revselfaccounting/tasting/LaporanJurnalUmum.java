@@ -70,10 +70,19 @@ public class LaporanJurnalUmum extends AppCompatActivity {
                 DataTransaksiMar dataTransaksiMar0 = dataTransaksiMarArrayList.get(0);
                 String pidSebelum = dataTransaksiMar0.getPid();
                 int j = 0;
+                int saldoDebet, saldoKredit;
+                saldoDebet = saldoKredit = 0;
                 String[][] data = new String[dataTransaksiMarArrayList.size()][8];
 
                 for (int i = 0; i < dataTransaksiMarArrayList.size(); i++){
                     dataTransaksiMar = dataTransaksiMarArrayList.get(i);
+
+                    if (dataTransaksiMar.getPos() == 0){
+                        saldoDebet += Math.abs(dataTransaksiMar.getNominal());
+                    }else{
+                        saldoKredit += Math.abs(dataTransaksiMar.getNominal());
+                    }
+
                     if (dataTransaksiMar.getPid().equals(pidSebelum)){
                         data[j][0] = dataTransaksiMar.getPid();
                         data[j][1] = dataTransaksiMar.getTgl();
@@ -111,6 +120,8 @@ public class LaporanJurnalUmum extends AppCompatActivity {
                     webView.loadUrl("javascript:addRow('', '" + data[k][3] +"', '" + data[k][4] +"','" + data[k][5] +"','" + data[k][7] +"');");
                 }
                 webView.loadUrl("javascript:addRow('','','(" + data[0][2] + ")','','');");
+
+                webView.loadUrl("javascript:total('" + saldoDebet + "','" + saldoKredit + "');");
 
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override

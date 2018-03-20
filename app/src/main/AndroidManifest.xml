@@ -47,6 +47,9 @@
         <activity android:name=".MenuUtamaMateri"/>
         <activity android:name=".MateriWebView1"/>
         <activity android:name=".MateriWebView2"/>
+        <activity android:name=".TentangActivity"/>
+        <activity android:name=".PetunjukActivity"/>
+        <activity android:name=".LaporanArusKas2"/>
 
     </application>
 

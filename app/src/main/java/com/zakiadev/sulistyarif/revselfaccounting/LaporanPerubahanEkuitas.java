@@ -208,12 +208,16 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                 int modalAkhirBulan = modalAwal + penambahanAtauPengurangnModal;
                 webView.loadUrl("javascript:separator('" + "Modal per 31 " + strBulan + " " + tahunDipilih + "', '" + modalAkhirBulan + "');");
 
+//                ngambil kas buat nanti dimasukin ke table modal
+                int kas = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectKas(bulanDipilih,tahunDipilih);
+
 //                masukin data modal akhir bulan ini biar jadi modal bulan depan
                 DataModal dataModal = new DataModal();
                 String bulanFormatted = String.format("%02d", bulanDipilih + 1);
 //                dataModal.setTgl("01/" + bulanFormatted + "/" + strTahun);
                 dataModal.setTgl(strTahun + "-" + bulanFormatted + "-01");
                 dataModal.setNominal(modalAkhirBulan);
+                dataModal.setNominalKas(kas);
                 new DBAdapterMix(LaporanPerubahanEkuitas.this).insertModal(dataModal);
 
                 Boolean isFinish = getIntent().getBooleanExtra("finish", false);

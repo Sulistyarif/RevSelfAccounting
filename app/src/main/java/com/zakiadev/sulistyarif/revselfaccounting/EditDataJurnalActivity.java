@@ -209,99 +209,133 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
         btUpdateJurnal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int jenisAkunDebet, jenisAkunKredit;
-                int nominalAkunDebet, nominalAkunKredit;
-                String pid = editPid;
-                String keterangan = etKeterangan.getText().toString();
-
-                DataJurnalMar dataJurnalMar = new DataJurnalMar();
-                dataJurnalMar.setPid(pid);
-                dataJurnalMar.setTgl(tglStor);
-                dataJurnalMar.setKet(keterangan);
-                dataJurnalMar.setKode_trans(pilihanTransaksi);
-
-                new DBAdapterMix(EditDataJurnalActivity.this).updateJurnalMar(dataJurnalMar);
-                Log.i("queryUpdate","update into jurnal(pid,tgl,keterangan,trans) values (" + pid + "," + tglStor + ", " + keterangan +", " + pilihanTransaksi + ");" );
-
-//                testing input data transaksi bagian debet
-                for (int i = 0; i < dataEtDebet.size() ; i++){
-//                    kalo nggak null brarti update
-                    if (idDebet.get(i) != 999){
-                        jenisAkunDebet = jenisDebetAl.get(i);
-                        nominalAkunDebet = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(i).getText().toString()));
-                        if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
-                            nominalAkunDebet *= -1;
+                debetloop:
+                for (int i = 0; i < dataEtDebet.size(); i++){
+                    if (NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(i).getText().toString()).equals("") || jenisDebetAl.size() != dataBtDebet.size()){
+                        Toast.makeText(EditDataJurnalActivity.this,"Lengkapi data debet",Toast.LENGTH_SHORT).show();
+                        break debetloop;
+                    }else if (i == (dataEtDebet.size() - 1)){
+                        Log.i("nilaiLoopDb", "nilai loop:" + i);
+                        kreditloop:
+                        for (int j = 0; j < dataEtKredit.size(); j++){
+                            if (NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(j).getText().toString()).equals("") || jenisKreditAl.size() != dataBtKredit.size()){
+                                Toast.makeText(EditDataJurnalActivity.this,"Lengkapi data kredit",Toast.LENGTH_SHORT).show();
+                                break debetloop;
+                            } else if (j == ((dataBtKredit.size()) - 1)){
+                                Log.i("nilaiLoopKr", "nilai loop:" + j);
+                                int nominalDebet = 0;
+                                int nominalKredit = 0;
+                                for (int k = 0; k < dataEtDebet.size(); k++){
+                                    nominalDebet += Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(k).getText().toString()));
+                                }
+                                for (int k = 0; k< dataEtKredit.size(); k++){
+                                    nominalKredit += Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(k).getText().toString()));
+                                }
+                                if (nominalDebet == nominalKredit){
+                                    updateData();
+                                } else {
+                                    Toast.makeText(EditDataJurnalActivity.this, "Nominal debet dan kredit tidak seimbang", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
-
-                        DataTransMar dataTransMar = new DataTransMar();
-                        dataTransMar.setPid(pid);
-                        dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
-                        dataTransMar.setNominal(nominalAkunDebet);
-                        dataTransMar.setPos(0);
-
-                        new DBAdapterMix(EditDataJurnalActivity.this).updateTrans(dataTransMar,idDebet.get(i));
-                        Log.i("queryUpdate", "update into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
-                    }else {
-//                        kalo null, brarti nambah baru lagi
-                        jenisAkunDebet = jenisDebetAl.get(i);
-                        nominalAkunDebet = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(i).getText().toString()));
-                        if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
-                            nominalAkunDebet *= -1;
-                        }
-
-                        DataTransMar dataTransMar = new DataTransMar();
-                        dataTransMar.setPid(pid);
-                        dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
-                        dataTransMar.setNominal(nominalAkunDebet);
-                        dataTransMar.setPos(0);
-
-                        new DBAdapterMix(EditDataJurnalActivity.this).insertTrans(dataTransMar);
-                        Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
                     }
-
                 }
-
-//                testing input data transaksi bagian kredit
-                for (int i = 0 ; i < dataEtKredit.size() ; i++){
-//                    kalo nggak null brarti update
-                    if (idKredit.get(i) != 999){
-                        jenisAkunKredit = jenisKreditAl.get(i);
-                        nominalAkunKredit = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(i).getText().toString()));
-                        Log.i("jenisAkun","" + jenisAkunKredit);
-                        if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
-                            nominalAkunKredit *= -1;
-                        }
-                        DataTransMar dataTransMar = new DataTransMar();
-                        dataTransMar.setPid(pid);
-                        dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
-                        dataTransMar.setNominal(nominalAkunKredit);
-                        dataTransMar.setPos(1);
-
-                        new DBAdapterMix(EditDataJurnalActivity.this).updateTrans(dataTransMar,idKredit.get(i));
-                        Log.i("queryUpdate", "update into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
-                    }else {
-                        jenisAkunKredit = jenisKreditAl.get(i);
-                        nominalAkunKredit = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(i).getText().toString()));
-                        Log.i("jenisAkun","" + jenisAkunKredit);
-                        if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
-                            nominalAkunKredit *= -1;
-                        }
-                        DataTransMar dataTransMar = new DataTransMar();
-                        dataTransMar.setPid(pid);
-                        dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
-                        dataTransMar.setNominal(nominalAkunKredit);
-                        dataTransMar.setPos(1);
-
-                        new DBAdapterMix(EditDataJurnalActivity.this).insertTrans(dataTransMar);
-                        Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
-                    }
-
-                }
-
-                finish();
             }
         });
 
+    }
+
+    private void updateData() {
+        int jenisAkunDebet, jenisAkunKredit;
+        int nominalAkunDebet, nominalAkunKredit;
+        String pid = editPid;
+        String keterangan = etKeterangan.getText().toString();
+
+        DataJurnalMar dataJurnalMar = new DataJurnalMar();
+        dataJurnalMar.setPid(pid);
+        dataJurnalMar.setTgl(tglStor);
+        dataJurnalMar.setKet(keterangan);
+        dataJurnalMar.setKode_trans(pilihanTransaksi);
+
+        new DBAdapterMix(EditDataJurnalActivity.this).updateJurnalMar(dataJurnalMar);
+        Log.i("queryUpdate","update into jurnal(pid,tgl,keterangan,trans) values (" + pid + "," + tglStor + ", " + keterangan +", " + pilihanTransaksi + ");" );
+
+//                testing input data transaksi bagian debet
+        for (int i = 0; i < dataEtDebet.size() ; i++){
+//                    kalo nggak null brarti update
+            if (idDebet.get(i) != 999){
+                jenisAkunDebet = jenisDebetAl.get(i);
+                nominalAkunDebet = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(i).getText().toString()));
+                if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
+                    nominalAkunDebet *= -1;
+                }
+
+                DataTransMar dataTransMar = new DataTransMar();
+                dataTransMar.setPid(pid);
+                dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
+                dataTransMar.setNominal(nominalAkunDebet);
+                dataTransMar.setPos(0);
+
+                new DBAdapterMix(EditDataJurnalActivity.this).updateTrans(dataTransMar,idDebet.get(i));
+                Log.i("queryUpdate", "update into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
+            }else {
+//                        kalo null, brarti nambah baru lagi
+                jenisAkunDebet = jenisDebetAl.get(i);
+                nominalAkunDebet = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(i).getText().toString()));
+                if (jenisAkunDebet == 2 || jenisAkunDebet == 3 || jenisAkunDebet == 4 || jenisAkunDebet == 5 || jenisAkunDebet == 6 ){
+                    nominalAkunDebet *= -1;
+                }
+
+                DataTransMar dataTransMar = new DataTransMar();
+                dataTransMar.setPid(pid);
+                dataTransMar.setKode_akun(kodeDebetAl.get(i).toString());
+                dataTransMar.setNominal(nominalAkunDebet);
+                dataTransMar.setPos(0);
+
+                new DBAdapterMix(EditDataJurnalActivity.this).insertTrans(dataTransMar);
+                Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeDebetAl.get(i).toString() + "," + nominalAkunDebet + ",0" + ");");
+            }
+
+        }
+
+//                testing input data transaksi bagian kredit
+        for (int i = 0 ; i < dataEtKredit.size() ; i++){
+//                    kalo nggak null brarti update
+            if (idKredit.get(i) != 999){
+                jenisAkunKredit = jenisKreditAl.get(i);
+                nominalAkunKredit = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(i).getText().toString()));
+                Log.i("jenisAkun","" + jenisAkunKredit);
+                if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
+                    nominalAkunKredit *= -1;
+                }
+                DataTransMar dataTransMar = new DataTransMar();
+                dataTransMar.setPid(pid);
+                dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
+                dataTransMar.setNominal(nominalAkunKredit);
+                dataTransMar.setPos(1);
+
+                new DBAdapterMix(EditDataJurnalActivity.this).updateTrans(dataTransMar,idKredit.get(i));
+                Log.i("queryUpdate", "update into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
+            }else {
+                jenisAkunKredit = jenisKreditAl.get(i);
+                nominalAkunKredit = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(i).getText().toString()));
+                Log.i("jenisAkun","" + jenisAkunKredit);
+                if (jenisAkunKredit == 0 || jenisAkunKredit == 1 || jenisAkunKredit == 7 || jenisAkunKredit == 8 || jenisAkunKredit == 9){
+                    nominalAkunKredit *= -1;
+                }
+                DataTransMar dataTransMar = new DataTransMar();
+                dataTransMar.setPid(pid);
+                dataTransMar.setKode_akun(kodeKreditAl.get(i).toString());
+                dataTransMar.setNominal(nominalAkunKredit);
+                dataTransMar.setPos(1);
+
+                new DBAdapterMix(EditDataJurnalActivity.this).insertTrans(dataTransMar);
+                Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
+            }
+
+        }
+
+        finish();
     }
 
     private void loadKredit(String idTrans, String pidTrans, String kodeAkunTrans, String namaAkunTrans, int nominalTrans, int jenisTrans, int jumKredit, int etJumKredit) {
