@@ -2592,4 +2592,40 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         }
         return dataBulanModals;
     }
+
+    public ArrayList<DataSaldo> selectRiwayatJenisBlnThnMarLabaRugi(int i, int bulanDipilih, int tahunDipilih) {
+        ArrayList<DataSaldo> dataSaldos = new ArrayList<DataSaldo>();
+        String bulan = String.format("%02d", bulanDipilih);
+        String tahun = String.valueOf(tahunDipilih);
+
+        String querySaldo = "SELECT trans.kode_akun, akun.nama_akun, sum(trans.nominal), akun.jenis\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan +"' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '" + i + "'\n" +
+                "GROUP BY trans.kode_akun;";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySaldo, null);
+
+        DataSaldo dataSaldo;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                String kodeAkun = String.valueOf(cursor.getInt(0));
+                String namaAkun = cursor.getString(1);
+                long nominal = cursor.getLong(2);
+                int jenis = cursor.getInt(3);
+
+                dataSaldo = new DataSaldo();
+                dataSaldo.setKodeAkun(kodeAkun);
+                dataSaldo.setNamaAkun(namaAkun);
+                dataSaldo.setNominal(nominal);
+                dataSaldo.setJenis(jenis);
+
+                dataSaldos.add(dataSaldo);
+            }
+        }
+        return dataSaldos;
+    }
 }

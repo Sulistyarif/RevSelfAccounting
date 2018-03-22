@@ -120,7 +120,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
                 webView.loadUrl("javascript:setPeriode('" + strBulan + "','" + strTahun + "');");
 
 //                pengambilan data untuk pendapatan
-                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMar(5, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMarLabaRugi(5, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo;
 
                 int totalPendapatan = 0;
@@ -141,7 +141,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
 
 //                pengambilan data untuk beban biaya operasional
 
-                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMar(7, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos1 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMarLabaRugi(7, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo1;
 
                 int totalBeban = 0;
@@ -162,7 +162,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
                 webView.loadUrl("javascript:separator('" + "Total Biaya Operasional" + "', '" + totalBeban + "');");
 
 //                pengambilan data untuk pendapatan luar usaha
-                ArrayList<DataSaldo> dataSaldos2 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMar(6, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos2 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMarLabaRugi(6, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo2;
 
                 int totalPendapatanNonOP = 0;
@@ -183,7 +183,7 @@ public class LaporanLabaRugi extends AppCompatActivity {
                 webView.loadUrl("javascript:separator('" + "Total Pendapatan Non Operasional" + "', '" + totalPendapatanNonOP + "');");
 
 //                pengambilan data untuk biaya luar usaha
-                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMar(8, bulanDipilih, tahunDipilih);
+                ArrayList<DataSaldo> dataSaldos3 = new DBAdapterMix(LaporanLabaRugi.this).selectRiwayatJenisBlnThnMarLabaRugi(8, bulanDipilih, tahunDipilih);
                 DataSaldo dataSaldo3;
 
                 int totalBebanNonOp = 0;
