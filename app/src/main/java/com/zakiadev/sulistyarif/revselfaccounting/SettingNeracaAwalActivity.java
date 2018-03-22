@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
 
@@ -90,6 +91,7 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
         SimpleDateFormat formatTglStor = new SimpleDateFormat("yyyy-MM-dd");
         tglStor = formatTglStor.format(tgl);
         btTgl.setText(formatTgl.format(tgl));
+        calendar = Calendar.getInstance(TimeZone.getDefault());
 
         btTgl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,6 +272,16 @@ public class SettingNeracaAwalActivity extends AppCompatActivity implements Date
         SharedPreferences.Editor editor1 = sharedPreferences1.edit();
         editor1.putBoolean("neracaSaldo", true);
         editor1.commit();
+
+        int tahun = calendar.get(Calendar.YEAR);
+        ArrayList<DataModal> dataBulanModals = new DBAdapterMix(SettingNeracaAwalActivity.this).selectDistinctBulan();
+        DataModal dataModal;
+        for (int i = 0; i< dataBulanModals.size(); i++){
+            dataModal = dataBulanModals.get(i);
+            int bulanFor = Integer.parseInt(dataModal.getTgl());
+            Log.i("updateModal", "bulanFor:" + bulanFor);
+            new DBAdapterMix(SettingNeracaAwalActivity.this).updateModal(bulanFor,tahun);
+        }
 
         Intent intent = new Intent(SettingNeracaAwalActivity.this, MenuUtamaActivity.class);
         startActivity(intent);

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
 import com.zakiadev.sulistyarif.revselfaccounting.data.EditDataTransMar;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
@@ -61,7 +62,7 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
     String namaKredit;
     int kodeKredit, jenisKredit;
     int kodeId;
-    Calendar calendar;
+    Calendar calendar = Calendar.getInstance();
     String tglStor;
     Spinner spinner;
     String editPid, editTgl, editKet, editKodeTrans;
@@ -100,6 +101,8 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
 
         tglStor = formatTglStor.format(tgl);
         btTgl.setText(formatTgl.format(tgl));
+        calendar.set(Calendar.YEAR, tgl.getYear());
+        calendar.set(Calendar.MONTH, tgl.getMonth());
 
         btTgl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -333,6 +336,16 @@ public class EditDataJurnalActivity extends AppCompatActivity implements DatePic
                 Log.i("queryTrans", "insert into trans(pid,kode_akun,nominal,pos) values (" + pid + "," + kodeKreditAl.get(i).toString() + "," + nominalAkunKredit + ",1" + ");");
             }
 
+        }
+
+        int tahun = calendar.get(Calendar.YEAR) + 1900;
+        ArrayList<DataModal> dataBulanModals = new DBAdapterMix(EditDataJurnalActivity.this).selectDistinctBulan();
+        DataModal dataModal;
+        for (int i = 0; i< dataBulanModals.size(); i++){
+            dataModal = dataBulanModals.get(i);
+            int bulanFor = Integer.parseInt(dataModal.getTgl());
+            Log.i("updateModal", "bulanFor:" + bulanFor);
+            new DBAdapterMix(EditDataJurnalActivity.this).updateModal(bulanFor,tahun);
         }
 
         finish();

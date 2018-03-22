@@ -123,6 +123,8 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
+                new DBAdapterMix(LaporanPerubahanEkuitas.this).updateModal(bulanDipilih,tahunDipilih);
+
 //                setting header
                 DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectDataPerusahaan();
                 webView.loadUrl("javascript:setNamaPersPerubahanEkuitas('" + dataPerusahaan.getNamaPers() + "');");
@@ -131,7 +133,6 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
 //                mencari modal awal sesuai tangggal yang diinputkan
                 ArrayList<DataJurnal> dataJurnals = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalAwalMar(bulanDipilih,tahunDipilih);
                 DataJurnal dataJurnal;
-
                 int modalAwal = 0;
 
                 for (int i = 0; i< dataJurnals.size(); i++){
@@ -143,13 +144,11 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                     modalAwal += dataJurnal.getNominalKredit();
 
                 }
-
                 webView.loadUrl("javascript:separator('" + "Modal Awal Per Tanggal 1 "  + strBulan + "', '" + modalAwal + "');");
 
 //                  mencari modal tambahan, atau modal yang selain tanggal 1
                 ArrayList<DataJurnal> dataJurnals1 = new DBAdapterMix(LaporanPerubahanEkuitas.this).selectModalTambahanMar(bulanDipilih,tahunDipilih);
                 DataJurnal dataJurnal1;
-
                 int modalTambahan = 0;
 
                 for (int i = 0; i< dataJurnals1.size(); i++){
@@ -161,7 +160,6 @@ public class LaporanPerubahanEkuitas extends AppCompatActivity {
                     modalTambahan += dataJurnal1.getNominalKredit();
 
                 }
-
                 webView.loadUrl("javascript:tambahData('" + "Tambahan Modal " + "', '" + modalTambahan + "');");
 
 //                Laba Rugi pada periode yang diinputkan

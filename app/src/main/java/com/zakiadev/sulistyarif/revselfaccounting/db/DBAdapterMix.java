@@ -398,42 +398,16 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
         String bulan = String.format("%02d", bulanDipilih);
         String tahun = String.valueOf(tahunDipilih);
-        String querySelect = "SELECT jurnal.tgl, trans.nominal\n" +
-                "FROM trans\n" +
-                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
-                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
-                "WHERE strftime('%d', jurnal.tgl) = '01' AND strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '4';";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(querySelect, null);
-
-        DataJurnal dataJurnal;
-
-        if (cursor != null){
-            while (cursor.moveToNext()){
-
-                String tgl = formatter(cursor.getString(0));
-                long nominal_kredit = cursor.getLong(1);
-
-                Log.i("ModalBlnLalu", "Datane : tanggal : " + tgl + ", Nominal : " + nominal_kredit );
-
-                    dataJurnal = new DataJurnal();
-                    dataJurnal.setTgl(tgl);
-                    dataJurnal.setNominalKredit(nominal_kredit);
-                    dataJurnals.add(dataJurnal);
-            }
-        }
-
-        String querySelectModalBulanKemarin = "SELECT tgl, nominal\n" +
+        String querySelectModalBulanIni = "SELECT tgl, nominal\n" +
                 "FROM modal\n" +
                 "WHERE strftime('%m',tgl) = '" + bulan + "' AND strftime('%Y',tgl) = '" + tahun + "';";
 
         SQLiteDatabase db1 = this.getReadableDatabase();
-        Cursor cursor1 = db1.rawQuery(querySelectModalBulanKemarin, null);
+        Cursor cursor1 = db1.rawQuery(querySelectModalBulanIni, null);
 
-//        DataJurnal dataJurnal;
+        DataJurnal dataJurnal;
 
-        if (cursor != null){
+        if (cursor1 != null){
             while (cursor1.moveToNext()){
 
                 String tgl = formatter(cursor1.getString(0));
@@ -464,7 +438,7 @@ public class DBAdapterMix extends SQLiteOpenHelper {
                 "FROM trans\n" +
                 "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
                 "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
-                "WHERE strftime('%d', jurnal.tgl) != '01' AND strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '4';";
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '4';";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(querySelect, null);
@@ -544,13 +518,6 @@ public class DBAdapterMix extends SQLiteOpenHelper {
 
         if (cursor1 != null){
             while (cursor1.moveToNext()){
-
-    //                mengambil data tanggal biar diparse
-                String tgl = formatter(cursor1.getString(2));
-
-    //                ngeparse tanggal
-
-    //                ngecek, cuma data yang bertanggal seperti input yang boleh dimasukkan
                     saldoBeban += cursor1.getInt(1);
                     Log.i("BebanBiaya", "akun : " + cursor1.getString(0) + ", dengan nominal : " + cursor1.getString(1) + ", ditambahkan pada " + cursor1.getString(2));
             }
@@ -2458,5 +2425,171 @@ public class DBAdapterMix extends SQLiteOpenHelper {
         }
         return modalTambahan;
 
+    }
+
+//    digunakan untuk melakukan update modal agar tidak perlu membuka laporan ekuitas
+    public void updateModal(int bulanDipilih, int tahunDipilih) {
+        String bulan = String.format("%02d", bulanDipilih);
+        String bulanDepan = String.format("%02d", bulanDipilih + 1);
+        String tahun = String.valueOf(tahunDipilih);
+//        modal bulan depan = modal awal bulan ini  + tambahan modal + labarugi - prive
+//        modal awal = modal bulan kemarin
+//        tambahan modal = transaksi pemasukan modal bulan ini
+//        laba rugi = pendapatan bulan ini - biaya bulan ini
+//        prive = prive bulan ini
+//        input dari parameter, ketika pilih bulan maret, outputnya keluar 2, tahun tetep 2018
+//        kalo bulannya april, keluarnya angka 3
+        int modalAkhirBulanIni = 0;
+        int modalAwal = 0;
+        int tambahanModal = 0;
+        int pendapatan = 0;
+        int biaya = 0;
+        int prive = 0;
+        int kas = 0;
+
+//        mengambil data modal awal
+        String querySelectModalBulanIni = "SELECT *\n" +
+                "FROM modal\n" +
+                "WHERE strftime('%m',tgl) = '" + bulan + "' AND strftime('%Y',tgl) = '" + tahun + "';";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(querySelectModalBulanIni, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                modalAwal += cursor.getInt(1);
+            }
+        }
+        db.close();
+
+//        mengambil data modal tambahan
+        String querySelectModalTambahan = "SELECT jurnal.tgl, trans.nominal\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.jenis = '4';";
+
+        db = this.getReadableDatabase();
+        cursor = db.rawQuery(querySelectModalTambahan, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                tambahanModal += cursor.getInt(1);
+            }
+        }
+        db.close();
+
+//        mengambil data  pendapatan
+        String querySelectPendapatan = "SELECT trans.kode_akun, trans.nominal, jurnal.tgl\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' \n" +
+                "AND strftime('%Y',jurnal.tgl) = '" + tahun + "' \n" +
+                "AND (akun.jenis = '5' OR akun.jenis = '6');";
+        db = this.getReadableDatabase();
+        cursor = db.rawQuery(querySelectPendapatan, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                pendapatan += cursor.getInt(1);
+            }
+        }
+        db.close();
+
+//        mengambil data beban biaya
+        String querySelectBiaya = "SELECT trans.kode_akun, trans.nominal, jurnal.tgl\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' \n" +
+                "AND strftime('%Y',jurnal.tgl) = '" + tahun + "' \n" +
+                "AND (akun.jenis = '7' OR akun.jenis = '8');";
+        db = this.getReadableDatabase();
+        cursor = db.rawQuery(querySelectBiaya, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                biaya += cursor.getInt(1);
+            }
+        }
+        db.close();
+
+//        mengambil data prive
+        String querySelectPrive = "SELECT trans.kode_akun, trans.nominal, jurnal.tgl\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' \n" +
+                "AND strftime('%Y',jurnal.tgl) = '" + tahun + "' \n" +
+                "AND akun.kode_akun = '6101';";
+        db = this.getReadableDatabase();
+        cursor = db.rawQuery(querySelectPrive, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                prive += cursor.getInt(1);
+            }
+        }
+        db.close();
+
+//        mengambil data modal kas sekarang
+        String querySelectkas = "SELECT sum(trans.nominal)\n" +
+                "FROM trans\n" +
+                "INNER JOIN jurnal ON jurnal.pid = trans.pid\n" +
+                "INNER JOIN akun ON trans.kode_akun = akun.kode_akun\n" +
+                "WHERE strftime('%m',jurnal.tgl) = '" + bulan + "' AND strftime('%Y',jurnal.tgl) = '" + tahun + "' AND akun.kode_akun = '1101'\n" +
+                "GROUP BY trans.kode_akun;";
+
+
+        db = this.getReadableDatabase();
+        cursor = db.rawQuery(querySelectkas, null);
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                kas += cursor.getInt(0);
+            }
+        }
+        db.close();
+
+        modalAkhirBulanIni = modalAwal + tambahanModal + (pendapatan - biaya) - prive;
+
+//        memasukkan data modal akhir bulan ini untuk modal awal bulan depan
+        String tgl = tahun + "-" + bulanDepan + "-01";
+        SQLiteDatabase db1 = this.getWritableDatabase();
+
+        String query = "INSERT OR REPLACE INTO modal('tgl','nominal','nominalKas') VALUES ('" + tgl + "','" + modalAkhirBulanIni + "','" + kas + "' )";
+        db1.execSQL(query);
+        db1.close();
+
+        Log.i("updateModal", "Bulan input:" + bulanDipilih + ",Tahun input:" + tahunDipilih);
+        Log.i("updateModal", "Bulan:" + bulan + " ,Tahun:" + tahun + " ,Modal Akhirnya:" + modalAkhirBulanIni);
+        Log.i("updateModal", "Modal Sudah diupdate");
+
+    }
+
+//    mengambil semua data bulan
+    public ArrayList<DataModal> selectDistinctBulan() {
+        ArrayList<DataModal> dataBulanModals = new ArrayList<DataModal>();
+
+        String selectQuery = "SELECT DISTINCT strftime('%m',tgl) FROM jurnal;";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        DataModal dataModal;
+
+        if (cursor != null){
+            while (cursor.moveToNext()){
+
+                dataModal = new DataModal();
+                String bulan = cursor.getString(0);
+                dataModal.setTgl(bulan);
+                dataBulanModals.add(dataModal);
+                Log.i("updateModal", "Hasil Distinct:" + cursor.getString(0));
+
+            }
+        }
+        return dataBulanModals;
     }
 }

@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataJurnalMar;
+import com.zakiadev.sulistyarif.revselfaccounting.data.DataModal;
 import com.zakiadev.sulistyarif.revselfaccounting.data.DataTransMar;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapter;
 import com.zakiadev.sulistyarif.revselfaccounting.db.DBAdapterMix;
@@ -309,10 +310,23 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
             tambahJurnalPembalik(indexPembalikUtang1,indexPembalikUtang2, 3);
         }
 
+        int tahun = calendar.get(Calendar.YEAR);
+        ArrayList<DataModal> dataBulanModals = new DBAdapterMix(TambahDataJurnalActivity.this).selectDistinctBulan();
+        DataModal dataModal;
+        for (int i = 0; i< dataBulanModals.size(); i++){
+            dataModal = dataBulanModals.get(i);
+            int bulanFor = Integer.parseInt(dataModal.getTgl());
+            Log.i("updateModal", "bulanFor:" + bulanFor);
+            new DBAdapterMix(TambahDataJurnalActivity.this).updateModal(bulanFor,tahun);
+        }
+
         finish();
     }
 
     private void tambahJurnalPembalik(int indexDebetAsal, int indexKreditAsal, int kodePembalik) {
+
+        int jenisAkunDebet, jenisAkunKredit;
+        int nominalAkunDebet, nominalAkunKredit;
 
         kodeId = new DBAdapterMix(TambahDataJurnalActivity.this).selectLastId();
         String pid = "p" + kodeId;
@@ -356,18 +370,31 @@ public class TambahDataJurnalActivity extends AppCompatActivity implements DateP
 //        masukan yang harusnya debet dijadikan kredit, dan kredit dijadikan debet
 
 //        debet
+//        karena dibalik maka nilainya juga dibalik
+        jenisAkunKredit = jenisKreditAl.get(indexKreditAsal);
+        nominalAkunKredit = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(indexKreditAsal).getText().toString()));
+        if (jenisAkunKredit == 2 || jenisAkunKredit == 3 || jenisAkunKredit == 4 || jenisAkunKredit == 5 || jenisAkunKredit == 6){
+            nominalAkunKredit *= -1;
+        }
         DataTransMar dataTransMar = new DataTransMar();
         dataTransMar.setPid(pid);
         dataTransMar.setKode_akun(kodeKreditAl.get(indexKreditAsal).toString());
-        dataTransMar.setNominal(Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtKredit.get(indexKreditAsal).getText().toString())));
+        dataTransMar.setNominal(nominalAkunKredit);
         dataTransMar.setPos(0);
 
         new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar);
 
+//        kredit
+//        karena diblaik maka nilainya juga dibalik
+        jenisAkunDebet = jenisDebetAl.get(indexDebetAsal);
+        nominalAkunDebet = Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(indexDebetAsal).getText().toString()));
+        if (jenisAkunDebet == 0 || jenisAkunDebet == 1 || jenisAkunDebet == 7 || jenisAkunDebet == 8 || jenisAkunDebet == 9 ){
+            nominalAkunDebet *= -1;
+        }
         DataTransMar dataTransMar1 = new DataTransMar();
         dataTransMar1.setPid(pid);
         dataTransMar1.setKode_akun(kodeDebetAl.get(indexDebetAsal).toString());
-        dataTransMar1.setNominal(Integer.parseInt(NumberTextWatcherForThousand.trimCommaOfString(dataEtDebet.get(indexDebetAsal).getText().toString())));
+        dataTransMar1.setNominal(nominalAkunDebet);
         dataTransMar1.setPos(1);
 
         new DBAdapterMix(TambahDataJurnalActivity.this).insertTrans(dataTransMar1);

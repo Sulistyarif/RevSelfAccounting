@@ -47,9 +47,9 @@ public class LaporanNeracaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laporan_neraca_activity);
 
-        Intent intent = new Intent(LaporanNeracaActivity.this, LaporanPerubahanEkuitas.class);
-        intent.putExtra("finish", true);
-        startActivity(intent);
+//        Intent intent = new Intent(LaporanNeracaActivity.this, LaporanPerubahanEkuitas.class);
+//        intent.putExtra("finish", true);
+//        startActivity(intent);
 
         fabPrint = (FloatingActionButton)findViewById(R.id.fabNeraca);
 
