@@ -1,35 +1,193 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-    <title>Petunjuk Pemakaian</title>
+  <title>Petunjuk Pemakaian</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-  </head>
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
 
-  <body>
+	#myBtn {
+	  display: none;
+	  position: fixed;
+	  bottom: 12px;
+	  right: 30px;
+	  z-index: 99;
+	  font-size: 15px;
+	  border: none;
+	  outline: none;
+	  background-color: #3498db;
+	  color: white;
+	  cursor: pointer;
+	  padding: 10px;
+	  border-radius: 4px;
+	}
 
-      <div class="container-fluid">
-        <h5 align="center">PETUNJUK PEMAKAIAN</h5>
-        <img src="petunjuk11.png" style="max-width: 100%;" class="img-responsive" alt="Responsive image">
-        <ol>
-          <li><p>Isikan data perusahaan anda pada kolom-kolom yang telah tersedia</p>
-            <ol type="a">
-              <li>Nama usaha anda</li>
-              <li>Pemilik perusahaan</li>
-              <li>Alamat usaha anda</li>
-              <li>Nomor telepon</li>
-              <li>Alamat e-mail</li>
-            </ol>
-          </li>
-          <li>Jika sudah terisi maka tekan tombol simpan dan lanjutkan</li>
-          <li>Tekan "Ya" jika anda ingin memasukan neraca awal, tekan "Tidak" jika anda tidak ingin memasukan neraca awal.</li>
+	#myBtn:hover {
+	  background-color: #555;
+	}
+	</style>
+<script type="text/javascript">
 
+  	window.onscroll = function() {scrollFunction()};
+	function scrollFunction() {
+	    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+	        document.getElementById("myBtn").style.display = "block";
+	    } else {
+	        document.getElementById("myBtn").style.display = "none";
+	    }
+	}
+
+	// When the user clicks on the button, scroll to the top of the document
+	function topFunction() {
+	    document.body.scrollTop = 0; // For Safari
+	    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+	}
+  </script>
+
+<body>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3 align="center">PETUNJUK PEMAKAIAN</h3>
+    <p><b><center>SETTING DATA AWAL</center></b></p>
+    <img src="petunjuk1.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk2.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li><p>Isikan data perusahaan anda pada kolom-kolom yang telah tersedia</p>
+        <ol type="a">
+          <li>Nama usaha anda</li>
+          <li>Pemilik perusahaan</li>
+          <li>Alamat usaha anda</li>
+          <li>Nomor telepon</li>
+          <li>Alamat e-mail</li>
         </ol>
-        <p><b>Contoh:</b><br> Tanggal 1 Januari 2017 perusahaan membeli bangunan yang akan digunakan untuk usaha senilai Rp100.000.000,00 dan memiliki umur manfaat (umur bangunan tersebut dapat digunakan untuk usaha) selama 10 tahun. Pada akhir tahun kesepuluh diperkirakan bangunan tersebut laku dijual Rp20.000.000,00. Penyusutan tiap periode sama.<br>Berikut adalah rumus untuk menghitung besarnya penyusutan:<br>Penyusutan = (nilai perolehan-nilai residu) / umur manfaat<br>Nilai perolehan : harga beli<br>Nilai residu : harga jual akhir masa manfaat</p>
-        <p>Berdasarkan rumus tersebut, maka besarnya penyusutan bangunan per periode adalah (Rp100.000.000,00-Rp20.000.000,00)/10 tahun = Rp8.000.000,00 pertahun. Jika penyusunan laporan keuangan dilakuakn persemster maka Rp8.000.000,00 / 2  = Rp4.000.000,00.</p>       
-        <img src="penyesuaian7.png" class="img-fluid" alt="Responsive image">
-      </div>
+      </li>
+      <li>Jika sudah terisi maka tekan tombol simpan dan lanjutkan</li>
+      <li>Tekan "Ya" jika anda ingin memasukan neraca awal, tekan "Tidak" jika anda tidak ingin memasukan neraca awal.</li>
+    </ol>
+    <p>Jika anda ingin memasukan neraca awal maka akan muncul tampilan sebagai berikut:</p>
+    <img src="petunjuk3.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tombol restart jika terdapat kesalahan dalam memasukan data neraca awal</li>
+      <li>Tombol untuk memilih tanggal</li>
+      <li>Tombol untuk memilih akun debet</li>
+      <li>Kolom untuk memasukan nominal debet</li>
+      <li>Tombol untuk memilih akun kredit</li>
+      <li>Kolom untuk memasukan nominal kredit</li>
+      <li>Tombol untuk menambah akun debet dan akun kredit</li>
+      <li>Tombol simpan, untuk meniympan data neraca awal</li>
+    </ol>
+    <p><b><center>MENU UTAMA</center></b></p>
+    <img src="petunjuk4.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Menu Jurnal untuk memasukan data jurnal.</li>
+      <li>Menu Laporan untuk melihat laporan keuangan</li>
+      <li>Menu Pengaturan pengaturan</li>
+      <li>Menu Materi berisi materi singkat tentang akuntansi perusahaan jasa </li>
+      <li>Menu petunjuk berisi panduan/petunjuk penggunaan aplikasi</li>
+      <li>Menu tentang, berisi informasi tentang aplikasi</li>
+    </ol>
+    <p><b><center>MEMASUKKAN DATA JURNAL</center></b></p>
+    <img src="petunjuk5.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk6.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tombol jika anda ingin menambah jurnal</li>
+      <li>Tombol restart, untuk mengulang jika terjadi kesalahan</li>
+      <li>Tombol tanggal, pilih tanggal terjadinya transaksi </li>
+      <li>Kolom keterangan, isikan keterangan transaksi pada kolom tersebut</li>
+      <li>Pilih jenis transaksi, yang akan anda masukkan. </li>
+      <li>Pilih akun debet yang sesuai dengan transaksi yang anda masukan</li>
+      <li>Masukan nominal debet </li>
+      <li>Pilih akun kredit yang sesuai dengan transaksi yang anda masukan</li>
+      <li>Masukan nominal kredit  </li>
+      <li>Tombol tambah akun debet dan tambah akun kredit digunakan jika transaksi melibatkan beberapa akun.</li>
+      <li>Tombol simpan untuk menyimpan transaksi.</li>
+      <p>NOTE: Jika nominal yang anda masukan tidak seimbang akan muncul pemberitahuan</p>
+    </ol>
+
+    <p><b><center>SUB MENU LAPORAN</center></b></p>
+    <img src="petunjuk7.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk8.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tombol untuk melihat rekapitulasi jurnal selama periode berjalan.</li>
+      <li>Tombol untuk melihat Neraca saldo</li>
+      <li>Tombol untuk melihat lapora Laba/rugi</li>
+      <li>Tombol untuk melihat laporan perubahan ekuitas</li>
+      <li>Tombol untuk melihat Neraca</li>
+      <li>Tombol untuk melihat Laporan Arus Kas</li>
+      <li>Tombol untuk covert PDF, mengubah file menjadi PDF.</li>
+    </ol>
+
+    <p><b><center>SUB MENU PENGATURAN</center></b></p>
+    <img src="petunjuk9.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tombol untuk mengatur atau mengedit identitas perusahaan</li>
+      <li>Tombol untuk melihat atau menambah akun</li>
+      <li>Tombol untuk mencadangkan seluruh data yang telah dimasukan.</li>
+      <li>Tombol untuk mengembalikan data seperti semula setelah dihapus.</li>
+      <li>Tombol untuk menghapus semua data yang telah dimasukan. </li>
+    </ol>
+
+    <p><b><center>PENGATURAN PERUSAHAAN</center></b></p>
+    <img src="petunjuk10.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tekan tombol <b>"Edit"</b> untuk mengedit identitas perusahaan.</li>
+      <li>Tekan tombol <b>"Simpan"</b> untuk menyimpan perubahan identias perusahaan </li>
+    </ol>
+
+    <p><b><center>PENGATURAN AKUN</center></b></p>
+    <img src="petunjuk11.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk12.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk13.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Pilih jenis akun mana yang akan anda tambahkan</li>
+      <li>Tombol untuk menambah akun</li>
+      <li>Masukkan kode akun dan nama akun yang akan anda tambahkan di kolom yang telah tersedia</li>
+      <li>Tekan tombol <b>"Tambahkan"</b> untuk menyimpan akun yang anda tambahkan.</li>
+    </ol>
+
+    <p><b><center>PENGATURAN BACKUP DATA</center></b></p>
+    <img src="petunjuk14.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk15.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tekan tombol <b>"Backup Data"</b> </li>
+      <li>Tekan tombol <b>"Ya"</b> untuk backup/mencadangakan semua data, jika anda tidak ingin mencadangkan maka tekan <b>"Tidak"</b></li>
+    </ol>
+
+    <p><b><center>PENGATURAN RESTORE DATA</center></b></p>
+    <img src="petunjuk16.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk17.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tekan tombol <b>"Restore"</b> jika anda ingin mengebalikan data yang telah anda hapus</li>
+      <li>Tekan tombol <b>"Ya"</b> jika anda yakin ingin merestore data,  tekan tombol <b>"Tidak"</b> untuk membatalkan</li>
+    </ol>
+
+    <p><b><center>PENGATURAN HAPUS SEMUA DATA</center></b></p>
+    <img src="petunjuk18.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk19.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Tekan tombol <b>"Hapus semua data"</b> jika anda ingin menghapus semua data. </li>
+      <li>Tekan tombol <b>"Ya"</b> jika anda yakin ingin menghapus semua data,  tekan tombol <b>"Tidak"</b> untuk membatalkan.</li>
+    </ol>
+
+    <p><b><center>TAMPILAN MENU MATERI</center></b></p>
+    <img src="petunjuk20.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk21.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk22.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <img src="petunjuk23.png" class="img-responsive" style="max-width: 100%;" alt="Responsive image">
+    <ol>
+      <li>Daftar materi yang bisa anda pilih</li>
+      <li>Tombol yang dapat anda pilih untuk mengetahui manfaat dari masing-masing laporan keuangan</li>
+      <li>Tombol yang dapat anda pilih untuk mengetahui penjelasan dari masing-masing jenis-jenis transaki </li>
+      <li>Tombol yang dapat anda pilih untuk mengetahui penjelasan dari masing-masing jenis transaski penyesuaian.</li>
+    </ol>
+  </div>
+</div>
+<button onclick="topFunction()" id="myBtn" title="Go to top">KEATAS</button>
+<div style="height:50px">
+</div>
 
 </body>
 </html>
