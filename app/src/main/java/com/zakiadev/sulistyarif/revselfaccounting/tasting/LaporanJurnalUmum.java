@@ -63,7 +63,7 @@ public class LaporanJurnalUmum extends AppCompatActivity {
 
 //                set header pake nama pers
                 DataPerusahaan dataPerusahaan = new DBAdapterMix(LaporanJurnalUmum.this).selectDataPerusahaan();
-                webView.loadUrl("javascript:setNamaPers('" + dataPerusahaan.getNamaPers() + "');");
+                webView.loadUrl("javascript:setNamaPersJurnalUmum('" + dataPerusahaan.getNamaPers() + "');");
 
                 ArrayList<DataTransaksiMar> dataTransaksiMarArrayList = new DBAdapterMix(LaporanJurnalUmum.this).selectTransMar();
                 DataTransaksiMar dataTransaksiMar;
