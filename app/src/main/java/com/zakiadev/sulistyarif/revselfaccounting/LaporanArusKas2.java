@@ -299,7 +299,7 @@ public class LaporanArusKas2 extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             createWebPrintJob(webView);
                         } else {
                             Toast.makeText(LaporanArusKas2.this, "Versi Android Anda Tidak Mendukung Export PDF",Toast.LENGTH_SHORT).show();
